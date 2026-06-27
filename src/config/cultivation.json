@@ -1,0 +1,72 @@
+{
+  "realmOrder": [
+    { "id": "lianqi", "name": "练气", "section": "人间九境", "layers": 9 },
+    { "id": "zhuji", "name": "筑基", "section": "人间九境", "layers": 9 },
+    { "id": "jindan", "name": "金丹", "section": "人间九境", "layers": 9 },
+    { "id": "yuanying", "name": "元婴", "section": "人间九境", "layers": 9 },
+    { "id": "huashen", "name": "化神", "section": "人间九境", "layers": 9 },
+    { "id": "lianxu", "name": "炼虚", "section": "人间九境", "layers": 9 },
+    { "id": "heti", "name": "合体", "section": "人间九境", "layers": 9 },
+    { "id": "dacheng", "name": "大乘", "section": "人间九境", "layers": 9 },
+    { "id": "dujie", "name": "渡劫", "section": "人间九境", "layers": 9 },
+    { "id": "zhenxian", "name": "真仙", "section": "仙界", "layers": 9 },
+    { "id": "jinxian", "name": "金仙", "section": "仙界", "layers": 9 },
+    { "id": "taiyi", "name": "太乙", "section": "仙界", "layers": 9 },
+    { "id": "daluo", "name": "大罗", "section": "仙界", "layers": 9 },
+    { "id": "daozu", "name": "道祖", "section": "仙界", "layers": 9 },
+    { "id": "kaitian", "name": "开天 N 重 / 鸿蒙 N 阶", "section": "无尽", "layers": "infinite" }
+  ],
+  "baseStatsByProgress": [
+    { "id": "lianqi_1", "realmId": "lianqi", "layer": 1, "label": "练气1", "baseAtk": 100, "baseHp": 1000, "baseDef": 50, "basePower": 1350, "expectedTotalPower": 2000, "levelId": "1-1" },
+    { "id": "lianqi_2", "realmId": "lianqi", "layer": 2, "label": "练气2", "baseAtk": 118, "baseHp": 1180, "baseDef": 59, "basePower": 1593, "expectedTotalPower": 2400, "levelId": "1-2" },
+    { "id": "lianqi_3", "realmId": "lianqi", "layer": 3, "label": "练气3", "baseAtk": 136, "baseHp": 1360, "baseDef": 68, "basePower": 1836, "expectedTotalPower": 2900, "levelId": "1-3" },
+    { "id": "lianqi_4", "realmId": "lianqi", "layer": 4, "label": "练气4", "baseAtk": 154, "baseHp": 1540, "baseDef": 77, "basePower": 2079, "expectedTotalPower": 3500, "levelId": "1-4" },
+    { "id": "lianqi_5", "realmId": "lianqi", "layer": 5, "label": "练气5", "baseAtk": 172, "baseHp": 1720, "baseDef": 86, "basePower": 2322, "expectedTotalPower": 4200, "levelId": "1-5" },
+    { "id": "lianqi_6", "realmId": "lianqi", "layer": 6, "label": "练气6", "baseAtk": 190, "baseHp": 1900, "baseDef": 95, "basePower": 2565, "expectedTotalPower": 5000, "levelId": "1-6" },
+    { "id": "lianqi_7", "realmId": "lianqi", "layer": 7, "label": "练气7", "baseAtk": 210, "baseHp": 2100, "baseDef": 105, "basePower": 2835, "expectedTotalPower": 6000, "levelId": "1-7" },
+    { "id": "lianqi_8", "realmId": "lianqi", "layer": 8, "label": "练气8", "baseAtk": 230, "baseHp": 2300, "baseDef": 115, "basePower": 3105, "expectedTotalPower": 7200, "levelId": "1-8" },
+    { "id": "lianqi_9", "realmId": "lianqi", "layer": 9, "label": "练气9", "baseAtk": 250, "baseHp": 2500, "baseDef": 125, "basePower": 3375, "expectedTotalPower": 8600, "levelId": "1-9" },
+    { "id": "zhuji_1", "realmId": "zhuji", "layer": 1, "label": "筑基1", "baseAtk": 450, "baseHp": 4500, "baseDef": 225, "basePower": 6075, "expectedTotalPower": 10300, "levelId": "1-10" },
+    { "id": "zhuji_2", "realmId": "zhuji", "layer": 2, "label": "筑基2", "baseAtk": 520, "baseHp": 5200, "baseDef": 260, "basePower": 7020, "expectedTotalPower": 12400, "levelId": "1-11" },
+    { "id": "zhuji_3", "realmId": "zhuji", "layer": 3, "label": "筑基3", "baseAtk": 590, "baseHp": 5900, "baseDef": 295, "basePower": 7965, "expectedTotalPower": 14900, "levelId": "1-12" },
+    { "id": "zhuji_4", "realmId": "zhuji", "layer": 4, "label": "筑基4", "baseAtk": 660, "baseHp": 6600, "baseDef": 330, "basePower": 8910, "expectedTotalPower": 17900, "levelId": "1-13" },
+    { "id": "zhuji_5", "realmId": "zhuji", "layer": 5, "label": "筑基5", "baseAtk": 730, "baseHp": 7300, "baseDef": 365, "basePower": 9855, "expectedTotalPower": 21500, "levelId": "1-14" },
+    { "id": "zhuji_6", "realmId": "zhuji", "layer": 6, "label": "筑基6", "baseAtk": 800, "baseHp": 8000, "baseDef": 400, "basePower": 10800, "expectedTotalPower": 25800, "levelId": "1-15" },
+    { "id": "zhuji_7", "realmId": "zhuji", "layer": 7, "label": "筑基7", "baseAtk": 870, "baseHp": 8700, "baseDef": 435, "basePower": 11745, "expectedTotalPower": 31000, "levelId": "1-16" },
+    { "id": "zhuji_8", "realmId": "zhuji", "layer": 8, "label": "筑基8", "baseAtk": 940, "baseHp": 9400, "baseDef": 470, "basePower": 12690, "expectedTotalPower": 37200, "levelId": "1-17" },
+    { "id": "zhuji_9", "realmId": "zhuji", "layer": 9, "label": "筑基9", "baseAtk": 1010, "baseHp": 10100, "baseDef": 505, "basePower": 13635, "expectedTotalPower": 44600, "levelId": "1-18" },
+    { "id": "zhuji_9_plus", "realmId": "zhuji", "layer": 9, "label": "筑基9+", "baseAtk": 1010, "baseHp": 10100, "baseDef": 505, "basePower": 13635, "expectedTotalPower": 53500, "levelId": "1-19" },
+    { "id": "jindan_preview", "realmId": "jindan", "layer": null, "label": "金丹预告", "baseAtk": 1600, "baseHp": 16000, "baseDef": 800, "basePower": 21600, "expectedTotalPower": 64200, "levelId": "1-20" }
+  ],
+  "attributePointExchange": {
+    "atkPerPoint": 5,
+    "hpPerPoint": 30,
+    "defPerPoint": 3
+  },
+  "breakthroughBaseline": {
+    "nextRealmStatMultiplier": 1.8
+  },
+  "elementCultivationLevels": [
+    { "level": 1, "cumulativeAttack": 5, "auraCost": 100, "realmLimit": "练气", "isPerfection": false },
+    { "level": 2, "cumulativeAttack": 10, "auraCost": 120, "realmLimit": "练气", "isPerfection": false },
+    { "level": 3, "cumulativeAttack": 15, "auraCost": 145, "realmLimit": "练气", "isPerfection": false },
+    { "level": 4, "cumulativeAttack": 20, "auraCost": 175, "realmLimit": "练气", "isPerfection": false },
+    { "level": 5, "cumulativeAttack": 25, "auraCost": 210, "realmLimit": "练气", "isPerfection": false },
+    { "level": 6, "cumulativeAttack": 30, "auraCost": 250, "realmLimit": "练气", "isPerfection": false },
+    { "level": 7, "cumulativeAttack": 35, "auraCost": 300, "realmLimit": "练气", "isPerfection": false },
+    { "level": 8, "cumulativeAttack": 40, "auraCost": 360, "realmLimit": "练气", "isPerfection": false },
+    { "level": 9, "cumulativeAttack": 45, "auraCost": 430, "realmLimit": "练气", "isPerfection": false },
+    { "level": 10, "cumulativeAttack": 50, "auraCost": 520, "realmLimit": "练气圆满", "isPerfection": true },
+    { "level": 11, "cumulativeAttack": 55, "auraCost": 620, "realmLimit": "筑基", "isPerfection": false },
+    { "level": 12, "cumulativeAttack": 60, "auraCost": 740, "realmLimit": "筑基", "isPerfection": false },
+    { "level": 13, "cumulativeAttack": 65, "auraCost": 890, "realmLimit": "筑基", "isPerfection": false },
+    { "level": 14, "cumulativeAttack": 70, "auraCost": 1070, "realmLimit": "筑基", "isPerfection": false },
+    { "level": 15, "cumulativeAttack": 75, "auraCost": 1280, "realmLimit": "筑基", "isPerfection": false },
+    { "level": 16, "cumulativeAttack": 80, "auraCost": 1540, "realmLimit": "筑基", "isPerfection": false },
+    { "level": 17, "cumulativeAttack": 85, "auraCost": 1850, "realmLimit": "筑基", "isPerfection": false },
+    { "level": 18, "cumulativeAttack": 90, "auraCost": 2220, "realmLimit": "筑基", "isPerfection": false },
+    { "level": 19, "cumulativeAttack": 95, "auraCost": 2660, "realmLimit": "筑基", "isPerfection": false },
+    { "level": 20, "cumulativeAttack": 100, "auraCost": 3190, "realmLimit": "筑基圆满", "isPerfection": true }
+  ]
+}
+

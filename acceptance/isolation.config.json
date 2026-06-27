@@ -1,0 +1,19 @@
+{
+  "_doc": "数值隔离门禁配置 —— 底层逻辑三（数值与代码隔离）的机器化执行。领域层(业务逻辑)不得硬编码平衡数值、不得引入 Babylon。由 Claude(监督者)维护，Codex 不得擅自放宽。",
+  "_scan_note": "只扫描架构钉死的领域子目录，避开 godogen 脚手架的过渡文件(src/game/scene.ts 等)。这些子目录由 Codex 在 Task 1+ 建立；建立前本门禁报 PENDING 不阻塞。",
+  "scan": [
+    "src/game/formulas",
+    "src/game/battle",
+    "src/game/meta",
+    "src/game/events"
+  ],
+  "ignore": [
+    ".test.ts",
+    ".spec.ts",
+    ".d.ts"
+  ],
+  "allowNumbers": [-1, 0, 1, 2],
+  "allowMarker": "iso-ok",
+  "forbiddenImports": ["@babylonjs"],
+  "allowedImportPrefixes": ["@babylonjs/core/Maths"]
+}

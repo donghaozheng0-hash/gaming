@@ -1,0 +1,129 @@
+{
+  "elements": {
+    "ids": ["metal", "wood", "water", "fire", "earth"],
+    "xiangshengCycle": {
+      "wood": "fire",
+      "fire": "earth",
+      "earth": "metal",
+      "metal": "water",
+      "water": "wood"
+    },
+    "kezhiCycle": {
+      "wood": "earth",
+      "earth": "water",
+      "water": "fire",
+      "fire": "metal",
+      "metal": "wood"
+    }
+  },
+  "powerFormula": {
+    "atkWeight": 6,
+    "hpWeight": 0.6,
+    "defWeight": 3
+  },
+  "damageFormula": {
+    "qualityMultipliers": {
+      "xia_pin": 1,
+      "zhong_pin": 1.3,
+      "shang_pin": 1.7,
+      "ji_pin": 2.2,
+      "ji_pin_plus": 3
+    },
+    "xiangshengMultipliers": {
+      "generated": 1.3,
+      "neutral": 1,
+      "mismatched": 0.8
+    },
+    "elementalMultipliers": {
+      "advantage": 1.5,
+      "neutral": 1,
+      "disadvantage": 0.67,
+      "perfectionPve": 2,
+      "perfectionPvp": 1.7,
+      "perfectionPvpDisadvantage": 0.85
+    },
+    "drawBonus": {
+      "base": 0,
+      "partialMinScore": 50,
+      "fullScore": 80,
+      "perfectScore": 95,
+      "fullBonus": 0.2
+    }
+  },
+  "defense": {
+    "damageReductionK": 600
+  },
+  "battle": {
+    "simulationFps": 30,
+    "pathLengthUnits": 1000,
+    "preparationSeconds": 15,
+    "normalLevelDurationSeconds": {
+      "min": 75,
+      "max": 105
+    },
+    "bossLevelDurationSeconds": {
+      "min": 110,
+      "max": 140
+    },
+    "wavesPerLevel": 7,
+    "defaultWaveIntervalSeconds": 10,
+    "lingjiGrantWaves": [2, 4, 6],
+    "maxLingjiPointsPerRun": 3,
+    "elementEssenceDrop": {
+      "guaranteedWaves": [3, 6],
+      "guaranteedAmount": 1,
+      "extraDropChance": 0.3,
+      "extraDropAmount": 1
+    },
+    "runeUpgradeAttackGrowthPerLevel": 0.15,
+    "drawRuneCooldownSeconds": {
+      "global": 5,
+      "perRune": 15
+    },
+    "targetPriority": ["boss", "elite", "shielded", "fast", "normal"],
+    "starSweepCondition": {
+      "minCoreHpRatio": 0.5,
+      "maxRevivesUsed": 0
+    },
+    "reviveRules": {
+      "mainline_normal": {
+        "maxRevives": 2,
+        "methods": ["ad", "item", "diamond"],
+        "reviveHpRatio": null
+      },
+      "boss": {
+        "maxRevives": 2,
+        "methods": ["ad", "item", "diamond"],
+        "reviveHpRatio": 0.5
+      },
+      "endless_tower": {
+        "maxRevives": 1,
+        "methods": ["rare_item"],
+        "reviveHpRatio": null
+      },
+      "material_dungeon": {
+        "maxRevives": 1,
+        "methods": ["ad"],
+        "reviveHpRatio": null
+      }
+    }
+  },
+  "progressionCurves": {
+    "chapterPowerFormula": {
+      "chapterOneBasePower": 2000,
+      "perLevelMultiplier": 1.2,
+      "chapterMultiplier": 3,
+      "bossMultiplier": 1.5
+    },
+    "endlessTower": {
+      "basePower": 2000,
+      "exponentBase": 1.15
+    },
+    "skillGapCompensation": {
+      "minPowerGapRatio": 0.25,
+      "maxPowerGapRatio": 0.3,
+      "lowPowerGuideRatio": 0.8
+    }
+  }
+}
+

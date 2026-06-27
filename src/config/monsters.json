@@ -1,0 +1,112 @@
+{
+  "monsters": [
+    {
+      "id": "normal_yaobing",
+      "name": "普通妖兵",
+      "tags": ["normal"],
+      "defaultElements": ["wood", "earth", "metal", "water", "fire"],
+      "hpCoefficientR": 0.15,
+      "shieldCoefficientR": 0,
+      "attackCoefficientR": 0.03,
+      "speedUnitsPerSecond": 60,
+      "leakThreat": "中",
+      "recommendedCounter": "克制属性正常清。",
+      "onDeath": null
+    },
+    {
+      "id": "swarm_xiaoyao",
+      "name": "群聚小妖",
+      "tags": ["swarm", "normal"],
+      "defaultElements": ["wood", "earth", "metal", "water", "fire"],
+      "hpCoefficientR": 0.08,
+      "shieldCoefficientR": 0,
+      "attackCoefficientR": 0.018,
+      "speedUnitsPerSecond": 63,
+      "leakThreat": "低但数量多",
+      "recommendedCounter": "AOE、减速。",
+      "onDeath": null
+    },
+    {
+      "id": "fast_yao",
+      "name": "疾行妖",
+      "tags": ["fast"],
+      "defaultElements": ["wood", "fire"],
+      "hpCoefficientR": 0.1,
+      "shieldCoefficientR": 0,
+      "attackCoefficientR": 0.025,
+      "speedUnitsPerSecond": 90,
+      "leakThreat": "高",
+      "recommendedCounter": "前排控制、后排补刀。",
+      "onDeath": null
+    },
+    {
+      "id": "armored_yao",
+      "name": "厚甲妖",
+      "tags": ["armored"],
+      "defaultElements": ["earth", "metal"],
+      "hpCoefficientR": 0.32,
+      "shieldCoefficientR": 0,
+      "attackCoefficientR": 0.035,
+      "speedUnitsPerSecond": 45,
+      "leakThreat": "高",
+      "recommendedCounter": "单体爆发、克制。",
+      "onDeath": null
+    },
+    {
+      "id": "shield_yao",
+      "name": "护盾妖",
+      "tags": ["shielded"],
+      "defaultElements": ["wood", "earth", "metal", "water", "fire"],
+      "hpCoefficientR": 0.18,
+      "shieldCoefficientR": 0.16,
+      "attackCoefficientR": 0.035,
+      "speedUnitsPerSecond": 50,
+      "leakThreat": "高",
+      "recommendedCounter": "克制破盾、斩金符。",
+      "onDeath": null
+    },
+    {
+      "id": "split_yao",
+      "name": "分裂妖",
+      "tags": ["split"],
+      "defaultElements": ["wood", "water"],
+      "hpCoefficientR": 0.14,
+      "shieldCoefficientR": 0,
+      "attackCoefficientR": 0.025,
+      "speedUnitsPerSecond": 55,
+      "leakThreat": "中",
+      "recommendedCounter": "死后分 2 只 0.04R 小怪，需 AOE。",
+      "onDeath": {
+        "spawnMonsterId": "swarm_xiaoyao",
+        "count": 2,
+        "hpCoefficientR": 0.04
+      }
+    },
+    {
+      "id": "elite_yaojiang",
+      "name": "精英妖将",
+      "tags": ["elite", "shielded"],
+      "defaultElements": ["earth", "fire", "water"],
+      "hpCoefficientR": 0.75,
+      "shieldCoefficientR": 0.4,
+      "attackCoefficientR": 0.045,
+      "speedUnitsPerSecond": 42,
+      "leakThreat": "极高",
+      "recommendedCounter": "克制破盾 + 画符爆发。",
+      "onDeath": null
+    },
+    {
+      "id": "chapter_boss",
+      "name": "章末 Boss",
+      "tags": ["boss", "elite", "shielded"],
+      "defaultElements": ["earth", "metal", "fire", "water"],
+      "hpCoefficientR": 3.2,
+      "shieldCoefficientR": 0.8,
+      "attackCoefficientR": 0.07,
+      "speedUnitsPerSecond": 30,
+      "leakThreat": "极高",
+      "recommendedCounter": "分阶段克制、融合、画符。",
+      "onDeath": null
+    }
+  ]
+}

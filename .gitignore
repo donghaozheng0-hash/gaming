@@ -1,0 +1,8 @@
+.claude
+CLAUDE.md
+/node_modules
+/dist
+/screenshots
+/reports
+.capture
+.babylon-help.log

@@ -1,0 +1,146 @@
+{
+  "waveTemplates": [
+    {
+      "id": "normal_7_wave",
+      "name": "普通关 7 波模板",
+      "levelKind": "normal",
+      "waves": [
+        {
+          "index": 1,
+          "startTimeSeconds": 0,
+          "entries": [{ "monsterPoolIds": ["normal_yaobing"], "totalCount": 5, "label": "普通妖兵" }],
+          "spawnIntervalSeconds": 1.2,
+          "designPurpose": "热身，看清属性。",
+          "specialRules": null
+        },
+        {
+          "index": 2,
+          "startTimeSeconds": 12,
+          "entries": [{ "monsterPoolIds": ["normal_yaobing"], "totalCount": 6, "label": "普通妖兵" }],
+          "spawnIntervalSeconds": 1,
+          "designPurpose": "给第一个灵机点前的轻压力。",
+          "specialRules": null
+        },
+        {
+          "index": 3,
+          "startTimeSeconds": 24,
+          "entries": [{ "monsterPoolIds": ["swarm_xiaoyao"], "totalCount": 8, "label": "群聚小妖" }],
+          "spawnIntervalSeconds": 0.7,
+          "designPurpose": "测 AOE 或控制。",
+          "specialRules": null
+        },
+        {
+          "index": 4,
+          "startTimeSeconds": 36,
+          "entries": [
+            { "monsterPoolIds": ["normal_yaobing"], "totalCount": 5, "label": "普通妖兵" },
+            { "monsterPoolIds": ["fast_yao"], "totalCount": 4, "label": "疾行妖" }
+          ],
+          "spawnIntervalSeconds": 0.9,
+          "designPurpose": "测前排控制和后排补刀。",
+          "specialRules": null
+        },
+        {
+          "index": 5,
+          "startTimeSeconds": 50,
+          "entries": [{ "monsterPoolIds": ["shield_yao", "armored_yao"], "totalCount": 2, "label": "护盾妖或厚甲妖" }],
+          "spawnIntervalSeconds": 1.8,
+          "designPurpose": "小高潮，测克制破盾。",
+          "specialRules": null
+        },
+        {
+          "index": 6,
+          "startTimeSeconds": 65,
+          "entries": [
+            {
+              "monsterPoolIds": ["normal_yaobing", "fast_yao", "shield_yao", "swarm_xiaoyao"],
+              "totalCount": 10,
+              "label": "混合怪"
+            }
+          ],
+          "spawnIntervalSeconds": 0.8,
+          "designPurpose": "给第三个灵机点前压力。",
+          "specialRules": null
+        },
+        {
+          "index": 7,
+          "startTimeSeconds": 82,
+          "entries": [
+            {
+              "monsterPoolIds": ["normal_yaobing", "fast_yao", "swarm_xiaoyao"],
+              "totalCount": 14,
+              "label": "冲锋混合怪"
+            }
+          ],
+          "spawnIntervalSeconds": 0.55,
+          "designPurpose": "收尾压阵眼血量。",
+          "specialRules": null
+        }
+      ]
+    },
+    {
+      "id": "boss_7_wave",
+      "name": "Boss 关 7 波模板",
+      "levelKind": "boss",
+      "waves": [
+        {
+          "index": 1,
+          "startTimeSeconds": 0,
+          "entries": [{ "monsterPoolIds": ["normal_yaobing"], "totalCount": 6, "label": "普通妖兵" }],
+          "spawnIntervalSeconds": null,
+          "designPurpose": "Boss 前热身。",
+          "specialRules": null
+        },
+        {
+          "index": 2,
+          "startTimeSeconds": 14,
+          "entries": [{ "monsterPoolIds": ["fast_yao"], "totalCount": 5, "label": "疾行妖" }],
+          "spawnIntervalSeconds": null,
+          "designPurpose": "压前排。",
+          "specialRules": null
+        },
+        {
+          "index": 3,
+          "startTimeSeconds": 28,
+          "entries": [{ "monsterPoolIds": ["shield_yao"], "totalCount": 2, "label": "护盾妖" }],
+          "spawnIntervalSeconds": null,
+          "designPurpose": "教破盾。",
+          "specialRules": null
+        },
+        {
+          "index": 4,
+          "startTimeSeconds": 44,
+          "entries": [{ "monsterPoolIds": ["swarm_xiaoyao"], "totalCount": 10, "label": "群聚小妖" }],
+          "spawnIntervalSeconds": null,
+          "designPurpose": "给 AOE 高光。",
+          "specialRules": null
+        },
+        {
+          "index": 5,
+          "startTimeSeconds": 62,
+          "entries": [{ "monsterPoolIds": ["chapter_boss"], "totalCount": 1, "label": "Boss 第 1 阶段" }],
+          "spawnIntervalSeconds": null,
+          "designPurpose": "Boss 进入第一阶段。",
+          "specialRules": "HP 降到 65% 切阶段。"
+        },
+        {
+          "index": 6,
+          "startTimeSeconds": 82,
+          "entries": [{ "monsterPoolIds": ["normal_yaobing", "swarm_xiaoyao"], "totalCount": 8, "label": "Boss 召唤小怪" }],
+          "spawnIntervalSeconds": null,
+          "designPurpose": "Boss 继续移动，小怪从入口刷。",
+          "specialRules": null
+        },
+        {
+          "index": 7,
+          "startTimeSeconds": 105,
+          "entries": [{ "monsterPoolIds": ["chapter_boss"], "totalCount": 1, "label": "Boss 第 2/3 阶段" }],
+          "spawnIntervalSeconds": null,
+          "designPurpose": "Boss 终局阶段。",
+          "specialRules": "HP 低于 30% 加速 20%，护盾刷新 1 次。"
+        }
+      ]
+    }
+  ]
+}
+

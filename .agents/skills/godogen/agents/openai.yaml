@@ -1,0 +1,4 @@
+interface:
+  display_name: "Godogen"
+  short_description: "Generate or update complete Babylon.js browser games"
+  default_prompt: "Use $godogen to build or update this Babylon.js browser game from a natural-language design brief."

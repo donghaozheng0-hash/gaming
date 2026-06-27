@@ -1,0 +1,120 @@
+{
+  "featureUnlocks": [
+    {
+      "featureId": "core_loop",
+      "name": "核心循环",
+      "unlock": { "realmId": "lianqi", "layer": 1 },
+      "description": "5 符出战、6 区域相生摆放、自动战斗、灵机点升级、第 1 章。"
+    },
+    {
+      "featureId": "advanced_drawing",
+      "name": "画符进阶档",
+      "unlock": { "realmId": "lianqi", "layer": 3 },
+      "description": "手绘 +20%。"
+    },
+    {
+      "featureId": "element_fusion",
+      "name": "五行精融合",
+      "unlock": { "realmId": "lianqi", "layer": 5 },
+      "description": "先解锁雷/冰/毒，后续开放幽/阴/阳等合成元素技。"
+    },
+    {
+      "featureId": "artifact",
+      "name": "法器系统",
+      "unlock": { "realmId": "lianqi", "layer": 7 },
+      "description": "主攻击养成线。"
+    },
+    {
+      "featureId": "sweep",
+      "name": "扫荡",
+      "unlock": { "realmId": "zhuji", "layer": 1 },
+      "description": "已通关关卡一键产出。"
+    },
+    {
+      "featureId": "robe",
+      "name": "道袍系统 + 每日材料副本",
+      "unlock": { "realmId": "zhuji", "layer": 3 },
+      "description": "道袍系统与每日材料副本开放。"
+    },
+    {
+      "featureId": "jewelry",
+      "name": "首饰系统",
+      "unlock": { "realmId": "zhuji", "layer": 6 },
+      "description": "词条组合。"
+    },
+    {
+      "featureId": "spirit_beast",
+      "name": "灵兽系统",
+      "unlock": { "realmId": "jindan", "layer": 1 },
+      "description": "金丹 1 解锁。"
+    },
+    {
+      "featureId": "pvp_rank",
+      "name": "PvP 段位赛",
+      "unlock": { "realmId": "jindan", "layer": 3 },
+      "description": "金丹 3 解锁。"
+    },
+    {
+      "featureId": "spirit_treasure",
+      "name": "灵宝系统",
+      "unlock": { "realmId": "jindan", "layer": 6 },
+      "description": "金丹 6 解锁。"
+    },
+    {
+      "featureId": "endless_tower",
+      "name": "无尽秘境（符塔）",
+      "unlock": { "realmId": "yuanying", "layer": 1 },
+      "description": "无限爬塔。"
+    },
+    {
+      "featureId": "appearance",
+      "name": "形象 / 外观系统",
+      "unlock": { "realmId": "yuanying", "layer": 3 },
+      "description": "元婴 3 解锁。"
+    },
+    {
+      "featureId": "guild_world_boss_cross_server",
+      "name": "宗门 / 帮派、世界 Boss、跨服",
+      "unlock": { "realmId": "yuanying", "layer": null },
+      "description": "元婴 + 后续版本逐步开放。"
+    },
+    {
+      "featureId": "later_chapters",
+      "name": "第 2~N 章主线、更高阶副本、新合成元素",
+      "unlock": { "realmId": "huashen", "layer": null },
+      "description": "化神 + 开放。"
+    },
+    {
+      "featureId": "immortal_tier_content",
+      "name": "仙阶专属玩法 / 装备品阶",
+      "unlock": { "realmId": "zhenxian", "layer": null },
+      "description": "仙界各境作为大版本载体。"
+    }
+  ],
+  "contentModules": [
+    {
+      "moduleId": "mainline",
+      "name": "主线推图",
+      "unlockRealmId": "lianqi_1",
+      "description": "分章，每章配合境界节奏，章末 Boss。"
+    },
+    {
+      "moduleId": "material_dungeon",
+      "name": "材料副本",
+      "unlockRealmId": "zhuji_3",
+      "description": "筑基 3 起逐个开，分系产装备材料。"
+    },
+    {
+      "moduleId": "breakthrough_dungeon",
+      "name": "突破副本",
+      "unlockRealmId": "realm_layer_9",
+      "description": "各境界 9 层时开放，产渡劫材料。"
+    },
+    {
+      "moduleId": "endless_tower",
+      "name": "无尽符塔",
+      "unlockRealmId": "yuanying_1",
+      "description": "无限挑战 + 周榜。"
+    }
+  ]
+}

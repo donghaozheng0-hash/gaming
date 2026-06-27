@@ -1,0 +1,108 @@
+{
+  "palette": {
+    "elements": {
+      "metal": {
+        "name": "素白/锋银",
+        "primary": "#E8E6DF",
+        "secondary": "#C9CDD2",
+        "usage": "金系符、斩击、破盾特效"
+      },
+      "wood": {
+        "name": "苍青",
+        "primary": "#5C8A5A",
+        "secondary": "#3E6B4F",
+        "usage": "木系符、藤蔓、减速场"
+      },
+      "water": {
+        "name": "墨蓝",
+        "primary": "#2E4B6B",
+        "secondary": "#4A7CA6",
+        "usage": "水系符、寒泉、冰棱"
+      },
+      "fire": {
+        "name": "朱赤",
+        "primary": "#C8402F",
+        "secondary": "#E2683A",
+        "usage": "火系符、焚天、燎原"
+      },
+      "earth": {
+        "name": "赭黄",
+        "primary": "#9C7A3C",
+        "secondary": "#7A5C2E",
+        "usage": "土系符、落岩、镇岳"
+      }
+    },
+    "fusedElements": {
+      "thunder": {
+        "name": "紫电",
+        "primary": "#7A5BAE",
+        "secondary": null,
+        "usage": "连锁跳弹"
+      },
+      "ice": {
+        "name": "冷白青",
+        "primary": "#A9D6E5",
+        "secondary": null,
+        "usage": "冻结减速"
+      },
+      "poison": {
+        "name": "黯绿",
+        "primary": "#6B8E3D",
+        "secondary": null,
+        "usage": "DoT 瘴气"
+      },
+      "ghost": {
+        "name": "幽碧",
+        "primary": "#3A5F5A",
+        "secondary": null,
+        "usage": "穿盾、恐惧"
+      },
+      "yang": {
+        "name": "金曜",
+        "primary": "#E8B53A",
+        "secondary": null,
+        "usage": "净化爆闪"
+      },
+      "yin": {
+        "name": "黛紫",
+        "primary": "#4A3A5A",
+        "secondary": null,
+        "usage": "蚀骨禁疗"
+      }
+    },
+    "surface": {
+      "paper": "#F2ECDD",
+      "lightInk": "淡墨灰",
+      "card": "纸面卡片",
+      "backgroundStyle": "纸纹"
+    },
+    "ink": {
+      "main": "#1C1A17",
+      "warning": "#C8402F",
+      "line": "墨线描边",
+      "crack": "龟裂墨色"
+    }
+  },
+  "effectKeys": {
+    "commonCast": "符箓：出手时浮现符箓纹样，亮起后笔画化为攻击。",
+    "fire": "泼墨焚烧：朱赤泼墨炸开 + 飞白火舌，边缘有焦墨。",
+    "water": "墨晕扩散：蓝墨在纸面上晕染推开，冰棱为锐利留白线条。",
+    "wood": "飞白藤生：枯笔藤蔓沿地面生长，减速时画面边缘起青雾。",
+    "metal": "一笔斩：单线锋银快斩，破盾时墨片崩裂飞溅。",
+    "earth": "浓墨砸落：延迟蓄力的浓墨团坠地泼溅，震屏。",
+    "thunder": "焦墨电纹：紫电以折线笔画连点，跳弹有顿挫感。",
+    "drawSuccess": "笔迹追光：玩家描的笔迹被点亮，收笔时墨花绽放。",
+    "hitCritical": "墨点飞溅 + 短暂留白闪。",
+    "coreDamage": "阵眼纹样墨色变淡、龟裂，告急用朱砂红描边 + 墨晕扩散。"
+  },
+  "uiTokens": {
+    "fontTitle": "书法体",
+    "fontBody": "思源宋体/类宋体衬线",
+    "controlSurface": "纸面卡片 + 墨线描边",
+    "primaryButton": "朱砂印章式按钮",
+    "badge": "朱砂印章式角标",
+    "transition": "墨晕开合/卷轴展开",
+    "layout": "竖屏单手，主操作区在下半屏",
+    "density": "单屏不堆叠超过玩家当前境界已解锁的入口"
+  }
+}

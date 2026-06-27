@@ -1,0 +1,136 @@
+{
+  "runes": [
+    {
+      "id": "fen_tian",
+      "name": "焚天符",
+      "element": "fire",
+      "role": "单体爆发",
+      "lv1Attack": 120,
+      "attackSpeedPerSecond": 1,
+      "range": { "kind": "units", "value": 260 },
+      "trait": "对精英 +20% 伤害",
+      "unlock": { "type": "initial" }
+    },
+    {
+      "id": "liao_yuan",
+      "name": "燎原符",
+      "element": "fire",
+      "role": "小范围 AOE",
+      "lv1Attack": 80,
+      "attackSpeedPerSecond": 0.8,
+      "range": { "kind": "units", "value": 240 },
+      "trait": "半径 90，最多 5 目标",
+      "unlock": { "type": "levelFirstClear", "levelId": "1-4" }
+    },
+    {
+      "id": "qing_teng",
+      "name": "青藤符",
+      "element": "wood",
+      "role": "单体控制",
+      "lv1Attack": 60,
+      "attackSpeedPerSecond": 0.67,
+      "range": { "kind": "units", "value": 300 },
+      "trait": "减速 45%，持续 2 秒",
+      "unlock": { "type": "levelFirstClear", "levelId": "1-2" }
+    },
+    {
+      "id": "hui_chun",
+      "name": "回春符",
+      "element": "wood",
+      "role": "容错辅助",
+      "lv1Attack": 40,
+      "attackSpeedPerSecond": 0.5,
+      "range": { "kind": "global" },
+      "trait": "每 6 秒恢复阵眼 1.5% 最大 HP",
+      "unlock": { "type": "levelFirstClear", "levelId": "1-8" }
+    },
+    {
+      "id": "han_quan",
+      "name": "寒泉符",
+      "element": "water",
+      "role": "范围减速",
+      "lv1Attack": 70,
+      "attackSpeedPerSecond": 0.67,
+      "range": { "kind": "units", "value": 280 },
+      "trait": "半径 110，减速 30%",
+      "unlock": { "type": "levelFirstClear", "levelId": "1-7" }
+    },
+    {
+      "id": "bing_leng",
+      "name": "冰棱符",
+      "element": "water",
+      "role": "直线穿透",
+      "lv1Attack": 95,
+      "attackSpeedPerSecond": 0.8,
+      "range": { "kind": "units", "value": 300 },
+      "trait": "穿透 3 个目标",
+      "unlock": { "type": "levelFirstClear", "levelId": "1-11" }
+    },
+    {
+      "id": "zhan_jin",
+      "name": "斩金符",
+      "element": "metal",
+      "role": "破盾单体",
+      "lv1Attack": 100,
+      "attackSpeedPerSecond": 1,
+      "range": { "kind": "units", "value": 260 },
+      "trait": "对护盾伤害 ×1.6",
+      "unlock": { "type": "levelFirstClear", "levelId": "1-6" }
+    },
+    {
+      "id": "wan_ren",
+      "name": "万刃符",
+      "element": "metal",
+      "role": "多段攻击",
+      "lv1Attack": 55,
+      "attackSpeedPerSecond": 1,
+      "range": { "kind": "units", "value": 250 },
+      "trait": "每次打 2 段，可分配目标",
+      "unlock": { "type": "levelFirstClear", "levelId": "1-13" }
+    },
+    {
+      "id": "zhen_yue",
+      "name": "镇岳符",
+      "element": "earth",
+      "role": "防御/减速场",
+      "lv1Attack": 50,
+      "attackSpeedPerSecond": 0.5,
+      "range": { "kind": "units", "value": 220 },
+      "trait": "区域内怪减速 20%，阵眼 DEF +8%",
+      "unlock": { "type": "levelFirstClear", "levelId": "1-15" }
+    },
+    {
+      "id": "luo_yan",
+      "name": "落岩符",
+      "element": "earth",
+      "role": "延迟范围爆发",
+      "lv1Attack": 160,
+      "attackSpeedPerSecond": 0.4,
+      "range": { "kind": "units", "value": 240 },
+      "trait": "1 秒延迟，半径 100",
+      "unlock": { "type": "levelFirstClear", "levelId": "1-17" }
+    }
+  ],
+  "upgradeCosts": [
+    { "fromLevel": 1, "toLevel": 2, "runeEssence": 5, "coins": 200, "note": "教学期" },
+    { "fromLevel": 2, "toLevel": 3, "runeEssence": 8, "coins": 350, "note": "教学期" },
+    { "fromLevel": 3, "toLevel": 4, "runeEssence": 12, "coins": 550, "note": null },
+    { "fromLevel": 4, "toLevel": 5, "runeEssence": 18, "coins": 800, "note": null },
+    { "fromLevel": 5, "toLevel": 6, "runeEssence": 26, "coins": 1200, "note": "练气中段" },
+    { "fromLevel": 6, "toLevel": 7, "runeEssence": 36, "coins": 1700, "note": null },
+    { "fromLevel": 7, "toLevel": 8, "runeEssence": 50, "coins": 2400, "note": null },
+    { "fromLevel": 8, "toLevel": 9, "runeEssence": 68, "coins": 3300, "note": null },
+    { "fromLevel": 9, "toLevel": 10, "runeEssence": 90, "coins": 4500, "note": "练气上限" },
+    { "fromLevel": 10, "toLevel": 11, "runeEssence": 120, "coins": 6200, "note": "筑基开始" },
+    { "fromLevel": 11, "toLevel": 12, "runeEssence": 155, "coins": 8300, "note": null },
+    { "fromLevel": 12, "toLevel": 13, "runeEssence": 200, "coins": 11000, "note": null },
+    { "fromLevel": 13, "toLevel": 14, "runeEssence": 255, "coins": 14500, "note": null },
+    { "fromLevel": 14, "toLevel": 15, "runeEssence": 320, "coins": 19000, "note": null },
+    { "fromLevel": 15, "toLevel": 16, "runeEssence": 400, "coins": 25000, "note": null },
+    { "fromLevel": 16, "toLevel": 17, "runeEssence": 500, "coins": 33000, "note": null },
+    { "fromLevel": 17, "toLevel": 18, "runeEssence": 620, "coins": 43000, "note": null },
+    { "fromLevel": 18, "toLevel": 19, "runeEssence": 760, "coins": 56000, "note": null },
+    { "fromLevel": 19, "toLevel": 20, "runeEssence": 930, "coins": 73000, "note": "筑基上限" }
+  ]
+}
+

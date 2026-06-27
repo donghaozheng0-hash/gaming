@@ -1,0 +1,71 @@
+{
+  "recipes": [
+    {
+      "id": "thunder",
+      "name": "雷",
+      "baseElements": ["wood", "fire"],
+      "cost": { "lingjiPoints": 1, "essences": { "wood": 1, "fire": 1 } },
+      "effect": { "chainTargets": 4, "jumpDecay": 0.2, "description": "连锁 4 个目标，每跳衰减 20%" },
+      "advantage": { "target": "water", "multiplier": 1.6 },
+      "disadvantage": { "source": "earth", "multiplier": 0.7 },
+      "permanentUnlock": "1-10 首通后可收集碎片解锁"
+    },
+    {
+      "id": "ice",
+      "name": "冰",
+      "baseElements": ["metal", "water"],
+      "cost": { "lingjiPoints": 1, "essences": { "metal": 1, "water": 1 } },
+      "effect": { "radius": 120, "slowRatio": 0.5, "durationSeconds": 2, "description": "范围 120，减速 50%，持续 2 秒" },
+      "advantage": { "target": "fire", "multiplier": 1.6 },
+      "disadvantage": { "source": "thunder", "multiplier": 0.7 },
+      "permanentUnlock": "1-14 首通后可收集碎片解锁"
+    },
+    {
+      "id": "poison",
+      "name": "毒",
+      "baseElements": ["wood", "earth"],
+      "cost": { "lingjiPoints": 1, "essences": { "wood": 1, "earth": 1 } },
+      "effect": { "durationSeconds": 6, "damagePerSecondSkillAttackRatio": 0.3, "description": "6 秒 DoT，每秒 30% 技能攻击" },
+      "advantage": { "target": "metal", "multiplier": 1.6 },
+      "disadvantage": { "source": "ice", "multiplier": 0.7 },
+      "permanentUnlock": "1-18 首通后可收集碎片解锁"
+    },
+    {
+      "id": "ghost",
+      "name": "幽",
+      "baseElements": ["water", "earth"],
+      "cost": { "lingjiPoints": 1, "essences": { "water": 1, "earth": 1 } },
+      "effect": { "shieldIgnoreRatio": 0.4, "fearSeconds": 3, "attackSpeedReduction": 0.2, "description": "40% 伤害无视护盾，并给目标挂 3 秒恐惧，攻速 -20%" },
+      "advantage": { "target": "shielded_or_spirit", "multiplier": 1.6 },
+      "disadvantage": { "source": "yang", "multiplier": 0.7 },
+      "permanentUnlock": "1-20 Boss 预告，筑基 6 后碎片解锁"
+    },
+    {
+      "id": "yang",
+      "name": "阳",
+      "baseElements": ["fire", "metal"],
+      "cost": { "lingjiPoints": 1, "essences": { "fire": 1, "metal": 1 } },
+      "effect": { "radius": 100, "extraDamageToGhostRatio": 0.3, "description": "爆闪范围 100，驱散怪物增益，对幽目标额外 +30%" },
+      "advantage": { "target": "ghost_or_yin", "multiplier": 1.7 },
+      "disadvantage": { "source": "water", "multiplier": 0.75 },
+      "permanentUnlock": "金丹 1 后解锁"
+    },
+    {
+      "id": "yin",
+      "name": "阴",
+      "baseElements": ["water", "wood"],
+      "cost": { "lingjiPoints": 1, "essences": { "water": 1, "wood": 1 } },
+      "effect": { "durationSeconds": 8, "attackReduction": 0.25, "dotTakenBonus": 0.2, "description": "8 秒蚀骨，目标攻击 -25%，受到 DoT +20%" },
+      "advantage": { "target": "high_attack_or_yang", "multiplier": 1.7 },
+      "disadvantage": { "source": "fire", "multiplier": 0.75 },
+      "permanentUnlock": "金丹 3 后解锁"
+    }
+  ],
+  "unlockSchedule": [
+    { "stage": "练气 5 起", "recipeIds": ["thunder", "ice", "poison"], "purpose": "首测核心，分别覆盖多目标、控制、持续伤害。" },
+    { "stage": "筑基 6 起", "recipeIds": ["ghost"], "purpose": "引入护盾穿透和灵体怪，为中期怪物机制服务。" },
+    { "stage": "金丹 1 起", "recipeIds": ["yang"], "purpose": "用来克制幽/阴，提供净化和爆发。" },
+    { "stage": "金丹 3 起", "recipeIds": ["yin"], "purpose": "用来压高攻怪、禁疗、强化 DoT 流派。" }
+  ]
+}
+

@@ -1,0 +1,225 @@
+{
+  "resources": [
+    {
+      "id": "dao_exp",
+      "name": "道行经验",
+      "sources": ["关卡", "副本", "秘境", "日常"],
+      "sinks": ["升境界层"]
+    },
+    {
+      "id": "tribulation_materials",
+      "name": "渡劫丹 + 突破材料",
+      "sources": ["突破副本（限次）", "周常", "活动"],
+      "sinks": ["突破渡劫"]
+    },
+    {
+      "id": "element_essence",
+      "name": "五行精",
+      "sources": ["关卡局内掉落", "副本"],
+      "sinks": ["局内融合"]
+    },
+    {
+      "id": "equipment_materials",
+      "name": "装备材料（分五系）",
+      "sources": ["材料副本（按系开放）", "扫荡"],
+      "sinks": ["打造装备", "强化装备", "升品装备"]
+    },
+    {
+      "id": "rune_essence_and_core",
+      "name": "符精 + 符胆",
+      "sources": ["关卡", "重复符分解"],
+      "sinks": ["符升级", "符升品"]
+    },
+    {
+      "id": "coins",
+      "name": "金币",
+      "sources": ["关卡", "扫荡（通用）"],
+      "sinks": ["各类升级消耗"]
+    },
+    {
+      "id": "diamonds",
+      "name": "钻石（软付费币）",
+      "sources": ["成就", "活动", "看广告", "后期充值"],
+      "sinks": ["复活", "扫荡券", "体力", "抽符"]
+    }
+  ],
+  "staminaModel": {
+    "mainlineConsumesStamina": false,
+    "limitedModes": ["副本", "秘境", "突破本"],
+    "recoveryRule": "主线推图不耗体；副本 / 秘境 / 突破本每日限次或耗体，体力随时间恢复，钻石/广告可买额外次数。"
+  },
+  "dailyOutputs": [
+    {
+      "sourceId": "mainline_first_clear",
+      "name": "主线首通",
+      "dailyLimit": null,
+      "singleRunOutput": {
+        "rule": "按 6.6 首通奖励"
+      },
+      "dailyOutput": {
+        "rule": "只拿一次"
+      },
+      "purpose": "推进、解锁、首通资源。"
+    },
+    {
+      "sourceId": "mainline_sweep",
+      "name": "主线扫荡",
+      "dailyLimit": 20,
+      "singleRunOutput": {
+        "coins": "关卡金币 60%",
+        "runeEssence": "符精 50%"
+      },
+      "dailyOutput": {
+        "coins": "约 2-8 万",
+        "runeEssence": "80-180"
+      },
+      "purpose": "补符升级。"
+    },
+    {
+      "sourceId": "artifact_material_dungeon",
+      "name": "法器材料本",
+      "dailyLimit": 3,
+      "singleRunOutput": {
+        "artifactStone": 8,
+        "coins": 1500
+      },
+      "dailyOutput": {
+        "artifactStone": 24,
+        "coins": 4500
+      },
+      "purpose": "法器强化。"
+    },
+    {
+      "sourceId": "robe_material_dungeon",
+      "name": "道袍材料本",
+      "dailyLimit": 3,
+      "singleRunOutput": {
+        "robeCloth": 8,
+        "coins": 1500
+      },
+      "dailyOutput": {
+        "robeCloth": 24,
+        "coins": 4500
+      },
+      "purpose": "道袍强化。"
+    },
+    {
+      "sourceId": "jewelry_material_dungeon",
+      "name": "首饰材料本",
+      "dailyLimit": 3,
+      "singleRunOutput": {
+        "jewelryJade": 6,
+        "coins": 2000
+      },
+      "dailyOutput": {
+        "jewelryJade": 18,
+        "coins": 6000
+      },
+      "purpose": "首饰强化。"
+    },
+    {
+      "sourceId": "breakthrough_dungeon",
+      "name": "突破副本",
+      "dailyLimit": 2,
+      "singleRunOutput": {
+        "tribulationPill": 4,
+        "realmEssence": 2
+      },
+      "dailyOutput": {
+        "tribulationPill": 8,
+        "realmEssence": 4
+      },
+      "purpose": "突破。"
+    },
+    {
+      "sourceId": "daily_tasks",
+      "name": "每日任务",
+      "dailyLimit": 1,
+      "singleRunOutput": {
+        "daoExp": 800,
+        "diamonds": 30,
+        "coins": 5000
+      },
+      "dailyOutput": {
+        "rule": "固定"
+      },
+      "purpose": "留存主奖励。"
+    },
+    {
+      "sourceId": "ad_double_reward",
+      "name": "广告翻倍",
+      "dailyLimit": 5,
+      "singleRunOutput": {
+        "rule": "指定副本奖励 x2"
+      },
+      "dailyOutput": {
+        "rule": "最高多拿 5 次副本产出"
+      },
+      "purpose": "首测广告主入口。"
+    }
+  ],
+  "breakthroughRequirements": [
+    {
+      "fromRealmId": "lianqi",
+      "toRealmId": "zhuji",
+      "tribulationPills": 10,
+      "specialMaterialId": "zhujiEssence",
+      "specialMaterialAmount": 5,
+      "challengeRecommendedPower": 9500,
+      "freeExpectedDays": 2,
+      "failureProtection": "连败 3 次后，挑战怪物 HP -15%。"
+    },
+    {
+      "fromRealmId": "zhuji",
+      "toRealmId": "jindan",
+      "tribulationPills": 25,
+      "specialMaterialId": "jindanEssence",
+      "specialMaterialAmount": 8,
+      "challengeRecommendedPower": 50000,
+      "freeExpectedDays": 4,
+      "failureProtection": "连败 3 次后，开局送 1 灵机点。"
+    },
+    {
+      "fromRealmId": "jindan",
+      "toRealmId": "yuanying",
+      "tribulationPills": 50,
+      "specialMaterialId": "yuanyingEssence",
+      "specialMaterialAmount": 12,
+      "challengeRecommendedPower": 90000,
+      "freeExpectedDays": 7,
+      "failureProtection": "连败 3 次后，Boss 护盾 -20%。"
+    }
+  ],
+  "pacingTargets": [
+    {
+      "target": "练气→筑基",
+      "freeExpected": "2 天内",
+      "adMaxExpected": "1 天",
+      "purpose": "不让新手卡太久。"
+    },
+    {
+      "target": "筑基→金丹",
+      "freeExpected": "4-5 天",
+      "adMaxExpected": "2-3 天",
+      "purpose": "形成第一个中期目标。"
+    },
+    {
+      "target": "主力符 1→10",
+      "freeExpected": "1-2 天",
+      "adMaxExpected": "1 天",
+      "purpose": "让玩家快速感到主力成长。"
+    },
+    {
+      "target": "主力符 10→20",
+      "freeExpected": "5-7 天",
+      "adMaxExpected": "3-4 天",
+      "purpose": "留出中期追求。"
+    },
+    {
+      "target": "首章 1-20 打通",
+      "freeExpected": "5-8 天",
+      "adMaxExpected": "3-5 天",
+      "purpose": "首测留存验证周期。"
+    }
+  ]
+}

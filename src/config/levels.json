@@ -1,0 +1,329 @@
+{
+  "levels": [
+    {
+      "id": "1-1",
+      "chapter": 1,
+      "stage": 1,
+      "displayName": "1-1",
+      "recommendedPower": 2000,
+      "progression": "练气1",
+      "teachingGoal": "自动战斗、阵眼血",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [{ "monsterId": "normal_yaobing", "elements": ["wood"], "label": "普通妖兵(木)" }],
+      "firstClearRewards": { "daoExp": 100, "coins": 400, "runeEssence": 5 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-2",
+      "chapter": 1,
+      "stage": 2,
+      "displayName": "1-2",
+      "recommendedPower": 2400,
+      "progression": "练气2",
+      "teachingGoal": "6 格选 5 格、相生摆位",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [{ "monsterId": "normal_yaobing", "elements": ["wood", "earth"], "label": "普通妖兵(木/土)" }],
+      "firstClearRewards": { "daoExp": 120, "coins": 480, "runeEssence": 6 },
+      "runeUnlockIds": ["qing_teng"]
+    },
+    {
+      "id": "1-3",
+      "chapter": 1,
+      "stage": 3,
+      "displayName": "1-3",
+      "recommendedPower": 2900,
+      "progression": "练气3",
+      "teachingGoal": "克制对位、画符入口预告",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "normal_yaobing", "elements": ["metal"], "label": "普通妖兵(金)" },
+        { "monsterId": "swarm_xiaoyao", "elements": ["water"], "label": "群聚小妖(水)" }
+      ],
+      "firstClearRewards": { "daoExp": 145, "coins": 580, "runeEssence": 7 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-4",
+      "chapter": 1,
+      "stage": 4,
+      "displayName": "1-4",
+      "recommendedPower": 3500,
+      "progression": "练气4",
+      "teachingGoal": "第一次画符评分",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "normal_yaobing", "elements": [], "label": "普通妖兵" },
+        { "monsterId": "swarm_xiaoyao", "elements": [], "label": "群聚小妖" }
+      ],
+      "firstClearRewards": { "daoExp": 175, "coins": 700, "runeEssence": 8 },
+      "runeUnlockIds": ["liao_yuan"]
+    },
+    {
+      "id": "1-5",
+      "chapter": 1,
+      "stage": 5,
+      "displayName": "1-5",
+      "recommendedPower": 4200,
+      "progression": "练气5",
+      "teachingGoal": "局内升级、灵机点",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "armored_yao", "elements": ["earth"], "label": "厚甲妖(土)" },
+        { "monsterId": "normal_yaobing", "elements": [], "label": "普通妖兵" }
+      ],
+      "firstClearRewards": { "daoExp": 210, "coins": 840, "runeEssence": 10, "elementEssence": 1 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-6",
+      "chapter": 1,
+      "stage": 6,
+      "displayName": "1-6",
+      "recommendedPower": 5000,
+      "progression": "练气6",
+      "teachingGoal": "第一次融合",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "shield_yao", "elements": ["fire"], "label": "护盾妖(火)" },
+        { "monsterId": "normal_yaobing", "elements": [], "label": "普通妖兵" }
+      ],
+      "firstClearRewards": { "daoExp": 250, "coins": 1000, "runeEssence": 12, "elementEssence": 2 },
+      "runeUnlockIds": ["zhan_jin"]
+    },
+    {
+      "id": "1-7",
+      "chapter": 1,
+      "stage": 7,
+      "displayName": "1-7",
+      "recommendedPower": 6000,
+      "progression": "练气7",
+      "teachingGoal": "法器解锁前卡点",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [{ "monsterId": "fast_yao", "elements": ["wood", "fire"], "label": "疾行妖(木/火)" }],
+      "firstClearRewards": { "daoExp": 300, "coins": 1200, "artifactStone": 5 },
+      "runeUnlockIds": ["han_quan"]
+    },
+    {
+      "id": "1-8",
+      "chapter": 1,
+      "stage": 8,
+      "displayName": "1-8",
+      "recommendedPower": 7200,
+      "progression": "练气8",
+      "teachingGoal": "控制符价值",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "fast_yao", "elements": [], "label": "疾行妖" },
+        { "monsterId": "swarm_xiaoyao", "elements": [], "label": "群聚小妖" }
+      ],
+      "firstClearRewards": { "daoExp": 360, "coins": 1440, "artifactStone": 6 },
+      "runeUnlockIds": ["hui_chun"]
+    },
+    {
+      "id": "1-9",
+      "chapter": 1,
+      "stage": 9,
+      "displayName": "1-9",
+      "recommendedPower": 8600,
+      "progression": "练气9",
+      "teachingGoal": "渡劫准备",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "elite_yaojiang", "elements": ["earth"], "label": "精英妖将(土)" },
+        { "monsterId": "shield_yao", "elements": [], "label": "护盾妖" }
+      ],
+      "firstClearRewards": { "daoExp": 430, "coins": 1720, "tribulationPill": 2 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-10",
+      "chapter": 1,
+      "stage": 10,
+      "displayName": "1-10",
+      "recommendedPower": 10300,
+      "progression": "筑基1",
+      "teachingGoal": "第一个 Boss、扫荡解锁",
+      "waveTemplateId": "boss_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [{ "monsterId": "chapter_boss", "elements": ["metal", "water"], "label": "章末小 Boss(金/水双阶段)" }],
+      "firstClearRewards": { "daoExp": 520, "coins": 2060, "tribulationPill": 3, "zhujiEssence": 1 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-11",
+      "chapter": 1,
+      "stage": 11,
+      "displayName": "1-11",
+      "recommendedPower": 12400,
+      "progression": "筑基2",
+      "teachingGoal": "扫荡收益教学",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "normal_yaobing", "elements": [], "label": "普通妖兵" },
+        { "monsterId": "fast_yao", "elements": [], "label": "疾行妖" }
+      ],
+      "firstClearRewards": { "daoExp": 620, "coins": 2480, "robeCloth": 5 },
+      "runeUnlockIds": ["bing_leng"]
+    },
+    {
+      "id": "1-12",
+      "chapter": 1,
+      "stage": 12,
+      "displayName": "1-12",
+      "recommendedPower": 14900,
+      "progression": "筑基3",
+      "teachingGoal": "材料副本解锁",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [{ "monsterId": "split_yao", "elements": ["wood", "water"], "label": "分裂妖(木/水)" }],
+      "firstClearRewards": { "daoExp": 740, "coins": 2980, "robeCloth": 6 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-13",
+      "chapter": 1,
+      "stage": 13,
+      "displayName": "1-13",
+      "recommendedPower": 17900,
+      "progression": "筑基4",
+      "teachingGoal": "AOE 清场",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "swarm_xiaoyao", "elements": [], "label": "群聚小妖" },
+        { "monsterId": "split_yao", "elements": [], "label": "分裂妖" }
+      ],
+      "firstClearRewards": { "daoExp": 890, "coins": 3580, "runeEssence": 18 },
+      "runeUnlockIds": ["wan_ren"]
+    },
+    {
+      "id": "1-14",
+      "chapter": 1,
+      "stage": 14,
+      "displayName": "1-14",
+      "recommendedPower": 21500,
+      "progression": "筑基5",
+      "teachingGoal": "破盾效率",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "shield_yao", "elements": [], "label": "护盾妖" },
+        { "monsterId": "armored_yao", "elements": [], "label": "厚甲妖" }
+      ],
+      "firstClearRewards": { "daoExp": 1070, "coins": 4300, "elementEssence": 2 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-15",
+      "chapter": 1,
+      "stage": 15,
+      "displayName": "1-15",
+      "recommendedPower": 25800,
+      "progression": "筑基6",
+      "teachingGoal": "首饰解锁前卡点",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "elite_yaojiang", "elements": ["fire"], "label": "精英妖将(火)" },
+        { "monsterId": "fast_yao", "elements": [], "label": "疾行妖" }
+      ],
+      "firstClearRewards": { "daoExp": 1280, "coins": 5160, "jewelryJade": 5 },
+      "runeUnlockIds": ["zhen_yue"]
+    },
+    {
+      "id": "1-16",
+      "chapter": 1,
+      "stage": 16,
+      "displayName": "1-16",
+      "recommendedPower": 31000,
+      "progression": "筑基7",
+      "teachingGoal": "多属性混编",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "normal_yaobing", "elements": [], "label": "普通妖兵" },
+        { "monsterId": "shield_yao", "elements": [], "label": "护盾妖" },
+        { "monsterId": "swarm_xiaoyao", "elements": [], "label": "群聚小妖" }
+      ],
+      "firstClearRewards": { "daoExp": 1540, "coins": 6200, "jewelryJade": 6 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-17",
+      "chapter": 1,
+      "stage": 17,
+      "displayName": "1-17",
+      "recommendedPower": 37200,
+      "progression": "筑基8",
+      "teachingGoal": "后排补刀压力",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "fast_yao", "elements": [], "label": "疾行妖" },
+        { "monsterId": "split_yao", "elements": [], "label": "分裂妖" }
+      ],
+      "firstClearRewards": { "daoExp": 1850, "coins": 7440, "runeCoreShard": 1 },
+      "runeUnlockIds": ["luo_yan"]
+    },
+    {
+      "id": "1-18",
+      "chapter": 1,
+      "stage": 18,
+      "displayName": "1-18",
+      "recommendedPower": 44600,
+      "progression": "筑基9",
+      "teachingGoal": "金丹突破准备",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "elite_yaojiang", "elements": ["water"], "label": "精英妖将(水)" },
+        { "monsterId": "shield_yao", "elements": [], "label": "护盾妖" }
+      ],
+      "firstClearRewards": { "daoExp": 2220, "coins": 8920, "tribulationPill": 4 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-19",
+      "chapter": 1,
+      "stage": 19,
+      "displayName": "1-19",
+      "recommendedPower": 53500,
+      "progression": "筑基9+",
+      "teachingGoal": "综合压力测试",
+      "waveTemplateId": "normal_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [
+        { "monsterId": "armored_yao", "elements": [], "label": "厚甲妖" },
+        { "monsterId": "fast_yao", "elements": [], "label": "疾行妖" },
+        { "monsterId": "swarm_xiaoyao", "elements": [], "label": "群聚小妖" }
+      ],
+      "firstClearRewards": { "daoExp": 2660, "coins": 10700, "jindanEssence": 1 },
+      "runeUnlockIds": []
+    },
+    {
+      "id": "1-20",
+      "chapter": 1,
+      "stage": 20,
+      "displayName": "1-20",
+      "recommendedPower": 64200,
+      "progression": "金丹预告",
+      "teachingGoal": "首测最终 Boss",
+      "waveTemplateId": "boss_7_wave",
+      "mapPoolId": "chapter1_maps",
+      "enemyGroups": [{ "monsterId": "chapter_boss", "elements": ["earth", "metal", "fire"], "label": "大 Boss(土/金/火三阶段)" }],
+      "firstClearRewards": { "daoExp": 3190, "coins": 12840, "jindanEssence": 2, "title": "限定称号" },
+      "runeUnlockIds": []
+    }
+  ]
+}
+

@@ -1,0 +1,151 @@
+{
+  "randomization": {
+    "pathTemplateSelection": "每关从路径模板池中抽 1 个地图样式",
+    "openSlotCount": 6,
+    "elementAssignment": "开放出来的 6 个格再各自随机五行",
+    "elementPool": ["metal", "wood", "water", "fire", "earth"]
+  },
+  "candidateSlotTypes": [
+    {
+      "id": "front_intercept",
+      "name": "前沿截击位",
+      "spatialPosition": "路线入口附近",
+      "rangeUnits": 300,
+      "battleMeaning": "最早接敌，压疾行怪",
+      "recommendedRuneIds": ["qing_teng", "han_quan", "zhan_jin"]
+    },
+    {
+      "id": "front_corner",
+      "name": "前沿弯道位",
+      "spatialPosition": "第一处弯道",
+      "rangeUnits": 300,
+      "battleMeaning": "覆盖时间长，适合控制",
+      "recommendedRuneIds": ["qing_teng", "han_quan"]
+    },
+    {
+      "id": "mid_output",
+      "name": "中路输出位",
+      "spatialPosition": "路线中段",
+      "rangeUnits": 260,
+      "battleMeaning": "标准输出位",
+      "recommendedRuneIds": ["fen_tian", "liao_yuan", "wan_ren"]
+    },
+    {
+      "id": "mid_merge",
+      "name": "中路交汇位",
+      "spatialPosition": "双入口汇流点",
+      "rangeUnits": 280,
+      "battleMeaning": "多路线收益高",
+      "recommendedRuneIds": ["liao_yuan", "luo_yan", "wan_ren"]
+    },
+    {
+      "id": "side_highground",
+      "name": "侧翼高台位",
+      "spatialPosition": "路线外侧",
+      "rangeUnits": 320,
+      "battleMeaning": "射程长但覆盖角度窄",
+      "recommendedRuneIds": ["bing_leng", "fen_tian"]
+    },
+    {
+      "id": "choke_lock",
+      "name": "窄口封锁位",
+      "spatialPosition": "狭窄通道",
+      "rangeUnits": 250,
+      "battleMeaning": "减速收益高",
+      "recommendedRuneIds": ["zhen_yue", "han_quan"]
+    },
+    {
+      "id": "rear_execute",
+      "name": "后排补刀位",
+      "spatialPosition": "阵眼前",
+      "rangeUnits": 220,
+      "battleMeaning": "专打快漏怪",
+      "recommendedRuneIds": ["fen_tian", "bing_leng", "luo_yan"]
+    },
+    {
+      "id": "core_guard",
+      "name": "阵眼守护位",
+      "spatialPosition": "阵眼周围",
+      "rangeUnits": 220,
+      "battleMeaning": "容错、防守、回血",
+      "recommendedRuneIds": ["hui_chun", "zhen_yue"]
+    },
+    {
+      "id": "far_delay",
+      "name": "远端延迟位",
+      "spatialPosition": "长直线末端",
+      "rangeUnits": 240,
+      "battleMeaning": "适合预判爆发",
+      "recommendedRuneIds": ["luo_yan", "bing_leng"]
+    },
+    {
+      "id": "risky_isolated",
+      "name": "危险孤位",
+      "spatialPosition": "覆盖短但倍率权重高",
+      "rangeUnits": 220,
+      "battleMeaning": "赌相生，收益高风险高",
+      "recommendedRuneIds": ["fen_tian", "zhan_jin", "luo_yan"]
+    }
+  ],
+  "mapPools": [
+    {
+      "id": "chapter1_maps",
+      "name": "首章路径模板池",
+      "pathLengthUnits": 1000,
+      "pathTemplates": [
+        {
+          "id": "straight_pressure",
+          "name": "直进压迫",
+          "archetype": "直进压迫",
+          "routeCount": 1,
+          "candidateSlotTypeIds": [
+            "front_intercept",
+            "mid_output",
+            "side_highground",
+            "choke_lock",
+            "rear_execute",
+            "core_guard",
+            "far_delay",
+            "risky_isolated"
+          ]
+        },
+        {
+          "id": "zigzag_path",
+          "name": "折线路径",
+          "archetype": "折线路径",
+          "routeCount": 1,
+          "candidateSlotTypeIds": [
+            "front_intercept",
+            "front_corner",
+            "mid_output",
+            "side_highground",
+            "choke_lock",
+            "rear_execute",
+            "core_guard",
+            "far_delay",
+            "risky_isolated"
+          ]
+        },
+        {
+          "id": "dual_entry_merge",
+          "name": "双入口汇流",
+          "archetype": "双入口汇流",
+          "routeCount": 2,
+          "candidateSlotTypeIds": [
+            "front_intercept",
+            "front_corner",
+            "mid_output",
+            "mid_merge",
+            "side_highground",
+            "choke_lock",
+            "rear_execute",
+            "core_guard",
+            "far_delay",
+            "risky_isolated"
+          ]
+        }
+      ]
+    }
+  ]
+}
+
