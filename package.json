@@ -17,6 +17,7 @@
     "build": "npm run check && vite build",
     "quality:gate": "node scripts/quality-gate.mjs",
     "quality:gate:capture": "node scripts/quality-gate.mjs --capture",
+    "balance": "node scripts/balance-sim.mjs",
     "supervisor:claude": "bash scripts/claude-supervise.sh",
     "preview": "vite preview --host 127.0.0.1",
     "capture:still": "node scripts/capture.mjs still screenshots/still.png",
