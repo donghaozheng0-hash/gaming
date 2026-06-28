@@ -4,7 +4,7 @@
   "stages": {
     "dependencies": "node_modules 就绪",
     "isolation": "数值隔离门禁·代码侧(scripts/check-isolation.mjs)",
-    "config tables": "配置层完整性门禁·数据侧(scripts/check-config.mjs)：11 张表齐全 + levels 交叉引用可解析",
+    "config tables": "配置层完整性门禁·数据侧(scripts/check-config.mjs)：14 张表齐全 + levels 交叉引用可解析",
     "typescript": "npm run check (tsc --noEmit)",
     "test": "npm test (vitest run，含黄金算例)",
     "build": "npm run build (vite build)",
@@ -30,7 +30,7 @@
       "evidence": [],
       "definitionOfDone": [
         "实现 src/game/formulas/{damage,core,power,elements}.ts 纯函数(无 Babylon)",
-        "tests/golden.formulas.test.ts 由 skip 变为全部 PASS：663/995/1326/444 与承伤 80，且【未修改该文件期望值】",
+        "tests/golden.formulas.test.ts 由 skip 变为全部 PASS：663/995/1326/444 与承伤 31(v4 相对式 relK=0.68)，且【未修改该文件期望值】",
         "所有系数从 config(balance) 读取；公式内不出现裸数字(isolation PASS)"
       ],
       "forbidden": ["修改黄金测试的期望值", "在公式里硬写总设计算例的分支/期望"]
@@ -99,6 +99,20 @@
         "全部内容来自配置；Claude 验收 PASS 后方可扩展到 1-20"
       ],
       "forbidden": ["跳过基础闭环直接铺 20 关"]
+    },
+    "T9": {
+      "title": "无限模式配置层落地（承伤相对式 + infinite/dungeons/fatigue 三表）",
+      "requires": ["dependencies", "isolation", "config tables", "typescript", "test", "build"],
+      "evidence": [],
+      "definitionOfDone": [
+        "balance.json 承伤改相对式 {armorModel:relative, relK:0.68, fixedK:600, capPct:0.80}；progressionCurves.endlessTower.exponentBase=1.07",
+        "在 T1 的 11 张表基础上新增 infinite/dungeons/fatigue 共 14 张表(.json)，各有 schema validator：字段缺失/类型错/越界/一致性违反 → 加载即抛错，禁止静默兜底",
+        "ConfigService 加载 14 张表并深 Object.freeze；GameConfig/RawGameConfig 含 infinite/dungeons/fatigue 三字段；loadGameConfig() 签名不变、对真实数据不抛错",
+        "所有数值等于 scripts/balance-sim.mjs 的 KNOBS(g=1.07 / R0=2000 / relK=0.68 / 疲劳0.012 / Boss 10·3·5 / exp 100 / 怪系数 0.15·0.030·3.20·0.070·0.75·0.045)，无自创数字",
+        "有牙校验：infinite.experience.growth===depthWall.depthGrowth；dungeons.defaultMonsterPowerMultiplier∈[min,max](产品拍板 1.45∈[1.2,1.5])；越界/不一致即抛错",
+        "tests/config.validation.test.ts 含 infinite/dungeons/fatigue 各 1 条负例 + 1 条正例(三表 defined 且 Object.isFrozen)"
+      ],
+      "forbidden": ["改任何 Claude 尺子(balance-sim/quality-gate/check-isolation/check-config/golden.formulas/config.smoke.gate/contracts)", "自创未过 balance-sim 的数值", "把无限模式状态机/控制器逻辑写进配置层", "as any / @ts-ignore 硬压类型"]
     }
   }
 }

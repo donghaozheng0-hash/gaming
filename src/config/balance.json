@@ -51,7 +51,10 @@
     }
   },
   "defense": {
-    "damageReductionK": 600
+    "armorModel": "relative",
+    "relK": 0.68,
+    "fixedK": 600,
+    "capPct": 0.80
   },
   "battle": {
     "simulationFps": 30,
@@ -117,7 +120,7 @@
     },
     "endlessTower": {
       "basePower": 2000,
-      "exponentBase": 1.15
+      "exponentBase": 1.07
     },
     "skillGapCompensation": {
       "minPowerGapRatio": 0.25,
@@ -126,4 +129,3 @@
     }
   }
 }
-

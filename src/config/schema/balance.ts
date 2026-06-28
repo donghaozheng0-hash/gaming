@@ -48,7 +48,10 @@ export interface BalanceConfig {
     };
   };
   defense: {
-    damageReductionK: number;
+    armorModel: "relative" | "fixedK" | "cappedPct";
+    relK: number;
+    fixedK: number;
+    capPct: number;
   };
   battle: {
     simulationFps: number;
@@ -229,10 +232,17 @@ function validateDamageFormula(value: unknown): BalanceConfig["damageFormula"] {
 
 function validateDefense(value: unknown): BalanceConfig["defense"] {
   const obj = assertPlainObject(value, "balance.defense");
-  assertExactKeys(obj, "balance.defense", ["damageReductionK"]);
+  assertExactKeys(obj, "balance.defense", ["armorModel", "relK", "fixedK", "capPct"]);
 
   return {
-    damageReductionK: assertNumber(requireField(obj, "damageReductionK", "balance.defense"), "balance.defense.damageReductionK"),
+    armorModel: assertEnum(
+      requireField(obj, "armorModel", "balance.defense"),
+      "balance.defense.armorModel",
+      ["relative", "fixedK", "cappedPct"] as const,
+    ),
+    relK: assertNumber(requireField(obj, "relK", "balance.defense"), "balance.defense.relK"),
+    fixedK: assertNumber(requireField(obj, "fixedK", "balance.defense"), "balance.defense.fixedK"),
+    capPct: assertNumber(requireField(obj, "capPct", "balance.defense"), "balance.defense.capPct"),
   };
 }
 
@@ -382,4 +392,3 @@ function validateProgressionCurves(value: unknown): BalanceConfig["progressionCu
     },
   };
 }
-

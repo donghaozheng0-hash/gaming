@@ -2,8 +2,11 @@ import { loadGameConfig as loadGameConfigFromService } from "./ConfigService";
 import type {
   BalanceConfig,
   CultivationConfig,
+  DungeonsConfig,
   EconomyConfig,
+  FatigueConfig,
   FusionConfig,
+  InfiniteConfig,
   LevelConfig,
   MapConfig,
   MonsterConfig,
@@ -15,6 +18,9 @@ import type {
 
 export interface GameConfig {
   balance: BalanceConfig;
+  infinite: InfiniteConfig;
+  dungeons: DungeonsConfig;
+  fatigue: FatigueConfig;
   runes: RuneConfig;
   monsters: MonsterConfig;
   levels: LevelConfig;

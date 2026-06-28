@@ -1,6 +1,6 @@
 // 配置层冒烟门禁 —— Claude 验收尺子，Codex 只读（等同 golden 测试，禁止修改/删除/skip）。
 // 钉死 ConfigService 的对外契约：src/config 必须导出 loadGameConfig(): GameConfig，
-// 它加载全部 11 张表、校验通过、对真实数据不抛错、并对结果做（深）Object.freeze。
+// 它加载全部 14 张表、校验通过、对真实数据不抛错、并对结果做（深）Object.freeze。
 // 与 scripts/check-config.mjs 互补：那把尺子验"数据"，这把尺子验"加载器代码确实存在且行为正确"。
 import { describe, expect, it } from "vitest";
 
@@ -16,10 +16,13 @@ const EXPECTED_TABLES = [
   "economy",
   "progression",
   "visual",
+  "infinite",
+  "dungeons",
+  "fatigue",
 ] as const;
 
 describe("配置层门禁 · ConfigService 冒烟（Claude 尺子，Codex 只读）", () => {
-  it("src/config 导出 loadGameConfig，加载真实配置成功、含 11 张表、且被 Object.freeze", async () => {
+  it("src/config 导出 loadGameConfig，加载真实配置成功、含 14 张表、且被 Object.freeze", async () => {
     let mod: Record<string, unknown>;
     try {
       mod = (await import("../src/config")) as Record<string, unknown>;

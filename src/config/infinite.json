@@ -1,0 +1,27 @@
+{
+  "depthWall": {
+    "baseRequiredPower": 2000,
+    "depthGrowth": 1.07
+  },
+  "monsterCoefficients": {
+    "commonHp": 0.15,
+    "commonAtk": 0.030,
+    "bossHp": 3.20,
+    "bossAtk": 0.070,
+    "eliteHp": 0.75,
+    "eliteAtk": 0.045
+  },
+  "bossRotation": {
+    "bandLevels": 10,
+    "recurEveryNLevels": 3,
+    "recurAtWaveOf7": 5
+  },
+  "mapRandom": {
+    "elementsPerLevel": { "min": 2, "max": 3 },
+    "effectivePowerVariance": 0.15
+  },
+  "experience": {
+    "baseAtDepth1": 100,
+    "growth": 1.07
+  }
+}

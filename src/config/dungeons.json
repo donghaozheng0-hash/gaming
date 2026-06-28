@@ -1,0 +1,6 @@
+{
+  "monsterPowerMultiplierRange": { "min": 1.2, "max": 1.5 },
+  "defaultMonsterPowerMultiplier": 1.45,
+  "fatigueApplies": false,
+  "dungeons": []
+}

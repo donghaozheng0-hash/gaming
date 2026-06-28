@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // 配置层完整性门禁 —— 底层逻辑三（数值与代码隔离）的"数据侧"机器化执行。
 // 与 check-isolation.mjs（代码侧）互补：本门禁只看纯数据，不依赖 Codex 的 ConfigService。
-// 职责：1) 11 张配置表必须齐全且为合法 JSON；2) 独立重算 levels 的交叉引用
+// 职责：1) 14 张配置表必须齐全且为合法 JSON；2) 独立重算 levels 的交叉引用
 //        (monsters/waves/maps/rune 必须可解析) —— 不信任业务加载器，直接验数据本身。
 // 配置：表清单与引用边写死在本文件（属验收尺子，由 Claude 维护，Codex 不得修改）。
 // 语义：配置层一张表都没有 -> PENDING(不阻塞，T1 未起步)；起步后缺表/坏引用 -> FAIL。
@@ -16,7 +16,7 @@ import { resolve } from "node:path";
 const root = process.cwd();
 const configDir = resolve(root, "src/config");
 
-// 契约钉死：11 张表（与 acceptance/contracts.json T1.definitionOfDone 一致）
+// 契约钉死：14 张表（T1 建 11 张 + T9 增 infinite/dungeons/fatigue 3 张；与 acceptance/contracts.json 各任务 DoD 累计一致）
 const TABLES = [
   "balance",
   "runes",
@@ -29,6 +29,9 @@ const TABLES = [
   "economy",
   "progression",
   "visual",
+  "infinite",
+  "dungeons",
+  "fatigue",
 ];
 
 function loadTable(name) {

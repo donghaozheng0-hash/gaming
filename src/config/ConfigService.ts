@@ -1,7 +1,10 @@
 import balanceJson from "./balance.json";
 import cultivationJson from "./cultivation.json";
+import dungeonsJson from "./dungeons.json";
 import economyJson from "./economy.json";
+import fatigueJson from "./fatigue.json";
 import fusionJson from "./fusion.json";
+import infiniteJson from "./infinite.json";
 import levelsJson from "./levels.json";
 import mapsJson from "./maps.json";
 import monstersJson from "./monsters.json";
@@ -12,8 +15,11 @@ import wavesJson from "./waves.json";
 import {
   validateBalanceConfig,
   validateCultivationConfig,
+  validateDungeonsConfig,
   validateEconomyConfig,
+  validateFatigueConfig,
   validateFusionConfig,
+  validateInfiniteConfig,
   validateLevelConfig,
   validateMapConfig,
   validateMonsterConfig,
@@ -26,6 +32,9 @@ import type { GameConfig } from "./index";
 
 export interface RawGameConfig {
   balance: unknown;
+  infinite: unknown;
+  dungeons: unknown;
+  fatigue: unknown;
   runes: unknown;
   monsters: unknown;
   levels: unknown;
@@ -40,6 +49,9 @@ export interface RawGameConfig {
 
 const rawGameConfig: RawGameConfig = {
   balance: balanceJson,
+  infinite: infiniteJson,
+  dungeons: dungeonsJson,
+  fatigue: fatigueJson,
   runes: runesJson,
   monsters: monstersJson,
   levels: levelsJson,
@@ -59,6 +71,9 @@ export function loadGameConfig(): GameConfig {
 export function createGameConfig(raw: RawGameConfig): GameConfig {
   const config: GameConfig = {
     balance: validateBalanceConfig(raw.balance),
+    infinite: validateInfiniteConfig(raw.infinite),
+    dungeons: validateDungeonsConfig(raw.dungeons),
+    fatigue: validateFatigueConfig(raw.fatigue),
     runes: validateRuneConfig(raw.runes),
     monsters: validateMonsterConfig(raw.monsters),
     levels: validateLevelConfig(raw.levels),

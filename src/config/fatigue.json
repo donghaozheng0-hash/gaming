@@ -1,0 +1,11 @@
+{
+  "penaltyPerLevel": 0.012,
+  "failMargin": 1.0,
+  "failureLoot": {
+    "scope": "current_run_only",
+    "keepsPermanentInventory": true
+  },
+  "recovery": {
+    "fullRecoverHours": 6
+  }
+}
