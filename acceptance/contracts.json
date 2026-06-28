@@ -30,7 +30,7 @@
       "evidence": [],
       "definitionOfDone": [
         "实现 src/game/formulas/{damage,core,power,elements}.ts 纯函数(无 Babylon)",
-        "tests/golden.formulas.test.ts 由 skip 变为全部 PASS：663/995/1326/444 与承伤 31(v4 相对式 relK=0.68)，且【未修改该文件期望值】",
+        "tests/golden.formulas.test.ts 4 个 describe 由 skip 全部转 PASS：符伤 663/995/1326/444、承伤 31(相对式 relK=0.68)、战力 1350、五行克制 advantage/disadvantage/neutral，且【未修改该文件期望值】",
         "所有系数从 config(balance) 读取；公式内不出现裸数字(isolation PASS)"
       ],
       "forbidden": ["修改黄金测试的期望值", "在公式里硬写总设计算例的分支/期望"]

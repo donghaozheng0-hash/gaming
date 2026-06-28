@@ -8,7 +8,7 @@ import { dirname, resolve } from "node:path";
 //
 // 角色契约：
 //   · Codex 在 Task 2 实现 src/game/formulas/** 使本测试全部 PASS。
-//   · Codex【不得修改本文件的期望值】(663/995/1326/444/31)。若认为算例有误，必须回报 Claude 评审，不得自行改测试就标"通过"。这是反套娃的关键护栏。
+//   · Codex【不得修改本文件的期望值】(663/995/1326/444/31/战力1350/克制关系)。若认为算例有误，必须回报 Claude 评审，不得自行改测试就标"通过"。这是反套娃的关键护栏。
 //
 // 接口契约(如需变更必须经 Claude 评审，不允许 Codex 单方面改签名)：
 //   damage.runeDamage({ base, qualityMul, xiangshengMul, kezhiMul, drawBonus? }): number   // 四舍五入到整数
@@ -20,6 +20,8 @@ import { dirname, resolve } from "node:path";
 const here = dirname(fileURLToPath(import.meta.url));
 const damagePath = resolve(here, "../src/game/formulas/damage.ts");
 const corePath = resolve(here, "../src/game/formulas/core.ts");
+const powerPath = resolve(here, "../src/game/formulas/power.ts");
+const elementsPath = resolve(here, "../src/game/formulas/elements.ts");
 
 // 变量 specifier：避免 tsc 在目标文件尚不存在时静态报错。
 async function load(path: string) {
@@ -47,6 +49,28 @@ describe("总设计算例 · 阵眼承伤 (相对式减伤 relK=0.68，v4 无限
     async () => {
       const { coreDamage } = await load(corePath);
       expect(coreDamage({ atk: 100, def: 150, relK: 0.68 })).toBe(31);
+    },
+  );
+});
+
+describe("总设计算例 · 战力合成 (权重 ATK6 / HP0.6 / DEF3，从 balance.powerFormula 读)", () => {
+  it.skipIf(!existsSync(powerPath))(
+    "ATK100 / HP1000 / DEF50 → 100×6 + 1000×0.6 + 50×3 = 1350",
+    async () => {
+      const { combatPower } = await load(powerPath);
+      expect(combatPower({ atk: 100, hp: 1000, def: 50 })).toBe(1350);
+    },
+  );
+});
+
+describe("总设计算例 · 五行克制关系 (balance.elements.kezhiCycle：木克土 / 金克木…)", () => {
+  it.skipIf(!existsSync(elementsPath))(
+    "木→土 advantage(克制)；木→金 disadvantage(被克)；木→水 neutral",
+    async () => {
+      const { relation } = await load(elementsPath);
+      expect(relation("wood", "earth")).toBe("advantage");
+      expect(relation("wood", "metal")).toBe("disadvantage");
+      expect(relation("wood", "water")).toBe("neutral");
     },
   );
 });
