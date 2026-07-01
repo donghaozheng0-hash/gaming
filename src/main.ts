@@ -1,5 +1,8 @@
 import "./style.css";
 import { BabylonApp } from "./app/BabylonApp";
+import { loadGameConfig } from "./config";
+import { BattleController } from "./game/battle/BattleController";
+import { EventBus } from "./game/events/EventBus";
 import { createScene } from "./game/scene";
 
 interface SceneChangePayload {
@@ -14,9 +17,16 @@ if (!canvas) {
 }
 
 const app = new BabylonApp(canvas);
+const config = loadGameConfig();
+const bus = new EventBus();
+const battle = new BattleController({ config, bus });
 
 await app.load(createScene);
+battle.start();
 app.start();
+app.engine.runRenderLoop(() => {
+  battle.tick(app.engine.getDeltaTime());
+});
 
 if (import.meta.env.DEV && import.meta.hot) {
   import.meta.hot.on("godogen:scene-change", async (payload: SceneChangePayload) => {

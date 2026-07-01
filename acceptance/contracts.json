@@ -40,11 +40,22 @@
       "requires": ["isolation", "typescript", "test", "build"],
       "evidence": [],
       "definitionOfDone": [
-        "BattleController 状态机 PREP→COMBAT→SETTLE 可在 headless(无 Babylon)跑完一局",
-        "固定 30 FPS sim tick(定步长累加)；EventBus 类型安全",
-        "vitest：一局能从 PREP 推进到 SETTLE 并产出结算事件"
+        "src/game/events/EventBus.ts 类型安全事件总线：泛型 on<K extends keyof BattleEventMap>(type,handler) 返回退订函数、emit<K>(type,payload)；BattleEventMap 钉死 battle.prepStarted / wave.started / wave.ended / battle.settled 及各自 payload",
+        "src/game/battle/BattleController.ts 状态机 phase 'prep'→'combat'→'settle' 单向不可逆、可在 headless(无 Babylon)跑完一局；构造【注入】{ config:GameConfig, bus:EventBus, levelId? }，严禁内部 loadGameConfig(否则不可测)",
+        "固定步长模拟：tick(realDtMs) 以 1000/config.balance.battle.simulationFps 为步长累加推进，与渲染帧率解耦(同一局用不同帧间隔喂入 totalSteps 完全一致)；simulationFps/preparationSeconds/wavesPerLevel/defaultWaveIntervalSeconds 全从 config.balance.battle 读，业务代码零裸数字",
+        "COMBAT 推进 wavesPerLevel 个空波次，各 emit wave.started/wave.ended(index 1..N)；SETTLE emit 恰 1 次 battle.settled{ victory:true, wavesCleared:wavesPerLevel, totalSteps }(空 battle 无怪攻击阵眼→满血→默认胜利)",
+        "尺子 tests/battle.controller.gate.test.ts 由全 skip 转全 PASS，且【未修改该文件】",
+        "src/main.ts 最小装配：实例化 EventBus/BattleController 并接入 BabylonApp 定步长驱动(装配层可 import Babylon；battle/events 领域层严禁)"
       ],
-      "forbidden": ["把具体关卡内容写进状态机代码", "实现复杂 UI"]
+      "forbidden": [
+        "修改任一 Claude 尺子(battle.controller.gate / golden.formulas / config.smoke.gate / scripts/*.mjs / acceptance/** / contracts.json)",
+        "BattleController 内部 loadGameConfig(必须注入 config)",
+        "在 src/game/battle 或 src/game/events 内 import @babylonjs(除 @babylonjs/core/Maths 纯数学)",
+        "硬编码 tick 率/波数/时长等数值(必须从 config.balance.battle 读)",
+        "把具体关卡内容/怪物/符数值写进状态机代码",
+        "实现复杂 UI 或真实刷怪/承伤(留给 T4/T6)",
+        "as any / @ts-ignore 硬压类型"
+      ]
     },
     "T4": {
       "title": "地图路径与随机开放格位",
