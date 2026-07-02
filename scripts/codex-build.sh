@@ -18,11 +18,29 @@ fi
 # 注：不做 curl 连通性预检——raw curl 对 chatgpt.com 会拿 Cloudflare 403/SSL 误报，
 # 而带认证 token 的 codex 客户端实际可连。若真断网，下面的 codex exec 会自行报错退出。
 
-echo "▶ [1/2] codex 施工 ${TASK}（sandbox=workspace-write）…"
+# 纪律三前置检查：派工时工作区必须干净(监督工件已提交)，否则尺子完整性门禁的基线失真。
+if [ -n "$(git status --porcelain)" ]; then
+  echo "✗ FAIL：工作区不干净。按纪律三，Claude 须先提交尺子/契约/简报再派工。"
+  git status --short
+  exit 1
+fi
+
+echo "▶ [1/3] codex 施工 ${TASK}（sandbox=workspace-write）…"
 codex exec --sandbox workspace-write - < "$BRIEF"
 
 echo ""
-echo "▶ [2/2] 运行硬门禁…"
+echo "▶ [2/3] 尺子完整性机器门禁（纪律二：施工 diff ∩ 尺子清单必须为空）…"
+violations="$(git status --porcelain | cut -c4- \
+  | grep -E '^(scripts/|acceptance/|docs/|package\.json$|package-lock\.json$|tsconfig\.json$|tests/golden\.formulas\.test\.ts$|tests/[^/]*\.gate\.test\.ts$)' || true)"
+if [ -n "$violations" ]; then
+  echo "✗ FAIL：施工者触碰了 Claude 尺子/规范（不属于施工授权范围）："
+  echo "$violations"
+  exit 1
+fi
+echo "✓ 尺子零改动（git status 机器验证）"
+
+echo ""
+echo "▶ [3/3] 运行硬门禁…"
 # 视觉任务(契约 requires 含 "capture still")自动追加截图门禁
 needs_capture="$(node -e "const c=(require('./acceptance/contracts.json').tasks['$TASK']||{});process.stdout.write(((c.requires||[]).includes('capture still'))?'1':'0')" 2>/dev/null || echo 0)"
 if [ "$needs_capture" = "1" ]; then
