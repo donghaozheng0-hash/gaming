@@ -5,6 +5,10 @@
     "elementAssignment": "开放出来的 6 个格再各自随机五行",
     "elementPool": ["metal", "wood", "water", "fire", "earth"]
   },
+  "canvas": {
+    "widthUnits": 1000,
+    "heightUnits": 1000
+  },
   "candidateSlotTypes": [
     {
       "id": "front_intercept",
@@ -98,15 +102,21 @@
           "name": "直进压迫",
           "archetype": "直进压迫",
           "routeCount": 1,
-          "candidateSlotTypeIds": [
-            "front_intercept",
-            "mid_output",
-            "side_highground",
-            "choke_lock",
-            "rear_execute",
-            "core_guard",
-            "far_delay",
-            "risky_isolated"
+          "routes": [
+            [
+              { "x": 80, "y": 500 },
+              { "x": 900, "y": 500 }
+            ]
+          ],
+          "candidateSlots": [
+            { "slotTypeId": "front_intercept", "position": { "x": 160, "y": 440 } },
+            { "slotTypeId": "mid_output", "position": { "x": 420, "y": 450 } },
+            { "slotTypeId": "side_highground", "position": { "x": 520, "y": 330 } },
+            { "slotTypeId": "choke_lock", "position": { "x": 620, "y": 500 } },
+            { "slotTypeId": "rear_execute", "position": { "x": 790, "y": 450 } },
+            { "slotTypeId": "core_guard", "position": { "x": 900, "y": 420 } },
+            { "slotTypeId": "far_delay", "position": { "x": 730, "y": 580 } },
+            { "slotTypeId": "risky_isolated", "position": { "x": 300, "y": 610 } }
           ]
         },
         {
@@ -114,16 +124,26 @@
           "name": "折线路径",
           "archetype": "折线路径",
           "routeCount": 1,
-          "candidateSlotTypeIds": [
-            "front_intercept",
-            "front_corner",
-            "mid_output",
-            "side_highground",
-            "choke_lock",
-            "rear_execute",
-            "core_guard",
-            "far_delay",
-            "risky_isolated"
+          "routes": [
+            [
+              { "x": 80, "y": 760 },
+              { "x": 260, "y": 760 },
+              { "x": 260, "y": 300 },
+              { "x": 570, "y": 300 },
+              { "x": 570, "y": 500 },
+              { "x": 900, "y": 500 }
+            ]
+          ],
+          "candidateSlots": [
+            { "slotTypeId": "front_intercept", "position": { "x": 150, "y": 700 } },
+            { "slotTypeId": "front_corner", "position": { "x": 260, "y": 690 } },
+            { "slotTypeId": "mid_output", "position": { "x": 420, "y": 300 } },
+            { "slotTypeId": "side_highground", "position": { "x": 450, "y": 180 } },
+            { "slotTypeId": "choke_lock", "position": { "x": 570, "y": 410 } },
+            { "slotTypeId": "rear_execute", "position": { "x": 760, "y": 450 } },
+            { "slotTypeId": "core_guard", "position": { "x": 890, "y": 430 } },
+            { "slotTypeId": "far_delay", "position": { "x": 720, "y": 620 } },
+            { "slotTypeId": "risky_isolated", "position": { "x": 350, "y": 860 } }
           ]
         },
         {
@@ -131,21 +151,34 @@
           "name": "双入口汇流",
           "archetype": "双入口汇流",
           "routeCount": 2,
-          "candidateSlotTypeIds": [
-            "front_intercept",
-            "front_corner",
-            "mid_output",
-            "mid_merge",
-            "side_highground",
-            "choke_lock",
-            "rear_execute",
-            "core_guard",
-            "far_delay",
-            "risky_isolated"
+          "routes": [
+            [
+              { "x": 80, "y": 260 },
+              { "x": 320, "y": 260 },
+              { "x": 520, "y": 500 },
+              { "x": 900, "y": 500 }
+            ],
+            [
+              { "x": 80, "y": 740 },
+              { "x": 320, "y": 740 },
+              { "x": 520, "y": 500 },
+              { "x": 900, "y": 500 }
+            ]
+          ],
+          "candidateSlots": [
+            { "slotTypeId": "front_intercept", "position": { "x": 160, "y": 230 } },
+            { "slotTypeId": "front_corner", "position": { "x": 310, "y": 700 } },
+            { "slotTypeId": "mid_output", "position": { "x": 420, "y": 430 } },
+            { "slotTypeId": "mid_merge", "position": { "x": 520, "y": 560 } },
+            { "slotTypeId": "side_highground", "position": { "x": 610, "y": 260 } },
+            { "slotTypeId": "choke_lock", "position": { "x": 610, "y": 720 } },
+            { "slotTypeId": "rear_execute", "position": { "x": 760, "y": 500 } },
+            { "slotTypeId": "core_guard", "position": { "x": 900, "y": 430 } },
+            { "slotTypeId": "far_delay", "position": { "x": 720, "y": 620 } },
+            { "slotTypeId": "risky_isolated", "position": { "x": 310, "y": 860 } }
           ]
         }
       ]
     }
   ]
 }
-

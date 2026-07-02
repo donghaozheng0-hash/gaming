@@ -2,6 +2,7 @@ import {
   assertArray,
   assertElementId,
   assertExactKeys,
+  fail,
   assertNumber,
   assertPlainObject,
   assertString,
@@ -16,8 +17,14 @@ export interface MapConfig {
     elementAssignment: string;
     elementPool: ElementId[];
   };
+  canvas: MapCanvas;
   candidateSlotTypes: CandidateSlotType[];
   mapPools: MapPool[];
+}
+
+export interface MapCanvas {
+  widthUnits: number;
+  heightUnits: number;
 }
 
 export interface CandidateSlotType {
@@ -41,21 +48,44 @@ export interface PathTemplate {
   name: string;
   archetype: string;
   routeCount: number;
-  candidateSlotTypeIds: string[];
+  routes: Vec2[][];
+  candidateSlots: CandidateSlot[];
+}
+
+export interface Vec2 {
+  x: number;
+  y: number;
+}
+
+export interface CandidateSlot {
+  slotTypeId: string;
+  position: Vec2;
 }
 
 export function validateMapConfig(value: unknown): MapConfig {
   const obj = assertPlainObject(value, "maps");
-  assertExactKeys(obj, "maps", ["randomization", "candidateSlotTypes", "mapPools"]);
+  assertExactKeys(obj, "maps", ["randomization", "canvas", "candidateSlotTypes", "mapPools"]);
+
+  const randomization = validateRandomization(requireField(obj, "randomization", "maps"));
+  const canvas = validateCanvas(requireField(obj, "canvas", "maps"));
+  const candidateSlotTypes = assertArray(
+    requireField(obj, "candidateSlotTypes", "maps"),
+    "maps.candidateSlotTypes",
+    validateCandidateSlotType,
+  );
+  const candidateSlotTypeIds = new Set(candidateSlotTypes.map((slotType) => slotType.id));
 
   return {
-    randomization: validateRandomization(requireField(obj, "randomization", "maps")),
-    candidateSlotTypes: assertArray(
-      requireField(obj, "candidateSlotTypes", "maps"),
-      "maps.candidateSlotTypes",
-      validateCandidateSlotType,
+    randomization,
+    canvas,
+    candidateSlotTypes,
+    mapPools: assertArray(requireField(obj, "mapPools", "maps"), "maps.mapPools", (item, path) =>
+      validateMapPool(item, path, {
+        canvas,
+        candidateSlotTypeIds,
+        openSlotCount: randomization.openSlotCount,
+      }),
     ),
-    mapPools: assertArray(requireField(obj, "mapPools", "maps"), "maps.mapPools", validateMapPool),
   };
 }
 
@@ -70,9 +100,19 @@ function validateRandomization(value: unknown): MapConfig["randomization"] {
 
   return {
     pathTemplateSelection: assertString(obj.pathTemplateSelection, "maps.randomization.pathTemplateSelection"),
-    openSlotCount: assertNumber(obj.openSlotCount, "maps.randomization.openSlotCount"),
+    openSlotCount: assertPositiveInteger(obj.openSlotCount, "maps.randomization.openSlotCount"),
     elementAssignment: assertString(obj.elementAssignment, "maps.randomization.elementAssignment"),
     elementPool: assertArray(obj.elementPool, "maps.randomization.elementPool", assertElementId),
+  };
+}
+
+function validateCanvas(value: unknown): MapCanvas {
+  const obj = assertPlainObject(value, "maps.canvas");
+  assertExactKeys(obj, "maps.canvas", ["widthUnits", "heightUnits"]);
+
+  return {
+    widthUnits: assertPositiveNumber(obj.widthUnits, "maps.canvas.widthUnits"),
+    heightUnits: assertPositiveNumber(obj.heightUnits, "maps.canvas.heightUnits"),
   };
 }
 
@@ -97,7 +137,13 @@ function validateCandidateSlotType(value: unknown, path: string): CandidateSlotT
   };
 }
 
-function validateMapPool(value: unknown, path: string): MapPool {
+interface MapValidationContext {
+  canvas: MapCanvas;
+  candidateSlotTypeIds: ReadonlySet<string>;
+  openSlotCount: number;
+}
+
+function validateMapPool(value: unknown, path: string, context: MapValidationContext): MapPool {
   const obj = assertPlainObject(value, path);
   assertExactKeys(obj, path, ["id", "name", "pathLengthUnits", "pathTemplates"]);
 
@@ -105,20 +151,122 @@ function validateMapPool(value: unknown, path: string): MapPool {
     id: assertString(obj.id, `${path}.id`),
     name: assertString(obj.name, `${path}.name`),
     pathLengthUnits: assertNumber(obj.pathLengthUnits, `${path}.pathLengthUnits`),
-    pathTemplates: assertArray(obj.pathTemplates, `${path}.pathTemplates`, validatePathTemplate),
+    pathTemplates: assertArray(obj.pathTemplates, `${path}.pathTemplates`, (item, itemPath) =>
+      validatePathTemplate(item, itemPath, context),
+    ),
   };
 }
 
-function validatePathTemplate(value: unknown, path: string): PathTemplate {
+function validatePathTemplate(value: unknown, path: string, context: MapValidationContext): PathTemplate {
   const obj = assertPlainObject(value, path);
-  assertExactKeys(obj, path, ["id", "name", "archetype", "routeCount", "candidateSlotTypeIds"]);
+  assertExactKeys(obj, path, ["id", "name", "archetype", "routeCount", "routes", "candidateSlots"]);
+
+  const routeCount = assertPositiveInteger(obj.routeCount, `${path}.routeCount`);
+  const routes = assertArray(obj.routes, `${path}.routes`, (route, routePath) =>
+    validateRoute(route, routePath, context.canvas),
+  );
+  if (routes.length !== routeCount) {
+    fail(`${path}.routes`, "length must equal routeCount");
+  }
+
+  const candidateSlots = assertArray(obj.candidateSlots, `${path}.candidateSlots`, (slot, slotPath) =>
+    validateCandidateSlot(slot, slotPath, context),
+  );
+  if (candidateSlots.length < context.openSlotCount + 2) {
+    fail(`${path}.candidateSlots`, "must contain at least openSlotCount + 2 slots");
+  }
+
+  validateUniqueCandidateSlots(candidateSlots, `${path}.candidateSlots`);
 
   return {
     id: assertString(obj.id, `${path}.id`),
     name: assertString(obj.name, `${path}.name`),
     archetype: assertString(obj.archetype, `${path}.archetype`),
-    routeCount: assertNumber(obj.routeCount, `${path}.routeCount`),
-    candidateSlotTypeIds: assertArray(obj.candidateSlotTypeIds, `${path}.candidateSlotTypeIds`, assertString),
+    routeCount,
+    routes,
+    candidateSlots,
   };
 }
 
+function validateRoute(value: unknown, path: string, canvas: MapCanvas): Vec2[] {
+  const route = assertArray(value, path, (point, pointPath) => validateVec2(point, pointPath, canvas));
+  if (route.length < 2) {
+    fail(path, "must contain at least two points");
+  }
+
+  return route;
+}
+
+function validateCandidateSlot(
+  value: unknown,
+  path: string,
+  context: MapValidationContext,
+): CandidateSlot {
+  const obj = assertPlainObject(value, path);
+  assertExactKeys(obj, path, ["slotTypeId", "position"]);
+
+  const slotTypeId = assertString(obj.slotTypeId, `${path}.slotTypeId`);
+  if (!context.candidateSlotTypeIds.has(slotTypeId)) {
+    fail(`${path}.slotTypeId`, `unknown candidate slot type "${slotTypeId}"`);
+  }
+
+  return {
+    slotTypeId,
+    position: validateVec2(obj.position, `${path}.position`, context.canvas),
+  };
+}
+
+function validateVec2(value: unknown, path: string, canvas: MapCanvas): Vec2 {
+  const obj = assertPlainObject(value, path);
+  assertExactKeys(obj, path, ["x", "y"]);
+
+  const point = {
+    x: assertNumber(obj.x, `${path}.x`),
+    y: assertNumber(obj.y, `${path}.y`),
+  };
+
+  if (point.x < 0 || point.x > canvas.widthUnits) {
+    fail(`${path}.x`, "must be inside canvas width");
+  }
+  if (point.y < 0 || point.y > canvas.heightUnits) {
+    fail(`${path}.y`, "must be inside canvas height");
+  }
+
+  return point;
+}
+
+function validateUniqueCandidateSlots(slots: CandidateSlot[], path: string): void {
+  const slotTypeIds = new Set<string>();
+  const positions = new Set<string>();
+
+  slots.forEach((slot, index) => {
+    if (slotTypeIds.has(slot.slotTypeId)) {
+      fail(`${path}[${index}].slotTypeId`, "duplicate slotTypeId");
+    }
+    slotTypeIds.add(slot.slotTypeId);
+
+    const positionKey = `${slot.position.x}:${slot.position.y}`;
+    if (positions.has(positionKey)) {
+      fail(`${path}[${index}].position`, "duplicate position");
+    }
+    positions.add(positionKey);
+  });
+}
+
+function assertPositiveInteger(value: unknown, path: string): number {
+  const number = assertNumber(value, path);
+  if (!Number.isInteger(number) || number <= 0) {
+    fail(path, "expected positive integer");
+  }
+
+  return number;
+}
+
+function assertPositiveNumber(value: unknown, path: string): number {
+  const number = assertNumber(value, path);
+  if (number <= 0) {
+    fail(path, "expected positive number");
+  }
+
+  return number;
+}
