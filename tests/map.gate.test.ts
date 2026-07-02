@@ -24,18 +24,21 @@ import { dirname, resolve } from "node:path";
 //       templateId: string
 //       archetype: string
 //       routes: Vec2[][]        // 长度 === 模板 routeCount；几何逐点等于配置模板的 routes(运行时不发明坐标)
-//       openSlots: OpenSlot[]   // 恰 config.maps.randomization.openSlotCount 个；slotTypeId 互异
+//       openSlots: OpenSlot[]   // 数量每局随机 ∈ [openSlotCountRange.min, openSlotCountRange.max]
+//                               // (产品拍板 2026-07-02：原固定 6 改每局随机 2-3,格位稀缺化)；slotTypeId 互异
 //     }
 //     export function generateMap(opts: { config: GameConfig; seed: number; poolId?: string }): GeneratedMap
 //       // poolId 缺省取 config.maps.mapPools[0]；config 必须【注入】，严禁内部 loadGameConfig / Math.random / Date。
 //
 //   配置扩展契约(src/config/maps.json + schema/maps.ts)：
+//     randomization.openSlotCount 废除,改 openSlotCountRange: { min: number; max: number }
+//                         // 1 ≤ min ≤ max 整数,schema 违反即抛；产品值 min=2,max=3
 //     顶层新增 canvas: { widthUnits: number; heightUnits: number }  // 逻辑画布，全部坐标必须落在其内
 //     pathTemplates[] 增补：
 //       routes: Vec2[][]  // 长度 === routeCount；每条 ≥2 点；zigzag_path 的单条 ≥4 点(折线)；
 //                         // dual_entry_merge 两条入口点不同、终点(阵眼)相同
 //       candidateSlots: Array<{ slotTypeId: string; position: Vec2 }>
-//                         // 互异、≥ openSlotCount+2，slotTypeId ∈ candidateSlotTypes；原 candidateSlotTypeIds 字段废除
+//                         // 互异、≥ openSlotCountRange.max+2，slotTypeId ∈ candidateSlotTypes；原 candidateSlotTypeIds 字段废除
 //
 // 未落地前(目标文件不存在)自动 skip，不阻塞既有基线；落地后立即生效，违约即判 FAIL。
 // 本文件是纯 headless 单测：全程不 import @babylonjs。
@@ -114,19 +117,25 @@ describe("T4 · 同 seed 可复现(验收标准·复现性)", () => {
 });
 
 describe("T4 · 不同 seed 产生不同地图(验收标准·随机性)", () => {
-  it.skipIf(!ready)("扫 seed 1..60：三套模板全部出现；开放格组合与五行分配多样", async () => {
+  it.skipIf(!ready)("扫 seed 1..60：三套模板全部出现；开格数覆盖 [min,max]；开放格组合与五行分配多样", async () => {
     const config = await loadConfig();
+    const { min, max } = config.maps.randomization.openSlotCountRange;
     const templates = new Set<string>();
+    const counts = new Set<number>();
     const slotSets = new Set<string>();
     const elementSets = new Set<string>();
     for (let seed = 1; seed <= 60; seed++) {
       const m = await gen(config, seed);
       templates.add(m.templateId);
+      counts.add(m.openSlots.length);
       slotSets.add(`${m.templateId}#${slotKey(m)}`);
       elementSets.add(`${m.templateId}#${elementKey(m)}`);
     }
     // 池里 3 套模板(直进压迫/折线/双入口汇流)在 60 个 seed 内必须全部可达
     expect(templates.size).toBe(config.maps.mapPools[0].pathTemplates.length);
+    // 开格数本身必须真随机：60 seed 内 min 与 max 两个端点都要出现(产品:2 与 3)
+    expect(counts.has(min)).toBe(true);
+    expect(counts.has(max)).toBe(true);
     // 开放格组合与五行分配都必须真随机(非固定)：60 seed 至少 10 种不同结果
     expect(slotSets.size).toBeGreaterThanOrEqual(10);
     expect(elementSets.size).toBeGreaterThanOrEqual(10);
@@ -134,9 +143,9 @@ describe("T4 · 不同 seed 产生不同地图(验收标准·随机性)", () => 
 });
 
 describe("T4 · 生成结果的结构合法性(逐 seed 全量校验)", () => {
-  it.skipIf(!ready)("开放格恰 openSlotCount 个、互异、来自模板候选、五行∈elementPool、坐标在画布内", async () => {
+  it.skipIf(!ready)("开放格数∈[min,max]、互异、来自模板候选、五行∈elementPool、坐标在画布内", async () => {
     const config = await loadConfig();
-    const { openSlotCount, elementPool } = config.maps.randomization;
+    const { openSlotCountRange, elementPool } = config.maps.randomization;
     const { widthUnits, heightUnits } = config.maps.canvas;
     for (let seed = 1; seed <= 30; seed++) {
       const m = await gen(config, seed);
@@ -144,9 +153,10 @@ describe("T4 · 生成结果的结构合法性(逐 seed 全量校验)", () => {
       expect(tpl).toBeTruthy();
       expect(m.archetype).toBe(tpl.archetype);
 
-      expect(m.openSlots.length).toBe(openSlotCount);
+      expect(m.openSlots.length).toBeGreaterThanOrEqual(openSlotCountRange.min);
+      expect(m.openSlots.length).toBeLessThanOrEqual(openSlotCountRange.max);
       const ids = m.openSlots.map((s: any) => s.slotTypeId);
-      expect(new Set(ids).size).toBe(openSlotCount); // 互异
+      expect(new Set(ids).size).toBe(m.openSlots.length); // 互异
       for (const slot of m.openSlots) {
         const candidate = tpl.candidateSlots.find((c: any) => c.slotTypeId === slot.slotTypeId);
         expect(candidate).toBeTruthy(); // 只能开模板候选里的格
@@ -200,12 +210,12 @@ describe("T4 · 三种路径原型的几何契约", () => {
 });
 
 describe("T4 · 随机参数读 config 而非硬编码", () => {
-  it.skipIf(!ready)("注入 openSlotCount=3 的 config，开放格数量随之为 3", async () => {
+  it.skipIf(!ready)("注入 openSlotCountRange={min:1,max:1} 的 config，开放格数量随之恒为 1", async () => {
     const base = await loadConfig();
     const patched = structuredClone(base);
-    patched.maps.randomization.openSlotCount = 3;
+    patched.maps.randomization.openSlotCountRange = { min: 1, max: 1 };
     const m = await gen(patched, 5);
-    expect(m.openSlots.length).toBe(3);
+    expect(m.openSlots.length).toBe(1);
   });
 
   it.skipIf(!ready)("注入单一 elementPool 的 config，全部开放格五行只能是该元素", async () => {

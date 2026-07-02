@@ -76,16 +76,44 @@
         "as any / @ts-ignore 硬压类型"
       ]
     },
+    "T4.1": {
+      "title": "开放格数量改每局随机 2-3(产品拍板 2026-07-02,原固定 6)",
+      "requires": ["isolation", "config tables", "typescript", "test", "build"],
+      "evidence": [],
+      "definitionOfDone": [
+        "maps.json randomization：废除 openSlotCount，新增 openSlotCountRange {\"min\":2,\"max\":3}",
+        "schema/maps.ts：校验 openSlotCountRange 为整数且 1≤min≤max；candidateSlots 下限改 ≥ max+2；违反即抛,禁静默兜底",
+        "MapGenerator：开格数量由注入 seed 的 rng 在 [min,max] 均匀抽取(单一 rng 流,禁 Math.random/Date)，其余选格/五行逻辑不变；GeneratedMap 形状不变",
+        "tests/config.validation.test.ts 增 maps 负例 1 条(min>max 应抛错)——该文件属施工可改域",
+        "尺子 tests/map.gate.test.ts(Claude 已按新契约更新)8 用例全 PASS，且【未修改该文件】"
+      ],
+      "forbidden": [
+        "修改任一 Claude 尺子(map.gate / render.gate / battle.controller.gate / golden.formulas / config.smoke.gate / scripts/** / acceptance/** / docs/**)",
+        "Math.random / Date 参与生成",
+        "改动 routes/candidateSlots 几何数据(本批只动数量机制)",
+        "as any / @ts-ignore 硬压类型"
+      ]
+    },
     "T5": {
       "title": "水墨国风占位场景(首个画面)",
-      "requires": ["typescript", "test", "build", "capture still"],
-      "evidence": ["screenshots/still.png：一眼可辨水墨/符箓方向，五行色可辨，非塑料纯色块"],
+      "requires": ["isolation", "config tables", "typescript", "test", "build", "capture still"],
+      "evidence": ["screenshots/still.png：一眼可辨水墨/符箓方向(宣纸底/墨线路径/阵眼/本局 2-3 个开放格/五行色符位)，非塑料纯色块，由 Claude 人眼复核"],
       "definitionOfDone": [
-        "src/render 呈现宣纸底 / 墨线路径 / 阵眼 / 6 个开放格 / 五行色符位",
-        "所有颜色与特效参数读 src/config/visual.json，不在渲染代码写死",
-        "quality:gate:capture 产出截图"
+        "src/render/mapping.ts：canvasToWorld 纯函数(画布左上原点→纸面XZ世界,y=0,契约公式见尺子头注)",
+        "src/render/battleScene.ts：createBattleScene(engine,{config,map}) 注入式,NullEngine 可无头构建(禁依赖 DOM/DynamicTexture)；场景图契约：clearColor=surface.paper、paper 节点、route-i 节点(metadata.points 与 map.routes[i] 深等)、core 节点在路线终点映射处、slot-<slotTypeId> 节点(metadata{slotTypeId,element}+位置映射+材质色=palette.elements[element].primary)",
+        "visual.json+schema 扩展：顶层 scene 段 {worldUnitsPerCanvasUnit,camera{alphaDeg,betaDeg,radiusWorldUnits},routeWidthCanvasUnits,slotRadiusCanvasUnits,coreRadiusCanvasUnits,paperMarginCanvasUnits} 全数值有牙校验",
+        "颜色纪律：src/render/**、src/ui/** 零 hex/rgb() 字面量(颜色只经 visual.json,静态扫描尺子强制)",
+        "main.ts 最小装配：generateMap(seed 取 URL ?seed= 或 1)→createBattleScene 接入 BabylonApp;渲染层可 import Babylon,领域层依赖方向不变(render 依赖 game/config,反向禁止)",
+        "尺子 tests/render.gate.test.ts 6 用例(1 静态+5 场景)全 PASS,且【未修改该文件】",
+        "quality:gate:capture 产出 screenshots/still.png,Claude 人眼复核水墨气质"
       ],
-      "forbidden": ["塑料感纯色块直接交付", "颜色硬编码在渲染代码"]
+      "forbidden": [
+        "修改任一 Claude 尺子(render.gate / map.gate / battle.controller.gate / golden.formulas / config.smoke.gate / scripts/** / acceptance/** / docs/**)",
+        "塑料感纯色块直接交付", "颜色/相机/尺寸等视觉参数硬编码在渲染代码",
+        "在 src/game/** 内 import src/render(依赖方向倒置)",
+        "createBattleScene 内部 loadGameConfig/generateMap(必须注入)",
+        "as any / @ts-ignore 硬压类型"
+      ]
     },
     "T6": {
       "title": "符/怪/目标选择/承伤 最小可玩闭环",

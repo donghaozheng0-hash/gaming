@@ -40,8 +40,8 @@
 PREP（准备 ~15s）          COMBAT（波次战斗 90–120s）            SETTLE（结算 瞬间）
 ──────────────────        ─────────────────────────────        ─────────────────────
 抽地图路径模板             WaveScheduler 按 waves 配置分波刷怪     判定胜负（7 波清完 / 阵眼破）
-随机开放 6 格 + 随机五行    Monster 沿 Path 推进                  发奖 / 解锁扫荡 / 复活流程
-玩家拖拽 5 符进 5 格        Rune 自动选目标→DamageSystem 出伤      触发 level_end 埋点
+随机开放 2-3 格 + 随机五行  Monster 沿 Path 推进                  发奖 / 解锁扫荡 / 复活流程
+玩家从 5 符中择符入格       Rune 自动选目标→DamageSystem 出伤      触发 level_end 埋点
 （自动战斗玩家可直接开打）   阵眼承伤（CorePillar，承伤公式）        回到局外 Meta
                           第 2/4/6 波给灵机点（升级 / 融合）
                           可选：DrawRuneSystem 画符增伤
@@ -75,7 +75,7 @@ PREP（准备 ~15s）          COMBAT（波次战斗 90–120s）            SET
 | 对象 | 类型 | 职责 | 关键公式/配置 |
 |---|---|---|---|
 | `BattleController` | 状态机 | 三段流程、决策点门控、胜负判定、复活流程 | levels / waves |
-| `MapLayout` | 值对象 | 抽路径模板、随机开放 6 格、每格随机五行 | maps |
+| `MapLayout` | 值对象 | 抽路径模板、每局随机开放 2-3 格、每格随机五行 | maps |
 | `Path` | 值对象 | 路径采样点、长度、怪物沿路推进 | maps（1000 单位） |
 | `WaveScheduler` | 系统 | 按波次时间表刷怪、控制刷怪间隔 | waves / monsters |
 | `Monster` | 玩法对象（拥有 mesh） | 五行、HP/护盾/攻击/速度、沿路移动、到阵眼触发承伤 | monsters（系数×R） |
