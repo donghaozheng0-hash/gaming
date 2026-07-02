@@ -6,6 +6,7 @@ import { validateDungeonsConfig } from "../src/config/schema/dungeons";
 import { validateEconomyConfig } from "../src/config/schema/economy";
 import { validateFatigueConfig } from "../src/config/schema/fatigue";
 import { validateInfiniteConfig } from "../src/config/schema/infinite";
+import { validateMapConfig } from "../src/config/schema/maps";
 import balance from "../src/config/balance.json";
 import cultivation from "../src/config/cultivation.json";
 import dungeons from "../src/config/dungeons.json";
@@ -125,5 +126,17 @@ describe("config validation", () => {
     const { failMargin: _failMargin, ...missingFailMargin } = fatigue;
 
     expect(() => validateFatigueConfig(missingFailMargin)).toThrow(/fatigue\.failMargin/);
+  });
+
+  it("throws when maps open slot count range min exceeds max", () => {
+    const badMaps = {
+      ...maps,
+      randomization: {
+        ...maps.randomization,
+        openSlotCountRange: { min: 3, max: 2 },
+      },
+    };
+
+    expect(() => validateMapConfig(badMaps)).toThrow(/openSlotCountRange/);
   });
 });

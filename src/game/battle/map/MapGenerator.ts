@@ -23,6 +23,7 @@ export interface GeneratedMap {
 type MapPool = GameConfig["maps"]["mapPools"][number];
 type PathTemplate = MapPool["pathTemplates"][number];
 type CandidateSlot = PathTemplate["candidateSlots"][number];
+type OpenSlotCountRange = GameConfig["maps"]["randomization"]["openSlotCountRange"];
 
 export function generateMap(opts: { config: GameConfig; seed: number; poolId?: string }): GeneratedMap {
   const { config, seed } = opts;
@@ -39,7 +40,8 @@ export function generateMap(opts: { config: GameConfig; seed: number; poolId?: s
 
   const rng = createRng(seed);
   const template = choose(pool.pathTemplates, rng, `maps.mapPools.${pool.id}.pathTemplates`);
-  const selectedSlots = selectOpenSlots(template, config.maps.randomization.openSlotCount, rng);
+  const openSlotCount = chooseOpenSlotCount(config.maps.randomization.openSlotCountRange, rng);
+  const selectedSlots = selectOpenSlots(template, openSlotCount, rng);
   const openSlots = assignElements(selectedSlots, config.maps.randomization.elementPool, rng);
 
   return {
@@ -49,6 +51,10 @@ export function generateMap(opts: { config: GameConfig; seed: number; poolId?: s
     routes: copyRoutes(template.routes),
     openSlots,
   };
+}
+
+function chooseOpenSlotCount(range: OpenSlotCountRange, rng: () => number): number {
+  return range.min + Math.floor(rng() * (range.max - range.min + 1));
 }
 
 function selectOpenSlots(template: PathTemplate, openSlotCount: number, rng: () => number): CandidateSlot[] {

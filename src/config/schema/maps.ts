@@ -13,13 +13,18 @@ import {
 export interface MapConfig {
   randomization: {
     pathTemplateSelection: string;
-    openSlotCount: number;
+    openSlotCountRange: OpenSlotCountRange;
     elementAssignment: string;
     elementPool: ElementId[];
   };
   canvas: MapCanvas;
   candidateSlotTypes: CandidateSlotType[];
   mapPools: MapPool[];
+}
+
+export interface OpenSlotCountRange {
+  min: number;
+  max: number;
 }
 
 export interface MapCanvas {
@@ -83,7 +88,7 @@ export function validateMapConfig(value: unknown): MapConfig {
       validateMapPool(item, path, {
         canvas,
         candidateSlotTypeIds,
-        openSlotCount: randomization.openSlotCount,
+        openSlotCountRange: randomization.openSlotCountRange,
       }),
     ),
   };
@@ -93,17 +98,31 @@ function validateRandomization(value: unknown): MapConfig["randomization"] {
   const obj = assertPlainObject(value, "maps.randomization");
   assertExactKeys(obj, "maps.randomization", [
     "pathTemplateSelection",
-    "openSlotCount",
+    "openSlotCountRange",
     "elementAssignment",
     "elementPool",
   ]);
 
   return {
     pathTemplateSelection: assertString(obj.pathTemplateSelection, "maps.randomization.pathTemplateSelection"),
-    openSlotCount: assertPositiveInteger(obj.openSlotCount, "maps.randomization.openSlotCount"),
+    openSlotCountRange: validateOpenSlotCountRange(obj.openSlotCountRange),
     elementAssignment: assertString(obj.elementAssignment, "maps.randomization.elementAssignment"),
     elementPool: assertArray(obj.elementPool, "maps.randomization.elementPool", assertElementId),
   };
+}
+
+function validateOpenSlotCountRange(value: unknown): OpenSlotCountRange {
+  const path = "maps.randomization.openSlotCountRange";
+  const obj = assertPlainObject(value, path);
+  assertExactKeys(obj, path, ["min", "max"]);
+
+  const min = assertPositiveInteger(obj.min, `${path}.min`);
+  const max = assertPositiveInteger(obj.max, `${path}.max`);
+  if (min > max) {
+    fail(path, "min must be less than or equal to max");
+  }
+
+  return { min, max };
 }
 
 function validateCanvas(value: unknown): MapCanvas {
@@ -140,7 +159,7 @@ function validateCandidateSlotType(value: unknown, path: string): CandidateSlotT
 interface MapValidationContext {
   canvas: MapCanvas;
   candidateSlotTypeIds: ReadonlySet<string>;
-  openSlotCount: number;
+  openSlotCountRange: OpenSlotCountRange;
 }
 
 function validateMapPool(value: unknown, path: string, context: MapValidationContext): MapPool {
@@ -172,8 +191,8 @@ function validatePathTemplate(value: unknown, path: string, context: MapValidati
   const candidateSlots = assertArray(obj.candidateSlots, `${path}.candidateSlots`, (slot, slotPath) =>
     validateCandidateSlot(slot, slotPath, context),
   );
-  if (candidateSlots.length < context.openSlotCount + 2) {
-    fail(`${path}.candidateSlots`, "must contain at least openSlotCount + 2 slots");
+  if (candidateSlots.length < context.openSlotCountRange.max + 2) {
+    fail(`${path}.candidateSlots`, "must contain at least openSlotCountRange.max + 2 slots");
   }
 
   validateUniqueCandidateSlots(candidateSlots, `${path}.candidateSlots`);

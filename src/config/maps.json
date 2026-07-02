@@ -1,8 +1,8 @@
 {
   "randomization": {
     "pathTemplateSelection": "每关从路径模板池中抽 1 个地图样式",
-    "openSlotCount": 6,
-    "elementAssignment": "开放出来的 6 个格再各自随机五行",
+    "openSlotCountRange": { "min": 2, "max": 3 },
+    "elementAssignment": "本局开放出来的格位再各自随机五行",
     "elementPool": ["metal", "wood", "water", "fire", "earth"]
   },
   "canvas": {
