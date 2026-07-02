@@ -83,6 +83,18 @@
       "crack": "龟裂墨色"
     }
   },
+  "scene": {
+    "worldUnitsPerCanvasUnit": 0.01,
+    "camera": {
+      "alphaDeg": 55,
+      "betaDeg": 48,
+      "radiusWorldUnits": 17
+    },
+    "routeWidthCanvasUnits": 28,
+    "slotRadiusCanvasUnits": 42,
+    "coreRadiusCanvasUnits": 56,
+    "paperMarginCanvasUnits": 80
+  },
   "effectKeys": {
     "commonCast": "符箓：出手时浮现符箓纹样，亮起后笔画化为攻击。",
     "fire": "泼墨焚烧：朱赤泼墨炸开 + 飞白火舌，边缘有焦墨。",

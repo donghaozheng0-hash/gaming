@@ -2,13 +2,9 @@ import "./style.css";
 import { BabylonApp } from "./app/BabylonApp";
 import { loadGameConfig } from "./config";
 import { BattleController } from "./game/battle/BattleController";
+import { generateMap } from "./game/battle/map/MapGenerator";
 import { EventBus } from "./game/events/EventBus";
-import { createScene } from "./game/scene";
-
-interface SceneChangePayload {
-  file: string;
-  time: number;
-}
+import { createBattleScene } from "./render/battleScene";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
 
@@ -18,10 +14,12 @@ if (!canvas) {
 
 const app = new BabylonApp(canvas);
 const config = loadGameConfig();
+const seed = readSeed();
+const map = generateMap({ config, seed });
 const bus = new EventBus();
 const battle = new BattleController({ config, bus });
 
-await app.load(createScene);
+await app.load((a) => createBattleScene(a.engine, { config, map }));
 battle.start();
 app.start();
 app.engine.runRenderLoop(() => {
@@ -29,14 +27,15 @@ app.engine.runRenderLoop(() => {
 });
 
 if (import.meta.env.DEV && import.meta.hot) {
-  import.meta.hot.on("godogen:scene-change", async (payload: SceneChangePayload) => {
-    console.info(`[godogen] scene reload: ${payload.file}`);
-    const sceneUrl = `/src/game/scene.ts?godogen-reload=${payload.time}`;
-    const sceneModule = await import(/* @vite-ignore */ sceneUrl);
-    await app.load(sceneModule.createScene);
-  });
-
   import.meta.hot.dispose(() => {
     app.dispose();
   });
+}
+
+function readSeed(): number {
+  const value = new URLSearchParams(location.search).get("seed");
+  if (value === null) return 1;
+
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) ? parsed : 1;
 }
