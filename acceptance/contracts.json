@@ -59,14 +59,22 @@
     },
     "T4": {
       "title": "地图路径与随机开放格位",
-      "requires": ["isolation", "typescript", "test", "build"],
+      "requires": ["isolation", "config tables", "typescript", "test", "build"],
       "evidence": [],
       "definitionOfDone": [
-        "≥3 套路径模板(直进压迫/折线/双入口汇流)；候选格位随机开放 6 个；开放格五行随机",
-        "种子化 RNG：同 seed 可复现，不同 seed 路径/开放格/五行不同",
-        "vitest：复现性与随机性各一条用例"
+        "src/game/battle/map/rng.ts：createRng(seed:number):()=>number 种子化确定性 PRNG，[0,1) 均匀、同 seed 序列全同；PRNG 结构魔数仅限本文件行级 iso-ok 豁免",
+        "src/game/battle/map/MapGenerator.ts：generateMap({config,seed,poolId?}):GeneratedMap{poolId,templateId,archetype,routes:Vec2[][],openSlots:OpenSlot[]}；config 注入，严禁内部 loadGameConfig/Math.random/Date；模板随机选自池、开放格从模板 candidateSlots 随机取恰 randomization.openSlotCount 个且互异、每格五行随机取自 elementPool；routes 逐点等于配置模板(运行时不发明坐标)",
+        "src/config/maps.json + schema/maps.ts 扩展：顶层新增 canvas{widthUnits,heightUnits}；pathTemplates 增 routes:Vec2[][](长度===routeCount,每条≥2点,zigzag≥4点,双入口两入口不同且终点相同,坐标全在画布内) 与 candidateSlots[{slotTypeId,position}](互异、≥openSlotCount+2、slotTypeId∈candidateSlotTypes)，废除 candidateSlotTypeIds；schema 违反即抛错，禁止静默兜底",
+        "尺子 tests/map.gate.test.ts 8 用例由全 skip 转全 PASS，且【未修改该文件】",
+        "同一关不同 seed 得到不同路径模板/开放格/五行；同一 seed 完全可复现(尺子覆盖)"
       ],
-      "forbidden": ["固定只有一条路线", "固定开放格位/五行"]
+      "forbidden": [
+        "修改任一 Claude 尺子(map.gate / battle.controller.gate / golden.formulas / config.smoke.gate / scripts/*.mjs / acceptance/** / contracts.json)",
+        "固定只有一条路线", "固定开放格位/五行",
+        "Math.random / Date 参与生成(必须全走注入 seed 的 RNG)",
+        "在 src/game/battle/map 内 import @babylonjs 或硬编码坐标/数量(除 rng.ts 的 iso-ok PRNG 常数)",
+        "as any / @ts-ignore 硬压类型"
+      ]
     },
     "T5": {
       "title": "水墨国风占位场景(首个画面)",
