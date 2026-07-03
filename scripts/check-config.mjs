@@ -98,6 +98,117 @@ if (levelsTbl.present && !levelsTbl.parseError && Array.isArray(levelsTbl.data?.
   }
 }
 
+// —— T6 战斗闭环数据侧(独立重算,不信任业务加载器)——
+// 覆盖:玩家三围推导 / R1 相生两档 / R3 开格补偿 / R6 策略词条 / 波次怪引用 / onDeath 分裂引用 / R2 模板 override。
+const t6Violations = [];
+const t6 = (ok, where, msg) => { if (!ok) t6Violations.push({ where, msg }); };
+const dataOf = (name) => {
+  const t = tables[name];
+  return t.present && !t.parseError ? t.data : null;
+};
+
+{
+  const balance = dataOf("balance");
+  if (balance) {
+    const pd = balance.playerDerivation;
+    t6(!!pd, "balance.playerDerivation", "缺失(阵眼三围推导与 balance-sim 同源座位)");
+    if (pd) {
+      t6(typeof pd.basePowerFrac === "number" && pd.basePowerFrac > 0 && pd.basePowerFrac < 1,
+        "balance.playerDerivation.basePowerFrac", `必须∈(0,1),得到 ${pd.basePowerFrac}`);
+      for (const key of ["atk", "hp", "def"]) {
+        t6(typeof pd.statRatio?.[key] === "number" && pd.statRatio[key] > 0,
+          `balance.playerDerivation.statRatio.${key}`, "必须为正数");
+      }
+    }
+    const xs = balance.damageFormula?.xiangshengMultipliers;
+    t6(typeof xs?.presence === "number", "balance.damageFormula.xiangshengMultipliers.presence", "缺失(R1 同场弱相生档)");
+    if (typeof xs?.presence === "number") {
+      t6(xs.presence >= 1 && xs.presence <= xs.generated,
+        "balance.damageFormula.xiangshengMultipliers", `两档必须有序 1 ≤ presence(${xs.presence}) ≤ generated(${xs.generated})`);
+    }
+    const adjacency = balance.battle?.xiangshengAdjacencyMaxCanvasUnits;
+    t6(typeof adjacency === "number" && adjacency > 0,
+      "balance.battle.xiangshengAdjacencyMaxCanvasUnits", "缺失或非正数(R1 相邻判定距离)");
+  }
+
+  const infinite = dataOf("infinite");
+  const maps = dataOf("maps");
+  if (infinite && maps) {
+    const comp = infinite.lootCompensation?.byOpenSlotCount;
+    t6(!!comp, "infinite.lootCompensation.byOpenSlotCount", "缺失(R3 开格风险补偿表)");
+    const range = maps.randomization?.openSlotCountRange;
+    if (comp && range) {
+      for (let n = range.min; n <= range.max; n++) {
+        t6(typeof comp[String(n)] === "number", `infinite.lootCompensation.byOpenSlotCount.${n}`,
+          "全局开格范围内的每个格数都必须有补偿键");
+      }
+      t6(comp[String(range.max)] === 1, `infinite.lootCompensation.byOpenSlotCount.${range.max}`,
+        "最大开格数=基准局,倍率必须恒为 1");
+      for (const [k, v] of Object.entries(comp)) {
+        t6(typeof v === "number" && v >= 1, `infinite.lootCompensation.byOpenSlotCount.${k}`,
+          "R3 是奖励补偿,倍率不得 < 1");
+      }
+    }
+  }
+
+  const runes = dataOf("runes");
+  if (runes && Array.isArray(runes.runes)) {
+    for (const rune of runes.runes) {
+      t6(typeof rune.targetingStrategyId === "string" && rune.targetingStrategyId.length > 0,
+        `runes.${rune.id}.targetingStrategyId`, "缺失或为空(R6 目标策略词条 id)");
+    }
+  }
+
+  const monsters = dataOf("monsters");
+  if (monsters && Array.isArray(monsters.monsters) && monsterIds) {
+    for (const monster of monsters.monsters) {
+      if (monster.onDeath) {
+        t6(monsterIds.has(monster.onDeath.spawnMonsterId),
+          `monsters.${monster.id}.onDeath.spawnMonsterId`, `引用不存在的怪 "${monster.onDeath.spawnMonsterId}"`);
+        t6(typeof monster.onDeath.count === "number" && monster.onDeath.count >= 1,
+          `monsters.${monster.id}.onDeath.count`, "分裂数量必须 ≥1");
+        t6(typeof monster.onDeath.hpCoefficientR === "number" && monster.onDeath.hpCoefficientR > 0,
+          `monsters.${monster.id}.onDeath.hpCoefficientR`, "子怪血量系数必须为正数");
+      }
+    }
+  }
+
+  const waves = dataOf("waves");
+  if (waves && Array.isArray(waves.waveTemplates) && monsterIds) {
+    for (const template of waves.waveTemplates) {
+      for (const wave of template.waves ?? []) {
+        for (const [i, entry] of (wave.entries ?? []).entries()) {
+          for (const mid of entry.monsterPoolIds ?? []) {
+            t6(monsterIds.has(mid),
+              `waves.${template.id}[${wave.index}].entries[${i}]`, `monsterPoolIds 引用不存在的怪 "${mid}"`);
+          }
+        }
+      }
+    }
+  }
+
+  if (maps) {
+    const globalRange = maps.randomization?.openSlotCountRange;
+    for (const pool of maps.mapPools ?? []) {
+      for (const template of pool.pathTemplates ?? []) {
+        const override = template.openSlotCountRange;
+        if (override) {
+          t6(Number.isInteger(override.min) && Number.isInteger(override.max) && override.min >= 1 && override.min <= override.max,
+            `maps.${template.id}.openSlotCountRange`, "override 必须满足 1 ≤ min ≤ max(整数)");
+          t6((template.candidateSlots ?? []).length >= override.max + 2,
+            `maps.${template.id}.candidateSlots`, "候选格必须 ≥ override.max + 2");
+        }
+        // 裁定 R2 独立重算:多路线模板双路分兵,开格下限必须 ≥3(经 override 显式声明)。
+        if ((template.routeCount ?? 1) > 1) {
+          const effectiveMin = override?.min ?? globalRange?.min;
+          t6(!!override && effectiveMin >= 3,
+            `maps.${template.id}`, `routeCount=${template.routeCount} 的模板必须声明 openSlotCountRange override 且 min ≥ 3(裁定 R2),当前 min=${effectiveMin}`);
+        }
+      }
+    }
+  }
+}
+
 mkdirSync(resolve(root, "reports"), { recursive: true });
 writeFileSync(
   resolve(root, "reports/config.json"),
@@ -108,6 +219,7 @@ writeFileSync(
       tablesMissing: missing,
       parseErrors,
       refViolations,
+      t6Violations,
       generatedAt: new Date().toISOString(),
     },
     null,
@@ -149,6 +261,16 @@ if (refViolations.length) {
     console.error(`  ${v.where} -> 引用不存在的 "${v.missingRef}"`);
   if (refViolations.length > 50)
     console.error(`  ... 其余 ${refViolations.length - 50} 处见 reports/config.json`);
+}
+
+if (t6Violations.length) {
+  failed = true;
+  console.error(
+    `\n[config] FAIL - ${t6Violations.length} 处 T6 战斗闭环数据违规（playerDerivation/R1/R2/R3/R6/波次与分裂引用）：`,
+  );
+  for (const v of t6Violations.slice(0, 50)) console.error(`  ${v.where}: ${v.msg}`);
+  if (t6Violations.length > 50)
+    console.error(`  ... 其余 ${t6Violations.length - 50} 处见 reports/config.json`);
 }
 
 if (failed) {

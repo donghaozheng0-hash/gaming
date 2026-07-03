@@ -53,6 +53,8 @@ export interface PathTemplate {
   name: string;
   archetype: string;
   routeCount: number;
+  /** R2:模板级开放格数 override(未声明时用全局 randomization.openSlotCountRange)。 */
+  openSlotCountRange?: OpenSlotCountRange;
   routes: Vec2[][];
   candidateSlots: CandidateSlot[];
 }
@@ -105,14 +107,13 @@ function validateRandomization(value: unknown): MapConfig["randomization"] {
 
   return {
     pathTemplateSelection: assertString(obj.pathTemplateSelection, "maps.randomization.pathTemplateSelection"),
-    openSlotCountRange: validateOpenSlotCountRange(obj.openSlotCountRange),
+    openSlotCountRange: validateOpenSlotCountRange(obj.openSlotCountRange, "maps.randomization.openSlotCountRange"),
     elementAssignment: assertString(obj.elementAssignment, "maps.randomization.elementAssignment"),
     elementPool: assertArray(obj.elementPool, "maps.randomization.elementPool", assertElementId),
   };
 }
 
-function validateOpenSlotCountRange(value: unknown): OpenSlotCountRange {
-  const path = "maps.randomization.openSlotCountRange";
+function validateOpenSlotCountRange(value: unknown, path: string): OpenSlotCountRange {
   const obj = assertPlainObject(value, path);
   assertExactKeys(obj, path, ["min", "max"]);
 
@@ -178,8 +179,18 @@ function validateMapPool(value: unknown, path: string, context: MapValidationCon
 
 function validatePathTemplate(value: unknown, path: string, context: MapValidationContext): PathTemplate {
   const obj = assertPlainObject(value, path);
-  assertExactKeys(obj, path, ["id", "name", "archetype", "routeCount", "routes", "candidateSlots"]);
+  const hasOverride = obj.openSlotCountRange !== undefined;
+  assertExactKeys(
+    obj,
+    path,
+    hasOverride
+      ? ["id", "name", "archetype", "routeCount", "openSlotCountRange", "routes", "candidateSlots"]
+      : ["id", "name", "archetype", "routeCount", "routes", "candidateSlots"],
+  );
 
+  const openSlotCountRange = hasOverride
+    ? validateOpenSlotCountRange(obj.openSlotCountRange, `${path}.openSlotCountRange`)
+    : undefined;
   const routeCount = assertPositiveInteger(obj.routeCount, `${path}.routeCount`);
   const routes = assertArray(obj.routes, `${path}.routes`, (route, routePath) =>
     validateRoute(route, routePath, context.canvas),
@@ -191,7 +202,8 @@ function validatePathTemplate(value: unknown, path: string, context: MapValidati
   const candidateSlots = assertArray(obj.candidateSlots, `${path}.candidateSlots`, (slot, slotPath) =>
     validateCandidateSlot(slot, slotPath, context),
   );
-  if (candidateSlots.length < context.openSlotCountRange.max + 2) {
+  const effectiveRange = openSlotCountRange ?? context.openSlotCountRange;
+  if (candidateSlots.length < effectiveRange.max + 2) {
     fail(`${path}.candidateSlots`, "must contain at least openSlotCountRange.max + 2 slots");
   }
 
@@ -202,6 +214,7 @@ function validatePathTemplate(value: unknown, path: string, context: MapValidati
     name: assertString(obj.name, `${path}.name`),
     archetype: assertString(obj.archetype, `${path}.archetype`),
     routeCount,
+    ...(openSlotCountRange ? { openSlotCountRange } : {}),
     routes,
     candidateSlots,
   };

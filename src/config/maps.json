@@ -151,6 +151,7 @@
           "name": "双入口汇流",
           "archetype": "双入口汇流",
           "routeCount": 2,
+          "openSlotCountRange": { "min": 3, "max": 3 },
           "routes": [
             [
               { "x": 80, "y": 260 },

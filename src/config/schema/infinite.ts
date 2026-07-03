@@ -27,6 +27,9 @@ export interface InfiniteConfig {
     elementsPerLevel: { min: number; max: number };
     effectivePowerVariance: number;
   };
+  lootCompensation: {
+    byOpenSlotCount: Record<string, number>;
+  };
   experience: {
     baseAtDepth1: number;
     growth: number;
@@ -40,6 +43,7 @@ export function validateInfiniteConfig(value: unknown): InfiniteConfig {
     "monsterCoefficients",
     "bossRotation",
     "mapRandom",
+    "lootCompensation",
     "experience",
   ]);
 
@@ -48,6 +52,7 @@ export function validateInfiniteConfig(value: unknown): InfiniteConfig {
     monsterCoefficients: validateMonsterCoefficients(requireField(obj, "monsterCoefficients", "infinite")),
     bossRotation: validateBossRotation(requireField(obj, "bossRotation", "infinite")),
     mapRandom: validateMapRandom(requireField(obj, "mapRandom", "infinite")),
+    lootCompensation: validateLootCompensation(requireField(obj, "lootCompensation", "infinite")),
     experience: validateExperience(requireField(obj, "experience", "infinite")),
   };
 
@@ -124,6 +129,30 @@ function validateElementsPerLevel(value: unknown, path: string): { min: number; 
   }
 
   return { min, max };
+}
+
+function validateLootCompensation(value: unknown): InfiniteConfig["lootCompensation"] {
+  const obj = assertPlainObject(value, "infinite.lootCompensation");
+  assertExactKeys(obj, "infinite.lootCompensation", ["byOpenSlotCount"]);
+
+  const table = assertPlainObject(obj.byOpenSlotCount, "infinite.lootCompensation.byOpenSlotCount");
+  const byOpenSlotCount: Record<string, number> = {};
+  for (const [count, multiplier] of Object.entries(table)) {
+    const path = `infinite.lootCompensation.byOpenSlotCount.${count}`;
+    if (!/^\d+$/.test(count)) {
+      throw new Error(`[config] ${path}: 键必须是开放格数(正整数字符串)`);
+    }
+    const value = assertNumber(multiplier, path);
+    if (value < 1) {
+      throw new Error(`[config] ${path}: 补偿倍率不得 < 1(R3 是奖励补偿,不是惩罚)`);
+    }
+    byOpenSlotCount[count] = value;
+  }
+  if (Object.keys(byOpenSlotCount).length === 0) {
+    throw new Error("[config] infinite.lootCompensation.byOpenSlotCount: 不得为空表");
+  }
+
+  return { byOpenSlotCount };
 }
 
 function validateExperience(value: unknown): InfiniteConfig["experience"] {

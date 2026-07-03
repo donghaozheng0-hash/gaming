@@ -13,7 +13,14 @@
   "tasks": {
     "T1": {
       "title": "配置层骨架与 Schema",
-      "requires": ["dependencies", "isolation", "config tables", "typescript", "test", "build"],
+      "requires": [
+        "dependencies",
+        "isolation",
+        "config tables",
+        "typescript",
+        "test",
+        "build"
+      ],
       "evidence": [],
       "definitionOfDone": [
         "建立 src/config/，含 11 张表：balance/runes/monsters/levels/waves/maps/fusion/cultivation/economy/progression/visual(.json)",
@@ -22,22 +29,38 @@
         "ConfigService 统一加载并 Object.freeze；交叉引用校验(levels 引用的 monsters/waves/maps/rune 必须可解析)",
         "新增 vitest 用例：非法配置(缺字段)应校验失败、合法配置应通过、关键交叉引用解析成功"
       ],
-      "forbidden": ["src/game 出现具体平衡数字", "配置层出现逻辑分支 / Babylon API"]
+      "forbidden": [
+        "src/game 出现具体平衡数字",
+        "配置层出现逻辑分支 / Babylon API"
+      ]
     },
     "T2": {
       "title": "公式模块与总设计算例单测",
-      "requires": ["isolation", "typescript", "test", "build"],
+      "requires": [
+        "isolation",
+        "typescript",
+        "test",
+        "build"
+      ],
       "evidence": [],
       "definitionOfDone": [
         "实现 src/game/formulas/{damage,core,power,elements}.ts 纯函数(无 Babylon)",
         "tests/golden.formulas.test.ts 4 个 describe 由 skip 全部转 PASS：符伤 663/995/1326/444、承伤 31(相对式 relK=0.68)、战力 1350、五行克制 advantage/disadvantage/neutral，且【未修改该文件期望值】",
         "所有系数从 config(balance) 读取；公式内不出现裸数字(isolation PASS)"
       ],
-      "forbidden": ["修改黄金测试的期望值", "在公式里硬写总设计算例的分支/期望"]
+      "forbidden": [
+        "修改黄金测试的期望值",
+        "在公式里硬写总设计算例的分支/期望"
+      ]
     },
     "T3": {
       "title": "战斗领域空循环(状态机)",
-      "requires": ["isolation", "typescript", "test", "build"],
+      "requires": [
+        "isolation",
+        "typescript",
+        "test",
+        "build"
+      ],
       "evidence": [],
       "definitionOfDone": [
         "src/game/events/EventBus.ts 类型安全事件总线：泛型 on<K extends keyof BattleEventMap>(type,handler) 返回退订函数、emit<K>(type,payload)；BattleEventMap 钉死 battle.prepStarted / wave.started / wave.ended / battle.settled 及各自 payload",
@@ -59,7 +82,13 @@
     },
     "T4": {
       "title": "地图路径与随机开放格位",
-      "requires": ["isolation", "config tables", "typescript", "test", "build"],
+      "requires": [
+        "isolation",
+        "config tables",
+        "typescript",
+        "test",
+        "build"
+      ],
       "evidence": [],
       "definitionOfDone": [
         "src/game/battle/map/rng.ts：createRng(seed:number):()=>number 种子化确定性 PRNG，[0,1) 均匀、同 seed 序列全同；PRNG 结构魔数仅限本文件行级 iso-ok 豁免",
@@ -70,7 +99,8 @@
       ],
       "forbidden": [
         "修改任一 Claude 尺子(map.gate / battle.controller.gate / golden.formulas / config.smoke.gate / scripts/*.mjs / acceptance/** / contracts.json)",
-        "固定只有一条路线", "固定开放格位/五行",
+        "固定只有一条路线",
+        "固定开放格位/五行",
         "Math.random / Date 参与生成(必须全走注入 seed 的 RNG)",
         "在 src/game/battle/map 内 import @babylonjs 或硬编码坐标/数量(除 rng.ts 的 iso-ok PRNG 常数)",
         "as any / @ts-ignore 硬压类型"
@@ -78,7 +108,13 @@
     },
     "T4.1": {
       "title": "开放格数量改每局随机 2-3(产品拍板 2026-07-02,原固定 6)",
-      "requires": ["isolation", "config tables", "typescript", "test", "build"],
+      "requires": [
+        "isolation",
+        "config tables",
+        "typescript",
+        "test",
+        "build"
+      ],
       "evidence": [],
       "definitionOfDone": [
         "maps.json randomization：废除 openSlotCount，新增 openSlotCountRange {\"min\":2,\"max\":3}",
@@ -96,8 +132,17 @@
     },
     "T5": {
       "title": "水墨国风占位场景(首个画面)",
-      "requires": ["isolation", "config tables", "typescript", "test", "build", "capture still"],
-      "evidence": ["screenshots/still.png：一眼可辨水墨/符箓方向(宣纸底/墨线路径/阵眼/本局 2-3 个开放格/五行色符位)，非塑料纯色块，由 Claude 人眼复核"],
+      "requires": [
+        "isolation",
+        "config tables",
+        "typescript",
+        "test",
+        "build",
+        "capture still"
+      ],
+      "evidence": [
+        "screenshots/still.png：一眼可辨水墨/符箓方向(宣纸底/墨线路径/阵眼/本局 2-3 个开放格/五行色符位)，非塑料纯色块，由 Claude 人眼复核"
+      ],
       "definitionOfDone": [
         "src/render/mapping.ts：canvasToWorld 纯函数(画布左上原点→纸面XZ世界,y=0,契约公式见尺子头注)",
         "src/render/battleScene.ts：createBattleScene(engine,{config,map}) 注入式,NullEngine 可无头构建(禁依赖 DOM/DynamicTexture)；场景图契约：clearColor=surface.paper、paper 节点、route-i 节点(metadata.points 与 map.routes[i] 深等)、core 节点在路线终点映射处、slot-<slotTypeId> 节点(metadata{slotTypeId,element}+位置映射+材质色=palette.elements[element].primary)",
@@ -109,47 +154,101 @@
       ],
       "forbidden": [
         "修改任一 Claude 尺子(render.gate / map.gate / battle.controller.gate / golden.formulas / config.smoke.gate / scripts/** / acceptance/** / docs/**)",
-        "塑料感纯色块直接交付", "颜色/相机/尺寸等视觉参数硬编码在渲染代码",
+        "塑料感纯色块直接交付",
+        "颜色/相机/尺寸等视觉参数硬编码在渲染代码",
         "在 src/game/** 内 import src/render(依赖方向倒置)",
         "createBattleScene 内部 loadGameConfig/generateMap(必须注入)",
         "as any / @ts-ignore 硬压类型"
       ]
     },
     "T6": {
-      "title": "符/怪/目标选择/承伤 最小可玩闭环",
-      "requires": ["isolation", "typescript", "test", "build", "capture still"],
-      "evidence": ["录像或截图证明：怪沿路推进 + 符自动攻击 + 漏怪扣阵眼血 + 胜负结算"],
-      "definitionOfDone": [
-        "8 类怪模板 + 10 张符模板全部来自配置(不写死 HP/攻击/速度)",
-        "目标选择：离阵眼最近优先",
-        "最小闭环：怪走→符打→漏怪扣血→结算"
+      "title": "符·怪·目标选择与承伤最小闭环(真实胜负)",
+      "requires": [
+        "isolation",
+        "config tables",
+        "typescript",
+        "test",
+        "build",
+        "capture still"
       ],
-      "forbidden": ["怪物/符数值写死到类里"]
+      "evidence": [
+        "tests/combat.gate.test.ts 15 用例由全 skip 转全 PASS(未修改该文件)",
+        "tests/map.gate.test.ts 的 T6/R2 两用例由 FAIL 转 PASS(未修改该文件)",
+        "screenshots/still.png:可见怪物在墨线路径上推进、开放格上有符、阵眼血条;水墨基调不回退(T5 render.gate 保持全绿),Claude 人眼复核"
+      ],
+      "definitionOfDone": [
+        "src/game/battle/combat/CombatSimulation.ts:按 tests/combat.gate.test.ts 头注契约实现(全注入式:config/map/bus/rng/loadout/requiredPower;严禁内部 loadGameConfig/Math.random/Date)",
+        "src/game/battle/combat/targeting.ts:registerTargetingStrategy/resolveTargetingStrategy + 内置 nearest_to_core=剩余路程最短(裁定 R6 词条化接口);未注册 id 解析即 throw",
+        "伤害链路只调用 src/game/formulas/**(runeDamage/coreDamage/relation),符伤=round(lv1Attack×品质×相生两档×克制),漏怪承伤=相对式;R1 两档:相邻(开放格距离≤balance.battle.xiangshengAdjacencyMaxCanvasUnits)×generated,同场×presence",
+        "BattleController deps 扩 simulation?: CombatSimulation:不注入时行为与 T3 完全一致(battle.controller.gate 8 用例保持全绿);注入时 wave.started→spawnWave,每定步驱动 sim.step,阵眼归零立即败,波尽场清后按 coreHp 判胜负",
+        "EventBus BattleEventMap 扩 monster.spawned/monster.died/monster.leaked/core.damaged/rune.fired;battle.settled 扩可选字段 coreHp/kills/leaks/lootMultiplier(注入 sim 时必带,lootMultiplier 读 infinite.lootCompensation,裁定 R3)",
+        "MapGenerator 读取模板级 openSlotCountRange override(裁定 R2):map.gate 的 T6/R2 两用例转 PASS,原 8 用例不回退",
+        "渲染层扩展:怪物沿路线移动表现、符开火表现、阵眼血条;视觉参数全部进 visual.json(+schema),颜色纪律静态扫描保持零硬编码;T5 场景图契约不回退",
+        "src/main.ts 装配:?seed= 地图→默认摆位(开放格依次摆 推荐符或 焚天/斩金/青藤)→真实战斗跑至结算,浏览器可观察完整一局",
+        "全部怪/符数值经注入 config 读取(系数×requiredPower),业务代码零裸数字(isolation PASS)"
+      ],
+      "forbidden": [
+        "修改任一 Claude 尺子:tests/*.gate.test.ts、tests/golden.formulas.test.ts、scripts/**、acceptance/**、docs/**、package.json(tsconfig 同理;机器门禁 diff∩尺子清单非空即整批 FAIL)",
+        "修改 visual.json(+schema/visual.ts) 之外的 src/config/**:其余配置侧本批已由 Claude 全部落定(playerDerivation/xiangsheng presence/相邻阈值/lootCompensation/R2 override/targetingStrategyId 与对应 schema);若认为配置有误,停下回报",
+        "修改 src/game/formulas/**(黄金算例锚死,战斗层只调用不重写)",
+        "怪物 HP/攻/速度/符攻速射程等数值写死在类里",
+        "Math.random/Date.now/performance.now 进战斗逻辑(确定性:随机只来自注入 rng,时间只来自定步计数)",
+        "as any / @ts-ignore 硬压类型",
+        "在 src/game/** 内 import src/render(依赖方向倒置)"
+      ]
     },
     "T7": {
       "title": "灵机点 / 画符 / 融合 首版交互",
-      "requires": ["isolation", "typescript", "test", "build", "capture still"],
-      "evidence": ["录像证明：不画符也能跑完一局 + 画符成功有水墨正反馈 + 融合效果可见"],
+      "requires": [
+        "isolation",
+        "typescript",
+        "test",
+        "build",
+        "capture still"
+      ],
+      "evidence": [
+        "录像证明：不画符也能跑完一局 + 画符成功有水墨正反馈 + 融合效果可见"
+      ],
       "definitionOfDone": [
         "第 2/4/6 波各 1 个灵机点(升级符 +15% 或触发融合)",
         "画符评分 50/80/95 阈值，成功 +20%，失败零惩罚(底层逻辑一)",
         "雷/冰/毒融合效果来自配置；headless 验证不操作可通关"
       ],
-      "forbidden": ["强制画符", "画符失败惩罚玩家"]
+      "forbidden": [
+        "强制画符",
+        "画符失败惩罚玩家"
+      ]
     },
     "T8": {
       "title": "首章 1-1~1-3 可玩切片",
-      "requires": ["isolation", "typescript", "test", "build", "capture still"],
-      "evidence": ["三关录像：核心玩法(自动战斗/相生摆位/克制对位)成立、可进可结算"],
+      "requires": [
+        "isolation",
+        "typescript",
+        "test",
+        "build",
+        "capture still"
+      ],
+      "evidence": [
+        "三关录像：核心玩法(自动战斗/相生摆位/克制对位)成立、可进可结算"
+      ],
       "definitionOfDone": [
         "1-1 自动战斗、1-2 相生摆位、1-3 克制对位，三关可进可结算",
         "全部内容来自配置；Claude 验收 PASS 后方可扩展到 1-20"
       ],
-      "forbidden": ["跳过基础闭环直接铺 20 关"]
+      "forbidden": [
+        "跳过基础闭环直接铺 20 关"
+      ]
     },
     "T9": {
       "title": "无限模式配置层落地（承伤相对式 + infinite/dungeons/fatigue 三表）",
-      "requires": ["dependencies", "isolation", "config tables", "typescript", "test", "build"],
+      "requires": [
+        "dependencies",
+        "isolation",
+        "config tables",
+        "typescript",
+        "test",
+        "build"
+      ],
       "evidence": [],
       "definitionOfDone": [
         "balance.json 承伤改相对式 {armorModel:relative, relK:0.68, fixedK:600, capPct:0.80}；progressionCurves.endlessTower.exponentBase=1.07",
@@ -159,7 +258,12 @@
         "有牙校验：infinite.experience.growth===depthWall.depthGrowth；dungeons.defaultMonsterPowerMultiplier∈[min,max](产品拍板 1.45∈[1.2,1.5])；越界/不一致即抛错",
         "tests/config.validation.test.ts 含 infinite/dungeons/fatigue 各 1 条负例 + 1 条正例(三表 defined 且 Object.isFrozen)"
       ],
-      "forbidden": ["改任何 Claude 尺子(balance-sim/quality-gate/check-isolation/check-config/golden.formulas/config.smoke.gate/contracts)", "自创未过 balance-sim 的数值", "把无限模式状态机/控制器逻辑写进配置层", "as any / @ts-ignore 硬压类型"]
+      "forbidden": [
+        "改任何 Claude 尺子(balance-sim/quality-gate/check-isolation/check-config/golden.formulas/config.smoke.gate/contracts)",
+        "自创未过 balance-sim 的数值",
+        "把无限模式状态机/控制器逻辑写进配置层",
+        "as any / @ts-ignore 硬压类型"
+      ]
     }
   }
 }

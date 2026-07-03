@@ -24,6 +24,8 @@ export interface RuneTemplate {
   attackSpeedPerSecond: number;
   range: { kind: "units"; value: number } | { kind: "global" };
   trait: string;
+  /** R6:目标选择策略词条 id(运行时注册表解析;T6 全部 nearest_to_core)。 */
+  targetingStrategyId: string;
   unlock: { type: "initial" } | { type: "levelFirstClear"; levelId: string };
 }
 
@@ -56,8 +58,14 @@ function validateRuneTemplate(value: unknown, path: string): RuneTemplate {
     "attackSpeedPerSecond",
     "range",
     "trait",
+    "targetingStrategyId",
     "unlock",
   ]);
+
+  const targetingStrategyId = assertString(obj.targetingStrategyId, `${path}.targetingStrategyId`);
+  if (targetingStrategyId.length === 0) {
+    throw new Error(`[config] ${path}.targetingStrategyId: 不得为空字符串(R6 词条 id)`);
+  }
 
   return {
     id: assertString(obj.id, `${path}.id`),
@@ -68,6 +76,7 @@ function validateRuneTemplate(value: unknown, path: string): RuneTemplate {
     attackSpeedPerSecond: assertNumber(obj.attackSpeedPerSecond, `${path}.attackSpeedPerSecond`),
     range: validateRange(obj.range, `${path}.range`),
     trait: assertString(obj.trait, `${path}.trait`),
+    targetingStrategyId,
     unlock: validateUnlock(obj.unlock, `${path}.unlock`),
   };
 }

@@ -70,8 +70,8 @@
 | 项 | 内容 |
 |---|---|
 | 目标 | 实现最小可玩闭环：怪沿路走、符自动攻击、漏怪扣阵眼血、胜负结算。 |
-| 允许修改 | `src/game/battle/**`、`src/render/**`、配置表。 |
-| 禁止事项 | 禁止把怪物 HP/攻击/速度写死到类里。 |
+| 允许修改 | `src/game/battle/**`、`src/render/**`、`src/ui/**`、`src/main.ts`、`src/config/visual.json`(+schema/visual.ts,若渲染需要新参数)。**其余配置侧(数据+schema)本批已由 Claude 落定**(playerDerivation/R1 presence/相邻阈值/R3 lootCompensation/R2 override/targetingStrategyId),Codex 不得再改。 |
+| 禁止事项 | 禁止把怪物 HP/攻击/速度写死到类里；禁止改 `src/game/formulas/**` 与 visual 之外的 `src/config/**`。 |
 | 必须包含 | 8 类怪模板可配置；10 张符模板可配置；目标选择“离阵眼最近优先”，且实现为**可配置策略接口**(策略 id 进符配置,默认 nearest_to_core,裁定 R6)。数值校准须以**每局 2-3 开放格**为输出容量输入(产品拍板 2026-07-02,格位稀缺化)，并落地裁定 **R1 相生两档制**(同场弱/相邻强,系数入 balance+KNOBS 过五曲线)、**R2 双入口模板最少开 3 格**(模板级 openSlotCountRange override)、**R3 2 格局战利品补偿**(倍率过 sim)。详见 `docs/DESIGN_RULINGS.md`。 |
 | 验收命令 | `npm run quality:gate:capture`。 |
 | 通过标准 | 录屏或截图证明怪物推进、符攻击、阵眼扣血；quality gate PASS。 |

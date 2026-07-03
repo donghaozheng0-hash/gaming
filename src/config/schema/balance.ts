@@ -10,6 +10,7 @@ import {
   assertString,
   elementIds,
   type ElementId,
+  fail,
   requireField,
 } from "./common";
 
@@ -24,10 +25,15 @@ export interface BalanceConfig {
     hpWeight: number;
     defWeight: number;
   };
+  playerDerivation: {
+    basePowerFrac: number;
+    statRatio: { atk: number; hp: number; def: number };
+  };
   damageFormula: {
     qualityMultipliers: Record<string, number>;
     xiangshengMultipliers: {
       generated: number;
+      presence: number;
       neutral: number;
       mismatched: number;
     };
@@ -56,6 +62,7 @@ export interface BalanceConfig {
   battle: {
     simulationFps: number;
     pathLengthUnits: number;
+    xiangshengAdjacencyMaxCanvasUnits: number;
     preparationSeconds: number;
     normalLevelDurationSeconds: { min: number; max: number };
     bossLevelDurationSeconds: { min: number; max: number };
@@ -105,6 +112,7 @@ export function validateBalanceConfig(value: unknown): BalanceConfig {
   assertExactKeys(obj, "balance", [
     "elements",
     "powerFormula",
+    "playerDerivation",
     "damageFormula",
     "defense",
     "battle",
@@ -114,6 +122,7 @@ export function validateBalanceConfig(value: unknown): BalanceConfig {
   return {
     elements: validateElements(requireField(obj, "elements", "balance")),
     powerFormula: validatePowerFormula(requireField(obj, "powerFormula", "balance")),
+    playerDerivation: validatePlayerDerivation(requireField(obj, "playerDerivation", "balance")),
     damageFormula: validateDamageFormula(requireField(obj, "damageFormula", "balance")),
     defense: validateDefense(requireField(obj, "defense", "balance")),
     battle: validateBattle(requireField(obj, "battle", "balance")),
@@ -155,6 +164,31 @@ function validatePowerFormula(value: unknown): BalanceConfig["powerFormula"] {
   };
 }
 
+function validatePlayerDerivation(value: unknown): BalanceConfig["playerDerivation"] {
+  const obj = assertPlainObject(value, "balance.playerDerivation");
+  assertExactKeys(obj, "balance.playerDerivation", ["basePowerFrac", "statRatio"]);
+
+  const basePowerFrac = assertNumber(requireField(obj, "basePowerFrac", "balance.playerDerivation"), "balance.playerDerivation.basePowerFrac");
+  if (basePowerFrac <= 0 || basePowerFrac >= 1) {
+    fail("balance.playerDerivation.basePowerFrac", `必须在 (0,1) 开区间内,得到 ${basePowerFrac}`);
+  }
+
+  const ratioObj = assertPlainObject(requireField(obj, "statRatio", "balance.playerDerivation"), "balance.playerDerivation.statRatio");
+  assertExactKeys(ratioObj, "balance.playerDerivation.statRatio", ["atk", "hp", "def"]);
+  const statRatio = {
+    atk: assertNumber(requireField(ratioObj, "atk", "balance.playerDerivation.statRatio"), "balance.playerDerivation.statRatio.atk"),
+    hp: assertNumber(requireField(ratioObj, "hp", "balance.playerDerivation.statRatio"), "balance.playerDerivation.statRatio.hp"),
+    def: assertNumber(requireField(ratioObj, "def", "balance.playerDerivation.statRatio"), "balance.playerDerivation.statRatio.def"),
+  };
+  for (const [key, ratio] of Object.entries(statRatio)) {
+    if (ratio <= 0) {
+      fail(`balance.playerDerivation.statRatio.${key}`, `三围比必须为正数,得到 ${ratio}`);
+    }
+  }
+
+  return { basePowerFrac, statRatio };
+}
+
 function validateDamageFormula(value: unknown): BalanceConfig["damageFormula"] {
   const obj = assertPlainObject(value, "balance.damageFormula");
   assertExactKeys(obj, "balance.damageFormula", [
@@ -175,6 +209,7 @@ function validateDamageFormula(value: unknown): BalanceConfig["damageFormula"] {
   );
   assertExactKeys(xiangsheng, "balance.damageFormula.xiangshengMultipliers", [
     "generated",
+    "presence",
     "neutral",
     "mismatched",
   ]);
@@ -202,10 +237,20 @@ function validateDamageFormula(value: unknown): BalanceConfig["damageFormula"] {
     "fullBonus",
   ]);
 
+  const xiangshengGenerated = assertNumber(xiangsheng.generated, "balance.damageFormula.xiangshengMultipliers.generated");
+  const xiangshengPresence = assertNumber(xiangsheng.presence, "balance.damageFormula.xiangshengMultipliers.presence");
+  if (xiangshengPresence < 1 || xiangshengPresence > xiangshengGenerated) {
+    fail(
+      "balance.damageFormula.xiangshengMultipliers.presence",
+      `两档相生必须有序(1 ≤ 同场弱档 ≤ 相邻强档),得到 presence=${xiangshengPresence}, generated=${xiangshengGenerated}`,
+    );
+  }
+
   return {
     qualityMultipliers,
     xiangshengMultipliers: {
-      generated: assertNumber(xiangsheng.generated, "balance.damageFormula.xiangshengMultipliers.generated"),
+      generated: xiangshengGenerated,
+      presence: xiangshengPresence,
       neutral: assertNumber(xiangsheng.neutral, "balance.damageFormula.xiangshengMultipliers.neutral"),
       mismatched: assertNumber(xiangsheng.mismatched, "balance.damageFormula.xiangshengMultipliers.mismatched"),
     },
@@ -251,6 +296,7 @@ function validateBattle(value: unknown): BalanceConfig["battle"] {
   assertExactKeys(obj, "balance.battle", [
     "simulationFps",
     "pathLengthUnits",
+    "xiangshengAdjacencyMaxCanvasUnits",
     "preparationSeconds",
     "normalLevelDurationSeconds",
     "bossLevelDurationSeconds",
@@ -266,9 +312,15 @@ function validateBattle(value: unknown): BalanceConfig["battle"] {
     "reviveRules",
   ]);
 
+  const adjacencyMax = assertNumber(obj.xiangshengAdjacencyMaxCanvasUnits, "balance.battle.xiangshengAdjacencyMaxCanvasUnits");
+  if (adjacencyMax <= 0) {
+    fail("balance.battle.xiangshengAdjacencyMaxCanvasUnits", `相邻判定距离必须为正数,得到 ${adjacencyMax}`);
+  }
+
   return {
     simulationFps: assertNumber(obj.simulationFps, "balance.battle.simulationFps"),
     pathLengthUnits: assertNumber(obj.pathLengthUnits, "balance.battle.pathLengthUnits"),
+    xiangshengAdjacencyMaxCanvasUnits: adjacencyMax,
     preparationSeconds: assertNumber(obj.preparationSeconds, "balance.battle.preparationSeconds"),
     normalLevelDurationSeconds: validateMinMax(obj.normalLevelDurationSeconds, "balance.battle.normalLevelDurationSeconds"),
     bossLevelDurationSeconds: validateMinMax(obj.bossLevelDurationSeconds, "balance.battle.bossLevelDurationSeconds"),

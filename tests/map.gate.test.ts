@@ -214,6 +214,11 @@ describe("T4 · 随机参数读 config 而非硬编码", () => {
     const base = await loadConfig();
     const patched = structuredClone(base);
     patched.maps.randomization.openSlotCountRange = { min: 1, max: 1 };
+    // R2 裁定引入模板级 override 后,"全局注入"断言需在无 override 的地图上验证:
+    // 删除全部模板 override,保证本用例测的仍是"数量读全局配置"这一件事。
+    for (const pool of patched.maps.mapPools) {
+      for (const template of pool.pathTemplates) delete template.openSlotCountRange;
+    }
     const m = await gen(patched, 5);
     expect(m.openSlots.length).toBe(1);
   });
@@ -224,5 +229,43 @@ describe("T4 · 随机参数读 config 而非硬编码", () => {
     patched.maps.randomization.elementPool = ["fire"];
     const m = await gen(patched, 9);
     for (const slot of m.openSlots) expect(slot.element).toBe("fire");
+  });
+});
+
+describe("T6/R2 · 模板级开格数 override(裁定 R2:双入口汇流最少开 3 格)", () => {
+  it.skipIf(!ready)("扫 seed 1..120:dual_entry_merge 开格数恒 ≥3(读模板 openSlotCountRange override)", async () => {
+    const config = await loadConfig();
+    let dualSeen = 0;
+    for (let seed = 1; seed <= 120; seed++) {
+      const m = await gen(config, seed);
+      if (m.templateId !== "dual_entry_merge") continue;
+      dualSeen++;
+      expect(m.openSlots.length).toBeGreaterThanOrEqual(3);
+    }
+    expect(dualSeen).toBeGreaterThan(0); // 样本必须覆盖到 dual 模板
+  });
+
+  it.skipIf(!ready)("override 是通用机制:注入任一模板 {min:1,max:1} → 该模板恒开 1 格,其余模板仍走全局范围", async () => {
+    const base = await loadConfig();
+    const patched = structuredClone(base);
+    for (const template of patched.maps.mapPools[0].pathTemplates) {
+      if (template.id === "straight_pressure") template.openSlotCountRange = { min: 1, max: 1 };
+    }
+    let straightSeen = 0;
+    let zigzagSeen = 0;
+    for (let seed = 1; seed <= 120; seed++) {
+      const m = await gen(patched, seed);
+      if (m.templateId === "straight_pressure") {
+        straightSeen++;
+        expect(m.openSlots.length).toBe(1);
+      } else if (m.templateId === "zigzag_path") {
+        zigzagSeen++;
+        const range = patched.maps.randomization.openSlotCountRange;
+        expect(m.openSlots.length).toBeGreaterThanOrEqual(range.min);
+        expect(m.openSlots.length).toBeLessThanOrEqual(range.max);
+      }
+    }
+    expect(straightSeen).toBeGreaterThan(0);
+    expect(zigzagSeen).toBeGreaterThan(0);
   });
 });
