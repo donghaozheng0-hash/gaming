@@ -2,7 +2,20 @@ export interface BattleEventMap {
   "battle.prepStarted": { levelId: string };
   "wave.started": { index: number };
   "wave.ended": { index: number };
-  "battle.settled": { victory: boolean; wavesCleared: number; totalSteps: number };
+  "monster.spawned": { entityId: number; monsterId: string; waveIndex: number; routeIndex: number };
+  "monster.died": { entityId: number; monsterId: string };
+  "monster.leaked": { entityId: number; monsterId: string };
+  "core.damaged": { amount: number; remainingHp: number };
+  "rune.fired": { slotIndex: number; runeId: string; targetEntityId: number; damage: number };
+  "battle.settled": {
+    victory: boolean;
+    wavesCleared: number;
+    totalSteps: number;
+    coreHp?: number;
+    kills?: number;
+    leaks?: number;
+    lootMultiplier?: number;
+  };
 }
 
 type EventHandler<K extends keyof BattleEventMap> = (payload: BattleEventMap[K]) => void;

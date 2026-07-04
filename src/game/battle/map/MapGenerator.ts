@@ -40,7 +40,8 @@ export function generateMap(opts: { config: GameConfig; seed: number; poolId?: s
 
   const rng = createRng(seed);
   const template = choose(pool.pathTemplates, rng, `maps.mapPools.${pool.id}.pathTemplates`);
-  const openSlotCount = chooseOpenSlotCount(config.maps.randomization.openSlotCountRange, rng);
+  const openSlotCountRange = template.openSlotCountRange ?? config.maps.randomization.openSlotCountRange;
+  const openSlotCount = chooseOpenSlotCount(openSlotCountRange, rng);
   const selectedSlots = selectOpenSlots(template, openSlotCount, rng);
   const openSlots = assignElements(selectedSlots, config.maps.randomization.elementPool, rng);
 

@@ -197,6 +197,14 @@ const dataOf = (name) => {
             `maps.${template.id}.openSlotCountRange`, "override 必须满足 1 ≤ min ≤ max(整数)");
           t6((template.candidateSlots ?? []).length >= override.max + 2,
             `maps.${template.id}.candidateSlots`, "候选格必须 ≥ override.max + 2");
+          // override 范围内的每个可能格数也必须被 R3 补偿表覆盖(否则运行时静默回退 ×1)。
+          const comp = infinite?.lootCompensation?.byOpenSlotCount;
+          if (comp) {
+            for (let n = override.min; n <= override.max; n++) {
+              t6(typeof comp[String(n)] === "number", `infinite.lootCompensation.byOpenSlotCount.${n}`,
+                `模板 ${template.id} 的 override 范围内每个格数都必须有补偿键(缺 ${n})`);
+            }
+          }
         }
         // 裁定 R2 独立重算:多路线模板双路分兵,开格下限必须 ≥3(经 override 显式声明)。
         if ((template.routeCount ?? 1) > 1) {

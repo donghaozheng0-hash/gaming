@@ -64,11 +64,20 @@ function validateMonsterTemplate(value: unknown, path: string): MonsterTemplate 
     hpCoefficientR: assertNumber(obj.hpCoefficientR, `${path}.hpCoefficientR`),
     shieldCoefficientR: assertNumber(obj.shieldCoefficientR, `${path}.shieldCoefficientR`),
     attackCoefficientR: assertNumber(obj.attackCoefficientR, `${path}.attackCoefficientR`),
-    speedUnitsPerSecond: assertNumber(obj.speedUnitsPerSecond, `${path}.speedUnitsPerSecond`),
+    speedUnitsPerSecond: assertPositiveNumber(obj.speedUnitsPerSecond, `${path}.speedUnitsPerSecond`),
     leakThreat: assertString(obj.leakThreat, `${path}.leakThreat`),
     recommendedCounter: assertString(obj.recommendedCounter, `${path}.recommendedCounter`),
     onDeath: obj.onDeath === null ? null : validateOnDeath(obj.onDeath, `${path}.onDeath`),
   };
+}
+
+function assertPositiveNumber(value: unknown, path: string): number {
+  const number = assertNumber(value, path);
+  if (number <= 0) {
+    throw new Error(`[config] ${path}: must be > 0`);
+  }
+
+  return number;
 }
 
 function validateOnDeath(value: unknown, path: string): NonNullable<MonsterTemplate["onDeath"]> {

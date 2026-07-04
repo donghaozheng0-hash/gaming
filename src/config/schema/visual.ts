@@ -31,6 +31,19 @@ export interface VisualSceneConfig {
   slotRadiusCanvasUnits: number;
   coreRadiusCanvasUnits: number;
   paperMarginCanvasUnits: number;
+  combat: {
+    monsterRadiusCanvasUnits: number;
+    monsterLiftCanvasUnits: number;
+    runeMarkerRadiusCanvasUnits: number;
+    runeMarkerHeightCanvasUnits: number;
+    fireLineWidthCanvasUnits: number;
+    fireLineLiftCanvasUnits: number;
+    fireLineLifetimeSeconds: number;
+    coreHpBarWidthCanvasUnits: number;
+    coreHpBarHeightCanvasUnits: number;
+    coreHpBarLiftCanvasUnits: number;
+    coreHpBarThicknessCanvasUnits: number;
+  };
 }
 
 export interface PaletteEntry {
@@ -65,6 +78,7 @@ function validateSceneConfig(value: unknown): VisualSceneConfig {
     "slotRadiusCanvasUnits",
     "coreRadiusCanvasUnits",
     "paperMarginCanvasUnits",
+    "combat",
   ]);
 
   return {
@@ -77,6 +91,71 @@ function validateSceneConfig(value: unknown): VisualSceneConfig {
     slotRadiusCanvasUnits: assertPositiveNumber(obj.slotRadiusCanvasUnits, "visual.scene.slotRadiusCanvasUnits"),
     coreRadiusCanvasUnits: assertPositiveNumber(obj.coreRadiusCanvasUnits, "visual.scene.coreRadiusCanvasUnits"),
     paperMarginCanvasUnits: assertPositiveNumber(obj.paperMarginCanvasUnits, "visual.scene.paperMarginCanvasUnits"),
+    combat: validateCombatSceneConfig(requireField(obj, "combat", "visual.scene")),
+  };
+}
+
+function validateCombatSceneConfig(value: unknown): VisualSceneConfig["combat"] {
+  const obj = assertPlainObject(value, "visual.scene.combat");
+  assertExactKeys(obj, "visual.scene.combat", [
+    "monsterRadiusCanvasUnits",
+    "monsterLiftCanvasUnits",
+    "runeMarkerRadiusCanvasUnits",
+    "runeMarkerHeightCanvasUnits",
+    "fireLineWidthCanvasUnits",
+    "fireLineLiftCanvasUnits",
+    "fireLineLifetimeSeconds",
+    "coreHpBarWidthCanvasUnits",
+    "coreHpBarHeightCanvasUnits",
+    "coreHpBarLiftCanvasUnits",
+    "coreHpBarThicknessCanvasUnits",
+  ]);
+
+  return {
+    monsterRadiusCanvasUnits: assertPositiveNumber(
+      obj.monsterRadiusCanvasUnits,
+      "visual.scene.combat.monsterRadiusCanvasUnits",
+    ),
+    monsterLiftCanvasUnits: assertPositiveNumber(
+      obj.monsterLiftCanvasUnits,
+      "visual.scene.combat.monsterLiftCanvasUnits",
+    ),
+    runeMarkerRadiusCanvasUnits: assertPositiveNumber(
+      obj.runeMarkerRadiusCanvasUnits,
+      "visual.scene.combat.runeMarkerRadiusCanvasUnits",
+    ),
+    runeMarkerHeightCanvasUnits: assertPositiveNumber(
+      obj.runeMarkerHeightCanvasUnits,
+      "visual.scene.combat.runeMarkerHeightCanvasUnits",
+    ),
+    fireLineWidthCanvasUnits: assertPositiveNumber(
+      obj.fireLineWidthCanvasUnits,
+      "visual.scene.combat.fireLineWidthCanvasUnits",
+    ),
+    fireLineLiftCanvasUnits: assertPositiveNumber(
+      obj.fireLineLiftCanvasUnits,
+      "visual.scene.combat.fireLineLiftCanvasUnits",
+    ),
+    fireLineLifetimeSeconds: assertPositiveNumber(
+      obj.fireLineLifetimeSeconds,
+      "visual.scene.combat.fireLineLifetimeSeconds",
+    ),
+    coreHpBarWidthCanvasUnits: assertPositiveNumber(
+      obj.coreHpBarWidthCanvasUnits,
+      "visual.scene.combat.coreHpBarWidthCanvasUnits",
+    ),
+    coreHpBarHeightCanvasUnits: assertPositiveNumber(
+      obj.coreHpBarHeightCanvasUnits,
+      "visual.scene.combat.coreHpBarHeightCanvasUnits",
+    ),
+    coreHpBarLiftCanvasUnits: assertPositiveNumber(
+      obj.coreHpBarLiftCanvasUnits,
+      "visual.scene.combat.coreHpBarLiftCanvasUnits",
+    ),
+    coreHpBarThicknessCanvasUnits: assertPositiveNumber(
+      obj.coreHpBarThicknessCanvasUnits,
+      "visual.scene.combat.coreHpBarThicknessCanvasUnits",
+    ),
   };
 }
 

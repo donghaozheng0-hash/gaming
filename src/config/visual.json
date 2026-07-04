@@ -93,7 +93,20 @@
     "routeWidthCanvasUnits": 28,
     "slotRadiusCanvasUnits": 42,
     "coreRadiusCanvasUnits": 56,
-    "paperMarginCanvasUnits": 80
+    "paperMarginCanvasUnits": 80,
+    "combat": {
+      "monsterRadiusCanvasUnits": 18,
+      "monsterLiftCanvasUnits": 38,
+      "runeMarkerRadiusCanvasUnits": 20,
+      "runeMarkerHeightCanvasUnits": 16,
+      "fireLineWidthCanvasUnits": 7,
+      "fireLineLiftCanvasUnits": 52,
+      "fireLineLifetimeSeconds": 0.18,
+      "coreHpBarWidthCanvasUnits": 180,
+      "coreHpBarHeightCanvasUnits": 18,
+      "coreHpBarLiftCanvasUnits": 110,
+      "coreHpBarThicknessCanvasUnits": 6
+    }
   },
   "effectKeys": {
     "commonCast": "符箓：出手时浮现符箓纹样，亮起后笔画化为攻击。",

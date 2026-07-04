@@ -15,12 +15,24 @@ import {
   Vector3,
 } from "../app/babylon";
 import type { GameConfig } from "../config";
+import type { CombatLoadoutEntry, CombatSimulation } from "../game/battle/combat/CombatSimulation";
 import type { GeneratedMap, Vec2 } from "../game/battle/map/MapGenerator";
+import type { EventBus } from "../game/events/EventBus";
+import { addCombatLayer } from "./combatLayer";
 import { canvasToWorld } from "./mapping";
 
 type SceneConfig = GameConfig["visual"]["scene"];
 
-export function createBattleScene(engine: Engine, deps: { config: GameConfig; map: GeneratedMap }): Scene {
+export function createBattleScene(
+  engine: Engine,
+  deps: {
+    config: GameConfig;
+    map: GeneratedMap;
+    simulation?: CombatSimulation;
+    bus?: EventBus;
+    loadout?: readonly CombatLoadoutEntry[];
+  },
+): Scene {
   const { config, map } = deps;
   const scene = new Scene(engine);
   const visualScene = config.visual.scene;
@@ -39,6 +51,15 @@ export function createBattleScene(engine: Engine, deps: { config: GameConfig; ma
   addRoutes(scene, inkMaterial, map, config);
   addCore(scene, inkMaterial, map, config);
   addOpenSlots(scene, inkMaterial, map, config);
+  if (deps.simulation !== undefined && deps.bus !== undefined && deps.loadout !== undefined) {
+    addCombatLayer(scene, {
+      config,
+      map,
+      simulation: deps.simulation,
+      bus: deps.bus,
+      loadout: deps.loadout,
+    });
+  }
   addCamera(scene, visualScene);
   new HemisphericLight("light", new Vector3(0, 1, 0), scene);
 
