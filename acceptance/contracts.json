@@ -264,6 +264,39 @@
         "把无限模式状态机/控制器逻辑写进配置层",
         "as any / @ts-ignore 硬压类型"
       ]
+    },
+    "T6.1": {
+      "title": "dev 调参台:?debug=1 面板 · 曲线红绿 · 旋钮覆写 · 真实回放校准(债#3/#6)",
+      "requires": [
+        "isolation",
+        "config tables",
+        "typescript",
+        "test",
+        "build"
+      ],
+      "evidence": [
+        "tests/debug.gate.test.ts 8 用例由全 skip 转全 PASS(未修改该文件)",
+        "既有 53 用例零回退(combat/map/render/battle.controller/golden/config 全绿)",
+        "Claude 手动截图 ?debug=1&seed=1:面板可见曲线红绿/旋钮区/回放对照表/纪律横幅;不带 debug 参数画面与 T6 一致(人眼复核)"
+      ],
+      "definitionOfDone": [
+        "src/debug/gate.ts:shouldLoadDebugPanel(search,isDev) 纯函数,语义=仅 dev 且 debug===\"1\";main.ts 用它守门动态 import(\"./debug/panel\"),生产构建与正常游玩零加载",
+        "src/debug/panelModel.ts:computePanelModel(tables,overrides?) 按尺子头注契约——K=deriveKnobs 后浅覆写数值键,未知键 throw,不改传入 tables;lines/sections/failures/ok 全部来自 scripts/balance-core.mjs 的 runBalanceModel(经 scripts/balance-core.d.mts 类型声明 import,严禁在 src 侧复制公式)",
+        "src/game/battle/combat/defaultLoadout.ts:buildDefaultLoadout(config,map) 从 main.ts 抽出,main 与 replay 共用(仓库内不得存在第二份等价实现)",
+        "src/debug/replay.ts:replayBattle 按尺子头注契约——内部装配真实 generateMap/CombatSimulation/BattleController(全注入),统计只来自 EventBus 订阅,归属规则=出生波(shotsFired 按目标怪出生波),跑至 settle",
+        "src/debug/panel.ts:DOM 薄壳(逻辑归 panelModel/replay)——sections 红绿列表+lines 等宽文本区+数值旋钮编辑(改后即时重算)+[回放本局] 按钮出分波表格并与 capacity 解析行对照(债#6)+常驻横幅\"仅试运行·不落地;落地须 balance-sim 全绿后由 Claude 落配置\"",
+        "面板 UI 文案中文;样式内联或同目录 css,不改 visual.json(面板是 dev 工具,不受水墨视觉纪律约束,但不得遮死画布:默认停靠右侧可折叠)",
+        "?debug=1&seed=N 时面板 replay 用同一 seed(与画布对局同源);URL 无 debug 时 src/debug/** 一个字节不执行"
+      ],
+      "forbidden": [
+        "修改任一 Claude 尺子:tests/*.gate.test.ts、tests/golden.formulas.test.ts、scripts/**(含 balance-core.mjs/.d.mts)、acceptance/**、docs/**、package.json/tsconfig.json",
+        "修改 src/config/**(本批零配置改动;认为缺配置就停下回报)",
+        "修改 src/game/formulas/**;修改 CombatSimulation/BattleController/EventBus/MapGenerator 既有行为(defaultLoadout 抽取属 main.ts 重构,combat 目录仅允许新增 defaultLoadout.ts 与 main.ts 同步删除内联实现)",
+        "在 src/debug/** 复制 balance-core 的任何公式/健康带常数(单一真相源:只准 import)",
+        "Math.random/Date.now/performance.now 进 panelModel/replay/defaultLoadout(面板 DOM 壳的动画/防抖也不需要它们)",
+        "as any/@ts-ignore 硬压类型;引入新依赖(零新增 npm 包,面板用原生 DOM)",
+        "src/game/** 内 import src/debug 或 src/render(依赖方向:debug→game 单向)"
+      ]
     }
   }
 }

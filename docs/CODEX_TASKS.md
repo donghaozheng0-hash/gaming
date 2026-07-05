@@ -76,6 +76,17 @@
 | 验收命令 | `npm run quality:gate:capture`。 |
 | 通过标准 | 录屏或截图证明怪物推进、符攻击、阵眼扣血；quality gate PASS。 |
 
+## Task 6.1：dev 调参台(?debug=1)——试运行工具,非正式 UI
+
+| 项 | 内容 |
+|---|---|
+| 目标 | 浏览器内实时调参:曲线红绿(import `scripts/balance-core.mjs` 单一真相源)、旋钮覆写重算、真实战斗回放与容量曲线对照(还债 #3,校准债 #6)。**dev 专用(`?debug=1`+dev 构建),玩家不可见,不属于 T7 正式 UI。** |
+| 允许修改 | `src/debug/**`(新建)、`src/main.ts`(守门动态 import + defaultLoadout 抽出)、`src/game/battle/combat/defaultLoadout.ts`(新增,从 main 抽出共享)。 |
+| 禁止事项 | 禁改 `src/config/**`(本批零配置)、`src/game/formulas/**`、combat/controller/bus/map 既有行为;禁止在 src 侧复制 balance-core 公式;禁新增 npm 依赖;调参结果不落地(落地=balance-sim 全绿后 Claude 落配置)。 |
+| 必须包含 | `shouldLoadDebugPanel` 纯函数守门;`computePanelModel(tables,overrides)`(未知键 throw/不改 tables);`replayBattle`(真实 CombatSimulation 全注入,统计按出生波归属);面板=红绿列表+旋钮编辑+回放对照表+"不落地"纪律横幅。接口契约钉死在 `tests/debug.gate.test.ts` 头注。 |
+| 验收命令 | `npm run quality:gate -- --task T6.1`(面板视觉由 Claude 手动 `?debug=1` 截图人眼复核)。 |
+| 通过标准 | debug.gate 8 用例 skip→PASS;既有 53 用例零回退;无 debug 参数时行为与 T6 完全一致。 |
+
 ## Task 7：灵机点、画符与融合的首版交互
 
 | 项 | 内容 |
