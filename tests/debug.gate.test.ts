@@ -4,8 +4,9 @@
  * ── 接口契约(施工按此实现,断言钉死) ─────────────────────────────────
  * 1) src/debug/gate.ts
  *      export function shouldLoadDebugPanel(search: string, isDev: boolean): boolean
- *    语义:仅当 isDev && URLSearchParams(search).get("debug")==="1" 时 true。
- *    main.ts 只在其为 true 时动态 import("./debug/panel");生产构建/正常游玩零加载。
+ *    语义(2026-07-05 产品拍板:试运行期实时调参):dev 构建【默认加载】,
+ *    仅 URLSearchParams(search).get("debug")==="0" 时显式关闭;!isDev 恒 false。
+ *    main.ts 只在其为 true 时动态 import("./debug/panel");生产构建永远零加载。
  *
  * 2) src/debug/panelModel.ts —— 面板纯逻辑核(零 DOM,零 Babylon)
  *      export type KnobOverrides = Partial<Record<NumericKnobKey, number>>
@@ -91,15 +92,16 @@ async function loadTables(): Promise<any> {
   };
 }
 
-describe("T6.1 · gate:调试面板只在 dev+?debug=1 加载", () => {
-  it.skipIf(!ready)("四象限语义:dev+debug=1 才 true,其余全 false", async () => {
+describe("T6.1 · gate:dev 默认加载调试面板,?debug=0 显式关闭", () => {
+  it.skipIf(!ready)("语义:dev 默认 true;debug=0 关闭;生产恒 false", async () => {
     const { shouldLoadDebugPanel } = await load(gatePath);
+    expect(shouldLoadDebugPanel("", true)).toBe(true); // 试运行期:启动即自动调出(产品拍板 2026-07-05)
+    expect(shouldLoadDebugPanel("?seed=7", true)).toBe(true);
     expect(shouldLoadDebugPanel("?debug=1", true)).toBe(true);
-    expect(shouldLoadDebugPanel("?seed=7&debug=1", true)).toBe(true);
-    expect(shouldLoadDebugPanel("?debug=1", false)).toBe(false); // 生产构建永不加载
-    expect(shouldLoadDebugPanel("", true)).toBe(false);
-    expect(shouldLoadDebugPanel("?debug=0", true)).toBe(false);
-    expect(shouldLoadDebugPanel("?debug=true", true)).toBe(false); // 只认 "1"
+    expect(shouldLoadDebugPanel("?debug=0", true)).toBe(false); // 唯一显式关闭口(截图门禁用)
+    expect(shouldLoadDebugPanel("?seed=7&debug=0", true)).toBe(false);
+    expect(shouldLoadDebugPanel("", false)).toBe(false); // 生产构建永不加载
+    expect(shouldLoadDebugPanel("?debug=1", false)).toBe(false);
   });
 });
 

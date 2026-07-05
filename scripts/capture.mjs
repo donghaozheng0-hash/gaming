@@ -5,7 +5,8 @@ import { spawnSync } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 import { chromium } from "playwright-core";
 
-const DEFAULT_URL = process.env.GODOGEN_CAPTURE_URL ?? "http://127.0.0.1:5173";
+// debug=0:截图门禁只拍游戏画面本体(dev 下调参台默认自动加载,入镜会污染视觉证据)。
+const DEFAULT_URL = process.env.GODOGEN_CAPTURE_URL ?? "http://127.0.0.1:5173/?debug=0";
 const DEFAULT_WIDTH = Number.parseInt(process.env.GODOGEN_CAPTURE_WIDTH ?? "1280", 10);
 const DEFAULT_HEIGHT = Number.parseInt(process.env.GODOGEN_CAPTURE_HEIGHT ?? "720", 10);
 const DEFAULT_FPS = Number.parseInt(process.env.GODOGEN_CAPTURE_FPS ?? "30", 10);
