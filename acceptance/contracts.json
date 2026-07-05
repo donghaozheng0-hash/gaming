@@ -198,25 +198,36 @@
       ]
     },
     "T7": {
-      "title": "灵机点 / 画符 / 融合 首版交互",
+      "title": "局内成长与画符/融合交互:灵机 2/4/6 · 画符评分 · 雷冰毒融合 · R4 情报 · R5 埋点 · 债#5",
       "requires": [
         "isolation",
+        "config tables",
         "typescript",
         "test",
         "build",
         "capture still"
       ],
       "evidence": [
-        "录像证明：不画符也能跑完一局 + 画符成功有水墨正反馈 + 融合效果可见"
+        "tests/interaction.gate.test.ts 16 用例由全 skip 转全 PASS(未修改该文件)",
+        "既有 64 用例零回退(合计 80);battle.controller.gate 8 用例不回退(无 sim 注入路径行为不变)",
+        "浏览器人眼复核:PREP 情报条(R4)/灵机菜单二选一/画符轨迹与评分反馈/融合面板;雾山五行基调(T7.0 拍板)不跑偏,Claude 截图确认"
       ],
       "definitionOfDone": [
-        "第 2/4/6 波各 1 个灵机点(升级符 +15% 或触发融合)",
-        "画符评分 50/80/95 阈值，成功 +20%，失败零惩罚(底层逻辑一)",
-        "雷/冰/毒融合效果来自配置；headless 验证不操作可通关"
+        "src/game/battle/draw/{scoring,recognition}.ts + src/game/battle/run/RunProgression.ts + src/game/battle/intel.ts:严格按 tests/interaction.gate.test.ts 头注契约(签名/语义/事件/rng 消耗顺序逐字执行)",
+        "CombatSimulation 扩 applyRuneUpgrade/applyFusion/submitDraw 三公开方法:升级复利进 runeDamage 的 base;融合=元素置换+克制表(对 advantage.target ×1.6/对 disadvantage.source ×0.7/其余 ×1.0,xiangsheng 冻结);画符=下一发 drawBonus 只吃一发+双冷却(步数=秒×simulationFps);既有行为(T6 15 用例)零回退",
+        "EventBus 扩 6 事件(lingji.granted/lingji.spent/essence.dropped/rune.upgraded/rune.fused/draw.scored)=R5 埋点数据源;battle.settled 增 wavesDispatched,wavesCleared 改完全清场口径(债#5)",
+        "UI 层(src/ui/ 或 src/render/):①PREP 期 R4 情报条(summarizeWaveElements 渲染:五行图标+潜在数+Boss 波朱砂旗,战斗开始收起) ②灵机点 HUD+菜单(升级选符/融合选配方,二选一,预检不满足置灰而非 throw 弹错) ③画符层(按住拖拽记录轨迹→scoreStroke→sim.submitDraw,三档水墨反馈按 T7.0 draw 板块样式,冷却可视) ④融合成功的符位标记合成元素色;视觉参数全进 visual.json(+schema),颜色纪律零硬编码",
+        "游戏可玩闭环:不画符也能整局跑完(2.7 基础档零惩罚);灵机点不用不阻塞;所有交互在 ?debug=0 纯游戏画面可用",
+        "main.ts 装配 RunProgression 与 UI 层;调参台/草图板不回归",
+        "全部数值经注入 config(runes.effects 本批只作数据展示与融合校验,特效引擎=T7b,不要实现 AOE/减速/DoT)"
       ],
       "forbidden": [
-        "强制画符",
-        "画符失败惩罚玩家"
+        "修改任一 Claude 尺子:tests/*.gate.test.ts、tests/golden.formulas.test.ts、scripts/**、acceptance/**、docs/**、package.json/tsconfig.json",
+        "修改 src/config/**(visual.json+schema/visual.ts 除外):runes.effects/drawTemplate/fusion/drawBonus/灵机配置已由 Claude 全部落定,认为有误停下回报",
+        "修改 src/game/formulas/**;删改 CombatSimulation/BattleController 既有公开行为(只允许契约点新增)",
+        "Math.random/Date.now/performance.now 进 src/game/**(轨迹采样时间戳用事件序号/步数,不用真时钟)",
+        "as any/@ts-ignore;新增 npm 依赖",
+        "实现 runes.effects 的战斗特效(aoe/slow/dot/pierce/multihit 等)——那是 T7b 的契约,本批实现=越权"
       ]
     },
     "T8": {

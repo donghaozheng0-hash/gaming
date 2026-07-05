@@ -217,6 +217,86 @@ const dataOf = (name) => {
   }
 }
 
+// —— T7 局内成长与画符/融合数据侧(独立重算,不信任业务加载器)——
+// 覆盖:画符评分三档有序 / 灵机发放与上限自洽 / 融合配方=五行且与消耗一致 / 克制系数方向 /
+// runes.effects 与 trait 文案抽查锚 / bonus_vs_tag 引用真实怪 tag / 首测三元素开放。
+{
+  const balance = dataOf("balance");
+  const fusion = dataOf("fusion");
+  const runes = dataOf("runes");
+  const monsters = dataOf("monsters");
+  const FIVE = ["metal", "wood", "water", "fire", "earth"];
+
+  if (balance) {
+    const draw = balance.damageFormula?.drawBonus;
+    t6(!!draw, "balance.damageFormula.drawBonus", "缺失(画符 2.7 三档)");
+    if (draw) {
+      t6(draw.partialMinScore < draw.fullScore && draw.fullScore < draw.perfectScore,
+        "balance.damageFormula.drawBonus", `三档必须有序 partial(${draw.partialMinScore}) < full(${draw.fullScore}) < perfect(${draw.perfectScore})`);
+      t6(typeof draw.fullBonus === "number" && draw.fullBonus > 0 && draw.fullBonus <= 0.5,
+        "balance.damageFormula.drawBonus.fullBonus", "满额加成必须∈(0,0.5](设计=0.2)");
+    }
+    const battle = balance.battle;
+    if (battle) {
+      const waves = battle.lingjiGrantWaves ?? [];
+      t6(Array.isArray(waves) && waves.length === battle.maxLingjiPointsPerRun,
+        "balance.battle.lingjiGrantWaves", `发放波数量(${waves.length})必须=每局上限(${battle.maxLingjiPointsPerRun})`);
+      t6(waves.every((w) => Number.isInteger(w) && w >= 1 && w <= battle.wavesPerLevel),
+        "balance.battle.lingjiGrantWaves", `每个发放波必须∈[1,${battle.wavesPerLevel}]`);
+      const drop = battle.elementEssenceDrop;
+      t6(!!drop && (drop.guaranteedWaves ?? []).every((w) => w >= 1 && w <= battle.wavesPerLevel)
+        && drop.extraDropChance > 0 && drop.extraDropChance < 1,
+        "balance.battle.elementEssenceDrop", "保底波须在波次范围内且额外概率∈(0,1)");
+      t6(typeof battle.runeUpgradeAttackGrowthPerLevel === "number" && battle.runeUpgradeAttackGrowthPerLevel === 0.15,
+        "balance.battle.runeUpgradeAttackGrowthPerLevel", "灵机升级每级 +15%(设计 2.8 钉死)=0.15");
+    }
+  }
+
+  if (fusion) {
+    for (const recipe of fusion.recipes ?? []) {
+      const where = `fusion.recipes.${recipe.id}`;
+      const base = recipe.baseElements ?? [];
+      t6(base.length === 2 && base.every((e) => FIVE.includes(e)),
+        `${where}.baseElements`, "配方必须恰为两个五行元素");
+      const essenceKeys = Object.keys(recipe.cost?.essences ?? {}).sort();
+      t6(JSON.stringify(essenceKeys) === JSON.stringify([...base].sort()),
+        `${where}.cost.essences`, "消耗精族必须与配方元素一致(2.9)");
+      t6(recipe.cost?.lingjiPoints === 1, `${where}.cost.lingjiPoints`, "融合固定消耗 1 灵机点(6.5)");
+      t6(recipe.advantage?.multiplier > 1, `${where}.advantage.multiplier`, "克制系数必须 > 1");
+      t6(recipe.disadvantage?.multiplier < 1, `${where}.disadvantage.multiplier`, "被克系数必须 < 1");
+    }
+    const firstStage = (fusion.unlockSchedule ?? [])[0];
+    const firstIds = new Set(firstStage?.recipeIds ?? firstStage?.elements ?? []);
+    t6(["thunder", "ice", "poison"].every((id) => firstIds.has(id)),
+      "fusion.unlockSchedule[0]", "首测开放必须恰含雷/冰/毒(6.5 开放节奏)");
+  }
+
+  if (runes && monsters) {
+    const byId = new Map((runes.runes ?? []).map((r) => [r.id, r]));
+    const allTags = new Set((monsters.monsters ?? []).flatMap((m) => m.tags ?? []));
+    // trait 文案 ↔ effects 抽查锚(独立字面量,防数据化时抄错):
+    const spot = (id, pick, expect, label) => {
+      const rune = byId.get(id);
+      const effect = (rune?.effects ?? []).find(pick);
+      t6(!!effect && Object.entries(expect).every(([k, v]) => effect[k] === v),
+        `runes.${id}.effects`, `${label} 必须与 trait 文案一致(${JSON.stringify(expect)})`);
+    };
+    spot("qing_teng", (e) => e.kind === "slow", { slowPct: 45, durationSeconds: 2 }, "青藤减速");
+    spot("liao_yuan", (e) => e.kind === "aoe", { radiusUnits: 90, maxTargets: 5 }, "燎原范围");
+    spot("zhan_jin", (e) => e.kind === "shield_damage_multiplier", { multiplier: 1.6 }, "斩金破盾");
+    spot("bing_leng", (e) => e.kind === "pierce", { targetCount: 3 }, "冰棱穿透");
+    for (const rune of runes.runes ?? []) {
+      for (const effect of rune.effects ?? []) {
+        if (effect.kind === "bonus_vs_tag") {
+          t6(allTags.has(effect.tag), `runes.${rune.id}.effects.bonus_vs_tag`,
+            `tag "${effect.tag}" 必须真实存在于 monsters 的 tags(现有:${[...allTags].join(",")})`);
+        }
+      }
+      t6((rune.drawTemplate ?? []).length >= 3, `runes.${rune.id}.drawTemplate`, "笔迹模板至少 3 点");
+    }
+  }
+}
+
 mkdirSync(resolve(root, "reports"), { recursive: true });
 writeFileSync(
   resolve(root, "reports/config.json"),

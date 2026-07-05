@@ -15,7 +15,32 @@
       "unlock": {
         "type": "initial"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "bonus_vs_tag",
+          "tag": "elite",
+          "bonusPct": 20
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.6,
+          "y": 0.1
+        },
+        {
+          "x": 0.35,
+          "y": 0.45
+        },
+        {
+          "x": 0.55,
+          "y": 0.45
+        },
+        {
+          "x": 0.4,
+          "y": 0.9
+        }
+      ]
     },
     {
       "id": "liao_yuan",
@@ -33,7 +58,32 @@
         "type": "levelFirstClear",
         "levelId": "1-4"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "aoe",
+          "radiusUnits": 90,
+          "maxTargets": 5
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.5,
+          "y": 0.15
+        },
+        {
+          "x": 0.2,
+          "y": 0.8
+        },
+        {
+          "x": 0.8,
+          "y": 0.8
+        },
+        {
+          "x": 0.5,
+          "y": 0.15
+        }
+      ]
     },
     {
       "id": "qing_teng",
@@ -51,7 +101,32 @@
         "type": "levelFirstClear",
         "levelId": "1-2"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "slow",
+          "slowPct": 45,
+          "durationSeconds": 2
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.3,
+          "y": 0.15
+        },
+        {
+          "x": 0.7,
+          "y": 0.35
+        },
+        {
+          "x": 0.3,
+          "y": 0.6
+        },
+        {
+          "x": 0.7,
+          "y": 0.85
+        }
+      ]
     },
     {
       "id": "hui_chun",
@@ -68,7 +143,52 @@
         "type": "levelFirstClear",
         "levelId": "1-8"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "core_heal",
+          "intervalSeconds": 6,
+          "pctMaxHp": 1.5
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.5,
+          "y": 0.15
+        },
+        {
+          "x": 0.78,
+          "y": 0.3
+        },
+        {
+          "x": 0.85,
+          "y": 0.55
+        },
+        {
+          "x": 0.7,
+          "y": 0.8
+        },
+        {
+          "x": 0.5,
+          "y": 0.88
+        },
+        {
+          "x": 0.3,
+          "y": 0.8
+        },
+        {
+          "x": 0.15,
+          "y": 0.55
+        },
+        {
+          "x": 0.22,
+          "y": 0.3
+        },
+        {
+          "x": 0.5,
+          "y": 0.15
+        }
+      ]
     },
     {
       "id": "han_quan",
@@ -86,7 +206,40 @@
         "type": "levelFirstClear",
         "levelId": "1-7"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "aoe",
+          "radiusUnits": 110
+        },
+        {
+          "kind": "slow",
+          "slowPct": 30,
+          "durationSeconds": 2
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.15,
+          "y": 0.5
+        },
+        {
+          "x": 0.35,
+          "y": 0.3
+        },
+        {
+          "x": 0.5,
+          "y": 0.5
+        },
+        {
+          "x": 0.65,
+          "y": 0.7
+        },
+        {
+          "x": 0.85,
+          "y": 0.5
+        }
+      ]
     },
     {
       "id": "bing_leng",
@@ -104,7 +257,27 @@
         "type": "levelFirstClear",
         "levelId": "1-11"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "pierce",
+          "targetCount": 3
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.3,
+          "y": 0.2
+        },
+        {
+          "x": 0.5,
+          "y": 0.85
+        },
+        {
+          "x": 0.7,
+          "y": 0.2
+        }
+      ]
     },
     {
       "id": "zhan_jin",
@@ -122,7 +295,27 @@
         "type": "levelFirstClear",
         "levelId": "1-6"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "shield_damage_multiplier",
+          "multiplier": 1.6
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.2,
+          "y": 0.3
+        },
+        {
+          "x": 0.8,
+          "y": 0.3
+        },
+        {
+          "x": 0.8,
+          "y": 0.85
+        }
+      ]
     },
     {
       "id": "wan_ren",
@@ -140,7 +333,36 @@
         "type": "levelFirstClear",
         "levelId": "1-13"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "multihit",
+          "hitCount": 2,
+          "splitTargets": true
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.15,
+          "y": 0.25
+        },
+        {
+          "x": 0.35,
+          "y": 0.75
+        },
+        {
+          "x": 0.5,
+          "y": 0.35
+        },
+        {
+          "x": 0.65,
+          "y": 0.75
+        },
+        {
+          "x": 0.85,
+          "y": 0.25
+        }
+      ]
     },
     {
       "id": "zhen_yue",
@@ -158,7 +380,36 @@
         "type": "levelFirstClear",
         "levelId": "1-15"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "aura",
+          "slowPct": 20,
+          "coreDefBonusPct": 8
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.2,
+          "y": 0.8
+        },
+        {
+          "x": 0.2,
+          "y": 0.4
+        },
+        {
+          "x": 0.5,
+          "y": 0.15
+        },
+        {
+          "x": 0.8,
+          "y": 0.4
+        },
+        {
+          "x": 0.8,
+          "y": 0.8
+        }
+      ]
     },
     {
       "id": "luo_yan",
@@ -176,7 +427,32 @@
         "type": "levelFirstClear",
         "levelId": "1-17"
       },
-      "targetingStrategyId": "nearest_to_core"
+      "targetingStrategyId": "nearest_to_core",
+      "effects": [
+        {
+          "kind": "delayed_aoe",
+          "delaySeconds": 1,
+          "radiusUnits": 100
+        }
+      ],
+      "drawTemplate": [
+        {
+          "x": 0.5,
+          "y": 0.1
+        },
+        {
+          "x": 0.5,
+          "y": 0.6
+        },
+        {
+          "x": 0.3,
+          "y": 0.75
+        },
+        {
+          "x": 0.55,
+          "y": 0.9
+        }
+      ]
     }
   ],
   "upgradeCosts": [
