@@ -36,13 +36,38 @@ export interface Knobs {
   capacityData: unknown;
 }
 
-/** runBalanceModel 输出的一节曲线判定。 */
-export interface BalanceSection {
-  id: "wall" | "mitigation" | "fatigue" | "boss" | "economy" | "samples" | "capacity";
-  title: string;
-  ok: boolean;
-  data: unknown;
+/** 容量曲线(第⑦条)单波解析行 —— 与 runBalanceModel 内 capacityRows 的字段逐一对应。 */
+export interface CapacityRow {
+  index: number;
+  totalCount: number;
+  ehpAbs: number;
+  windowSeconds: number;
+  demandDps: number;
+  ratio2: number;
+  ratio3: number;
+  dense: boolean;
 }
+
+export interface CapacitySectionData {
+  rows: CapacityRow[];
+  minRatio2: number;
+  minRatio3: number;
+  avgRatio3: number;
+  presence: number;
+  adjacent: number;
+  comp2: number;
+  supplyRatio32: number;
+}
+
+/** runBalanceModel 输出的一节曲线判定(capacity 节 data 已类型化,消费方禁止鸭子解析)。 */
+export type BalanceSection =
+  | { id: "capacity"; title: string; ok: boolean; data: CapacitySectionData }
+  | {
+      id: "wall" | "mitigation" | "fatigue" | "boss" | "economy" | "samples";
+      title: string;
+      ok: boolean;
+      data: unknown;
+    };
 
 export interface BalanceRunResult {
   lines: string[];
@@ -64,7 +89,8 @@ export interface BalanceTables {
 export const SIM_SCRIPT: {
   milestones: ReadonlyArray<readonly [string, number]>;
   bands: Record<string, number>;
-  capacity: Record<string, unknown>;
+  /** waveTemplateId 是容量剧本与真实回放对齐的 join 键,消费方必须显式传递而非依赖模板表顺序。 */
+  capacity: { waveTemplateId: string } & Record<string, unknown>;
 } & Record<string, unknown>;
 
 export function deriveKnobs(tables: BalanceTables): Knobs;
