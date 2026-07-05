@@ -32,6 +32,13 @@ interface Point {
   y: number;
 }
 
+interface SketchBox {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
 export const STYLEBOARD_SECTIONS: ReadonlyArray<StyleboardSection> = [
   { id: "entry", title: "入场界面" },
   { id: "hud", title: "战斗 HUD" },
@@ -40,24 +47,24 @@ export const STYLEBOARD_SECTIONS: ReadonlyArray<StyleboardSection> = [
 ];
 
 const MONSTER_FEATURES_BY_ID: Readonly<Record<string, string>> = {
-  normal_yaobing: "基本墨团直立,一笔重顿的头部",
-  swarm_xiaoyao: "三小团簇拥,错落高低",
-  fast_yao: "低伏前倾,身后两道拖尾流线",
-  armored_yao: "方厚块身形,横向三笔甲片",
-  shield_yao: "常规墨团,体外一圈半透明环晕",
-  split_yao: "双瓣墨团,中缝一道留白细线",
-  elite_yaojiang: "竖长身形,头顶双角,肩部重笔",
-  chapter_boss: "大墨团约常规二倍,体表朱砂裂纹与底部威压晕圈",
+  normal_yaobing: "佝偻直立小妖:圆头尖耳、弓背短腿、右手拖棒,腹部木绿晕染",
+  swarm_xiaoyao: "三只鼠蝠小妖品字簇拥:大耳细尾、六眼亮点,背部晕染",
+  fast_yao: "低伏疾奔四足兽:尖吻、两伸两蹬、直尾飞白拖尾,肩胛火红",
+  armored_yao: "驮甲龟犀形:三层弧甲、短粗四足、小头探出,甲面土金晕染",
+  shield_yao: "持杖直立小妖法师:瘦长披袍、双手举杖、身前半透明符盾",
+  split_yao: "双头连体妖:宽躯双头、顶至腹留白裂缝、四短腿、两瓣晕染",
+  elite_yaojiang: "披甲直立武将:宽肩双角、披风、长刀触地、朱砂双眼",
+  chapter_boss: "弓背巨兽:隆背低头独角、双臂拳撑、朱砂裂纹与足下威压晕圈",
 };
 
 const MONSTER_ACCENT_BY_ID: Readonly<Record<string, ElementKey>> = {
   normal_yaobing: "wood",
-  swarm_xiaoyao: "water",
+  swarm_xiaoyao: "wood",
   fast_yao: "fire",
-  armored_yao: "metal",
-  shield_yao: "earth",
-  split_yao: "wood",
-  elite_yaojiang: "water",
+  armored_yao: "earth",
+  shield_yao: "water",
+  split_yao: "water",
+  elite_yaojiang: "fire",
   chapter_boss: "earth",
 };
 
@@ -134,7 +141,7 @@ function hudSection(colors: StyleboardColors, redrawJobs: Array<() => void>): HT
 }
 
 function monstersSection(colors: StyleboardColors, redrawJobs: Array<() => void>): HTMLElement {
-  const section = sectionShell("monsters", "八怪图鉴", "墨团为体 / 笔触勾边 / 五行色一处晕染");
+  const section = sectionShell("monsters", "八怪图鉴", "强剪影 / 头眼肢体可读 / 五行色一处晕染");
   const grid = element("div", "monster-grid");
 
   for (const spec of MONSTER_SKETCH_SPECS) {
@@ -182,9 +189,9 @@ function sketchCanvas(label: string): HTMLCanvasElement {
 function paintEntry(canvas: HTMLCanvasElement, colors: StyleboardColors): void {
   const { ctx, width, height } = setupCanvas(canvas, 1120, 700, colors);
   drawPaperTexture(ctx, width, height, colors, 101);
-  drawMountainLayer(ctx, width, height, colors, 0.34, 0.18, 0.10, 11);
-  drawMountainLayer(ctx, width, height, colors, 0.48, 0.22, 0.17, 23);
-  drawMountainLayer(ctx, width, height, colors, 0.62, 0.18, 0.24, 37);
+  drawMountainLayer(ctx, width, height, colors, 0.28, 0.13, 0.07, 11);
+  drawMountainLayer(ctx, width, height, colors, 0.43, 0.16, 0.11, 23);
+  drawMountainLayer(ctx, width, height, colors, 0.58, 0.13, 0.15, 37);
 
   drawCalligraphy(ctx, "符塔", width * 0.5, height * 0.36, Math.min(132, width * 0.14), colors);
   drawSealButton(ctx, width * 0.5, height * 0.69, Math.min(128, width * 0.12), colors);
@@ -238,108 +245,554 @@ function paintMonster(canvas: HTMLCanvasElement, spec: MonsterSketchSpec, colors
 
   const accentKey = requiredElementKey(MONSTER_ACCENT_BY_ID, spec.monsterId);
   const accent = colors[accentKey];
-  const cx = width * 0.5;
-  const cy = height * 0.53;
+  const eye = monsterEyeColor(spec.monsterId, accent, colors);
+  const box = {
+    x: width * 0.08,
+    y: height * 0.08,
+    w: width * 0.84,
+    h: height * 0.78,
+  };
 
   switch (spec.monsterId) {
     case "normal_yaobing":
-      drawInkBlob(ctx, cx, cy, width * 0.16, height * 0.25, 301, colors, { color: accent, dx: 0.2, dy: -0.18 });
-      drawInkBlob(ctx, cx - width * 0.02, cy - height * 0.24, width * 0.12, height * 0.1, 302, colors);
+      drawNormalYaobing(ctx, box, colors, accent, eye);
       break;
     case "swarm_xiaoyao":
-      drawInkBlob(ctx, cx - width * 0.12, cy + height * 0.03, width * 0.11, height * 0.16, 321, colors, {
-        color: accent,
-        dx: -0.08,
-        dy: -0.12,
-      });
-      drawInkBlob(ctx, cx + width * 0.05, cy - height * 0.03, width * 0.13, height * 0.2, 322, colors, {
-        color: accent,
-        dx: 0.12,
-        dy: -0.08,
-      });
-      drawInkBlob(ctx, cx + width * 0.18, cy + height * 0.05, width * 0.1, height * 0.14, 323, colors);
+      drawSwarmXiaoyao(ctx, box, colors, accent, eye);
       break;
     case "fast_yao":
-      dryBrushLine(ctx, [
-        { x: cx - width * 0.34, y: cy + height * 0.08 },
-        { x: cx - width * 0.02, y: cy - height * 0.04 },
-      ], width * 0.055, colors.ink, 0.34, 351);
-      dryBrushLine(ctx, [
-        { x: cx - width * 0.38, y: cy + height * 0.17 },
-        { x: cx - width * 0.04, y: cy + height * 0.05 },
-      ], width * 0.037, colors.ink, 0.28, 352);
-      drawInkBlob(ctx, cx + width * 0.08, cy + height * 0.02, width * 0.22, height * 0.13, 353, colors, {
-        color: accent,
-        dx: 0.1,
-        dy: -0.1,
-      });
-      drawInkBlob(ctx, cx + width * 0.28, cy - height * 0.05, width * 0.09, height * 0.08, 354, colors);
+      drawFastYao(ctx, box, colors, accent, eye);
       break;
     case "armored_yao":
-      drawBoxBody(ctx, cx, cy, width * 0.34, height * 0.39, colors, accent);
+      drawArmoredYao(ctx, box, colors, accent);
       break;
     case "shield_yao":
-      ctx.save();
-      ctx.strokeStyle = accent;
-      ctx.globalAlpha = 0.36;
-      ctx.lineWidth = width * 0.035;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, width * 0.24, height * 0.31, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-      drawInkBlob(ctx, cx, cy, width * 0.16, height * 0.23, 381, colors, { color: accent, dx: -0.1, dy: -0.14 });
+      drawShieldYao(ctx, box, colors, accent, eye);
       break;
     case "split_yao":
-      drawInkBlob(ctx, cx - width * 0.075, cy, width * 0.14, height * 0.24, 391, colors, {
-        color: accent,
-        dx: -0.12,
-        dy: -0.08,
-      });
-      drawInkBlob(ctx, cx + width * 0.075, cy, width * 0.14, height * 0.24, 392, colors);
-      ctx.save();
-      ctx.strokeStyle = colors.paper;
-      ctx.lineWidth = width * 0.018;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy - height * 0.24);
-      ctx.quadraticCurveTo(cx + width * 0.03, cy, cx - width * 0.01, cy + height * 0.25);
-      ctx.stroke();
-      ctx.restore();
+      drawSplitYao(ctx, box, colors, accent, eye);
       break;
     case "elite_yaojiang":
-      drawInkBlob(ctx, cx, cy + height * 0.02, width * 0.15, height * 0.35, 401, colors, {
-        color: accent,
-        dx: 0.15,
-        dy: -0.2,
-      });
-      dryBrushLine(ctx, [
-        { x: cx - width * 0.07, y: cy - height * 0.34 },
-        { x: cx - width * 0.15, y: cy - height * 0.47 },
-      ], width * 0.026, colors.ink, 0.84, 402);
-      dryBrushLine(ctx, [
-        { x: cx + width * 0.07, y: cy - height * 0.34 },
-        { x: cx + width * 0.15, y: cy - height * 0.47 },
-      ], width * 0.026, colors.ink, 0.84, 403);
-      dryBrushLine(ctx, [
-        { x: cx - width * 0.24, y: cy - height * 0.02 },
-        { x: cx + width * 0.24, y: cy - height * 0.04 },
-      ], width * 0.052, colors.ink, 0.78, 404);
+      drawEliteYaojiang(ctx, box, colors, accent);
       break;
     case "chapter_boss":
-      ctx.save();
-      ctx.strokeStyle = colors.ink;
-      ctx.globalAlpha = 0.12;
-      ctx.lineWidth = width * 0.035;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + height * 0.29, width * 0.34, height * 0.08, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-      drawInkBlob(ctx, cx, cy, width * 0.28, height * 0.31, 431, colors, { color: accent, dx: -0.2, dy: 0.08 });
-      drawCracks(ctx, cx, cy, width, height, colors);
+      drawChapterBoss(ctx, { x: width * 0.04, y: height * 0.02, w: width * 0.92, h: height * 0.9 }, colors, accent);
       break;
     default:
-      drawInkBlob(ctx, cx, cy, width * 0.16, height * 0.22, 499, colors, { color: accent, dx: 0, dy: 0 });
+      drawInkBlob(ctx, width * 0.5, height * 0.5, width * 0.16, height * 0.22, 499, colors, {
+        color: accent,
+        dx: 0,
+        dy: 0,
+      });
       break;
   }
+}
+
+function monsterEyeColor(monsterId: string, accent: string, colors: StyleboardColors): string {
+  if (monsterId === "elite_yaojiang" || monsterId === "chapter_boss") return colors.seal;
+  if (monsterId === "armored_yao") return colors.metal;
+  return accent;
+}
+
+function drawNormalYaobing(
+  ctx: CanvasRenderingContext2D,
+  box: SketchBox,
+  colors: StyleboardColors,
+  accent: string,
+  eye: string,
+): void {
+  const cx = box.x + box.w * 0.49;
+  const ground = box.y + box.h * 0.88;
+  const hip = box.y + box.h * 0.62;
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.06, y: hip },
+    { x: cx - box.w * 0.14, y: ground },
+  ], box.w * 0.034, colors.ink, 0.82, 3001);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.05, y: hip },
+    { x: cx + box.w * 0.12, y: ground },
+  ], box.w * 0.032, colors.ink, 0.8, 3002);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.11, y: box.y + box.h * 0.48 },
+    { x: cx + box.w * 0.26, y: box.y + box.h * 0.72 },
+    { x: cx + box.w * 0.28, y: ground },
+  ], box.w * 0.032, colors.ink, 0.8, 3003);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.3, y: box.y + box.h * 0.66 },
+    { x: cx + box.w * 0.32, y: ground + box.h * 0.05 },
+  ], box.w * 0.022, colors.ink, 0.84, 3004);
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.1, y: box.y + box.h * 0.48 },
+    { x: cx - box.w * 0.21, y: box.y + box.h * 0.6 },
+  ], box.w * 0.028, colors.ink, 0.72, 3005);
+
+  ctx.save();
+  ctx.translate(cx, box.y + box.h * 0.52);
+  ctx.rotate(-0.24);
+  drawInkBlob(ctx, 0, 0, box.w * 0.13, box.h * 0.23, 3006, colors, { color: accent, dx: 0.2, dy: 0.18 });
+  drawInkBlob(ctx, -box.w * 0.045, -box.h * 0.25, box.w * 0.1, box.h * 0.085, 3007, colors);
+  drawEar(ctx, -box.w * 0.13, -box.h * 0.3, box.w * 0.07, -0.45, colors);
+  drawEar(ctx, box.w * 0.025, -box.h * 0.33, box.w * 0.062, 0.2, colors);
+  drawEye(ctx, -box.w * 0.08, -box.h * 0.26, box.w * 0.014, eye, colors);
+  drawEye(ctx, -box.w * 0.03, -box.h * 0.255, box.w * 0.012, eye, colors);
+  ctx.restore();
+}
+
+function drawSwarmXiaoyao(
+  ctx: CanvasRenderingContext2D,
+  box: SketchBox,
+  colors: StyleboardColors,
+  accent: string,
+  eye: string,
+): void {
+  drawMouseYao(ctx, box.x + box.w * 0.49, box.y + box.h * 0.57, box.w * 0.43, 3111, colors, accent, eye, 1.08);
+  drawMouseYao(ctx, box.x + box.w * 0.33, box.y + box.h * 0.42, box.w * 0.34, 3121, colors, accent, eye, 0.74);
+  drawMouseYao(ctx, box.x + box.w * 0.66, box.y + box.h * 0.45, box.w * 0.32, 3131, colors, accent, eye, 0.68);
+}
+
+function drawMouseYao(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+  seed: number,
+  colors: StyleboardColors,
+  accent: string,
+  eye: string,
+  eyeScale: number,
+): void {
+  dryBrushLine(ctx, [
+    { x: cx - size * 0.28, y: cy + size * 0.1 },
+    { x: cx - size * 0.52, y: cy + size * 0.02 },
+    { x: cx - size * 0.63, y: cy - size * 0.16 },
+  ], size * 0.045, colors.ink, 0.72, seed);
+  drawInkBlob(ctx, cx, cy, size * 0.18, size * 0.16, seed + 1, colors, { color: accent, dx: 0.1, dy: -0.2 });
+  drawEar(ctx, cx - size * 0.09, cy - size * 0.15, size * 0.1, -0.6, colors);
+  drawEar(ctx, cx + size * 0.08, cy - size * 0.15, size * 0.1, 0.6, colors);
+  dryBrushLine(ctx, [
+    { x: cx - size * 0.08, y: cy + size * 0.13 },
+    { x: cx - size * 0.14, y: cy + size * 0.23 },
+  ], size * 0.028, colors.ink, 0.62, seed + 2);
+  dryBrushLine(ctx, [
+    { x: cx + size * 0.08, y: cy + size * 0.13 },
+    { x: cx + size * 0.15, y: cy + size * 0.23 },
+  ], size * 0.028, colors.ink, 0.62, seed + 3);
+  drawEye(ctx, cx - size * 0.055, cy - size * 0.02, size * 0.019 * eyeScale, eye, colors);
+  drawEye(ctx, cx + size * 0.035, cy - size * 0.018, size * 0.017 * eyeScale, eye, colors);
+}
+
+function drawFastYao(
+  ctx: CanvasRenderingContext2D,
+  box: SketchBox,
+  colors: StyleboardColors,
+  accent: string,
+  eye: string,
+): void {
+  const cx = box.x + box.w * 0.53;
+  const cy = box.y + box.h * 0.55;
+  dryBrushLine(ctx, [
+    { x: box.x + box.w * 0.16, y: cy + box.h * 0.02 },
+    { x: box.x - box.w * 0.03, y: cy + box.h * 0.02 },
+  ], box.w * 0.036, colors.ink, 0.38, 3211);
+  dryBrushLine(ctx, [
+    { x: box.x + box.w * 0.2, y: cy + box.h * 0.09 },
+    { x: box.x + box.w * 0.02, y: cy + box.h * 0.17 },
+  ], box.w * 0.028, colors.ink, 0.3, 3212);
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.27, y: cy - box.h * 0.01 },
+    { x: box.x + box.w * 0.04, y: cy - box.h * 0.08 },
+  ], box.w * 0.03, colors.ink, 0.8, 3213);
+
+  drawInkBlob(ctx, cx, cy, box.w * 0.26, box.h * 0.13, 3214, colors, { color: accent, dx: 0.38, dy: -0.35 });
+  drawInkShape(ctx, [
+    { x: cx + box.w * 0.2, y: cy - box.h * 0.08 },
+    { x: cx + box.w * 0.39, y: cy - box.h * 0.12 },
+    { x: cx + box.w * 0.48, y: cy - box.h * 0.02 },
+    { x: cx + box.w * 0.31, y: cy + box.h * 0.06 },
+  ], colors.ink, 0.9);
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.1, y: cy + box.h * 0.08 },
+    { x: cx - box.w * 0.24, y: cy + box.h * 0.28 },
+  ], box.w * 0.035, colors.ink, 0.8, 3215);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.02, y: cy + box.h * 0.09 },
+    { x: cx + box.w * 0.1, y: cy + box.h * 0.31 },
+  ], box.w * 0.034, colors.ink, 0.8, 3216);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.14, y: cy + box.h * 0.08 },
+    { x: cx + box.w * 0.27, y: cy + box.h * 0.23 },
+  ], box.w * 0.03, colors.ink, 0.72, 3217);
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.2, y: cy + box.h * 0.07 },
+    { x: cx - box.w * 0.07, y: cy + box.h * 0.27 },
+  ], box.w * 0.03, colors.ink, 0.7, 3218);
+  drawEye(ctx, cx + box.w * 0.35, cy - box.h * 0.055, box.w * 0.014, eye, colors);
+}
+
+function drawArmoredYao(
+  ctx: CanvasRenderingContext2D,
+  box: SketchBox,
+  colors: StyleboardColors,
+  accent: string,
+): void {
+  const cx = box.x + box.w * 0.49;
+  const cy = box.y + box.h * 0.58;
+  const ground = box.y + box.h * 0.82;
+  for (const offset of [-0.23, -0.06, 0.14, 0.3]) {
+    dryBrushLine(ctx, [
+      { x: cx + box.w * offset, y: cy + box.h * 0.12 },
+      { x: cx + box.w * (offset - 0.02), y: ground },
+    ], box.w * 0.044, colors.ink, 0.82, 3311 + Math.round((offset + 1) * 100));
+  }
+  drawInkBlob(ctx, cx, cy, box.w * 0.33, box.h * 0.22, 3312, colors, { color: accent, dx: 0.08, dy: -0.3 });
+  drawInkBlob(ctx, cx + box.w * 0.35, cy - box.h * 0.03, box.w * 0.105, box.h * 0.085, 3313, colors);
+  drawArmorShellGaps(ctx, cx, cy, box, colors);
+  drawEye(ctx, cx + box.w * 0.38, cy - box.h * 0.05, box.w * 0.014, colors.earth, colors);
+  drawEye(ctx, cx + box.w * 0.38, cy - box.h * 0.05, box.w * 0.008, colors.metal, colors);
+}
+
+function drawShieldYao(
+  ctx: CanvasRenderingContext2D,
+  box: SketchBox,
+  colors: StyleboardColors,
+  accent: string,
+  eye: string,
+): void {
+  const cx = box.x + box.w * 0.48;
+  const top = box.y + box.h * 0.22;
+  const robeTop = box.y + box.h * 0.39;
+  const robeBottom = box.y + box.h * 0.84;
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.16, y: top },
+    { x: cx + box.w * 0.19, y: robeBottom },
+  ], box.w * 0.024, colors.ink, 0.82, 3411);
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.04, y: robeTop },
+    { x: cx + box.w * 0.12, y: top + box.h * 0.1 },
+  ], box.w * 0.026, colors.ink, 0.76, 3412);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.07, y: robeTop },
+    { x: cx + box.w * 0.16, y: top + box.h * 0.1 },
+  ], box.w * 0.026, colors.ink, 0.76, 3413);
+  drawInkBlob(ctx, cx, top, box.w * 0.085, box.h * 0.075, 3414, colors);
+  drawInkShape(ctx, [
+    { x: cx - box.w * 0.12, y: robeTop },
+    { x: cx + box.w * 0.11, y: robeTop - box.h * 0.02 },
+    { x: cx + box.w * 0.17, y: robeBottom },
+    { x: cx - box.w * 0.19, y: robeBottom + box.h * 0.01 },
+  ], colors.ink, 0.9);
+  ctx.save();
+  robePath(ctx, cx, robeTop, robeBottom, box.w);
+  ctx.clip();
+  drawColorBleed(ctx, cx + box.w * 0.03, robeBottom - box.h * 0.08, box.w * 0.11, box.h * 0.08, accent, 0.54);
+  ctx.restore();
+  drawEye(ctx, cx - box.w * 0.03, top - box.h * 0.005, box.w * 0.011, eye, colors);
+  drawEye(ctx, cx + box.w * 0.03, top - box.h * 0.005, box.w * 0.011, eye, colors);
+  drawShieldRing(ctx, cx + box.w * 0.05, box.y + box.h * 0.55, box.w * 0.27, box.h * 0.31, colors, accent);
+}
+
+function drawSplitYao(
+  ctx: CanvasRenderingContext2D,
+  box: SketchBox,
+  colors: StyleboardColors,
+  accent: string,
+  eye: string,
+): void {
+  const cx = box.x + box.w * 0.5;
+  const cy = box.y + box.h * 0.57;
+  const ground = box.y + box.h * 0.86;
+  for (const offset of [-0.23, -0.09, 0.11, 0.25]) {
+    dryBrushLine(ctx, [
+      { x: cx + box.w * offset, y: cy + box.h * 0.13 },
+      { x: cx + box.w * (offset + 0.03), y: ground },
+    ], box.w * 0.032, colors.ink, 0.74, 3510 + Math.round((offset + 1) * 100));
+  }
+  drawInkBlob(ctx, cx - box.w * 0.08, cy, box.w * 0.17, box.h * 0.24, 3511, colors, {
+    color: accent,
+    dx: -0.18,
+    dy: -0.02,
+  });
+  drawInkBlob(ctx, cx + box.w * 0.08, cy, box.w * 0.17, box.h * 0.24, 3512, colors, {
+    color: accent,
+    dx: 0.18,
+    dy: 0.08,
+  });
+  drawInkBlob(ctx, cx - box.w * 0.1, box.y + box.h * 0.31, box.w * 0.09, box.h * 0.08, 3513, colors);
+  drawInkBlob(ctx, cx + box.w * 0.1, box.y + box.h * 0.31, box.w * 0.09, box.h * 0.08, 3514, colors);
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.25, y: cy - box.h * 0.01 },
+    { x: cx - box.w * 0.35, y: cy + box.h * 0.06 },
+  ], box.w * 0.035, colors.ink, 0.68, 3515);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.25, y: cy - box.h * 0.01 },
+    { x: cx + box.w * 0.35, y: cy + box.h * 0.06 },
+  ], box.w * 0.035, colors.ink, 0.68, 3516);
+  drawSeam(ctx, cx, box.y + box.h * 0.25, box.y + box.h * 0.76, box.w, colors);
+  drawEye(ctx, cx - box.w * 0.105, box.y + box.h * 0.31, box.w * 0.012, eye, colors);
+  drawEye(ctx, cx + box.w * 0.105, box.y + box.h * 0.31, box.w * 0.012, eye, colors);
+}
+
+function drawEliteYaojiang(
+  ctx: CanvasRenderingContext2D,
+  box: SketchBox,
+  colors: StyleboardColors,
+  accent: string,
+): void {
+  const cx = box.x + box.w * 0.5;
+  const headY = box.y + box.h * 0.23;
+  const bodyY = box.y + box.h * 0.55;
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.13, y: bodyY - box.h * 0.08 },
+    { x: cx - box.w * 0.31, y: box.y + box.h * 0.8 },
+  ], box.w * 0.08, colors.ink, 0.42, 3610);
+  drawInkBlob(ctx, cx, bodyY, box.w * 0.14, box.h * 0.32, 3611, colors, { color: accent, dx: 0.04, dy: -0.24 });
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.24, y: bodyY - box.h * 0.18 },
+    { x: cx + box.w * 0.24, y: bodyY - box.h * 0.18 },
+  ], box.w * 0.064, colors.ink, 0.88, 3612);
+  drawInkBlob(ctx, cx, headY, box.w * 0.075, box.h * 0.075, 3613, colors);
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.045, y: headY - box.h * 0.06 },
+    { x: cx - box.w * 0.14, y: headY - box.h * 0.18 },
+    { x: cx - box.w * 0.1, y: headY - box.h * 0.24 },
+  ], box.w * 0.024, colors.ink, 0.88, 3614);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.045, y: headY - box.h * 0.06 },
+    { x: cx + box.w * 0.14, y: headY - box.h * 0.18 },
+    { x: cx + box.w * 0.1, y: headY - box.h * 0.24 },
+  ], box.w * 0.024, colors.ink, 0.88, 3615);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.26, y: bodyY - box.h * 0.03 },
+    { x: cx + box.w * 0.31, y: box.y + box.h * 0.89 },
+  ], box.w * 0.024, colors.ink, 0.88, 3616);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.29, y: box.y + box.h * 0.76 },
+    { x: cx + box.w * 0.38, y: box.y + box.h * 0.9 },
+  ], box.w * 0.018, colors.ink, 0.74, 3617);
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.05, y: bodyY + box.h * 0.23 },
+    { x: cx - box.w * 0.11, y: box.y + box.h * 0.9 },
+  ], box.w * 0.034, colors.ink, 0.76, 3618);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.05, y: bodyY + box.h * 0.23 },
+    { x: cx + box.w * 0.1, y: box.y + box.h * 0.9 },
+  ], box.w * 0.034, colors.ink, 0.76, 3619);
+  drawEye(ctx, cx - box.w * 0.024, headY - box.h * 0.002, box.w * 0.011, colors.seal, colors);
+  drawEye(ctx, cx + box.w * 0.024, headY - box.h * 0.002, box.w * 0.011, colors.seal, colors);
+}
+
+function drawChapterBoss(
+  ctx: CanvasRenderingContext2D,
+  box: SketchBox,
+  colors: StyleboardColors,
+  accent: string,
+): void {
+  const cx = box.x + box.w * 0.5;
+  const cy = box.y + box.h * 0.56;
+  ctx.save();
+  ctx.strokeStyle = colors.ink;
+  ctx.globalAlpha = 0.12;
+  ctx.lineWidth = box.w * 0.04;
+  ctx.beginPath();
+  ctx.ellipse(cx, box.y + box.h * 0.88, box.w * 0.36, box.h * 0.08, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  dryBrushLine(ctx, [
+    { x: cx - box.w * 0.24, y: cy + box.h * 0.07 },
+    { x: cx - box.w * 0.36, y: box.y + box.h * 0.8 },
+  ], box.w * 0.06, colors.ink, 0.82, 3711);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.24, y: cy + box.h * 0.07 },
+    { x: cx + box.w * 0.35, y: box.y + box.h * 0.8 },
+  ], box.w * 0.06, colors.ink, 0.82, 3712);
+  drawInkBlob(ctx, cx, cy, box.w * 0.32, box.h * 0.27, 3713, colors, { color: accent, dx: -0.16, dy: -0.34 });
+  drawInkBlob(ctx, cx - box.w * 0.08, cy - box.h * 0.08, box.w * 0.23, box.h * 0.2, 3714, colors);
+  drawInkBlob(ctx, cx + box.w * 0.03, cy + box.h * 0.02, box.w * 0.16, box.h * 0.12, 3715, colors);
+  drawInkBlob(ctx, cx - box.w * 0.37, box.y + box.h * 0.83, box.w * 0.08, box.h * 0.055, 3716, colors);
+  drawInkBlob(ctx, cx + box.w * 0.37, box.y + box.h * 0.83, box.w * 0.08, box.h * 0.055, 3717, colors);
+  dryBrushLine(ctx, [
+    { x: cx + box.w * 0.02, y: cy - box.h * 0.2 },
+    { x: cx + box.w * 0.03, y: cy - box.h * 0.42 },
+  ], box.w * 0.03, colors.ink, 0.9, 3718);
+  drawEye(ctx, cx - box.w * 0.03, cy - box.h * 0.03, box.w * 0.018, colors.seal, colors);
+  drawEye(ctx, cx + box.w * 0.045, cy - box.h * 0.035, box.w * 0.018, colors.seal, colors);
+  drawCracks(ctx, cx, cy, box.w, box.h, colors);
+}
+
+function drawEar(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+  rotation: number,
+  colors: StyleboardColors,
+): void {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  ctx.fillStyle = colors.ink;
+  ctx.globalAlpha = 0.9;
+  ctx.beginPath();
+  ctx.moveTo(0, -size * 0.7);
+  ctx.lineTo(size * 0.52, size * 0.42);
+  ctx.lineTo(-size * 0.42, size * 0.38);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawEye(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number,
+  color: string,
+  colors: StyleboardColors,
+): void {
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = Math.max(2, radius * 2.4);
+  ctx.fillStyle = color;
+  ctx.globalAlpha = 0.98;
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = colors.paper;
+  ctx.globalAlpha = 0.34;
+  ctx.lineWidth = Math.max(1, radius * 0.34);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawInkShape(ctx: CanvasRenderingContext2D, points: ReadonlyArray<Point>, color: string, alpha: number): void {
+  if (points.length < 3) return;
+  const xs = points.map((point) => point.x);
+  const ys = points.map((point) => point.y);
+  const width = Math.max(...xs) - Math.min(...xs);
+  const height = Math.max(...ys) - Math.min(...ys);
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = alpha;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let index = 1; index < points.length; index += 1) {
+    ctx.lineTo(points[index].x, points[index].y);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.globalAlpha = alpha * 0.72;
+  ctx.lineJoin = "round";
+  ctx.lineWidth = Math.max(2, Math.min(width, height) * 0.08);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawArmorShellGaps(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  box: SketchBox,
+  colors: StyleboardColors,
+): void {
+  ctx.save();
+  ctx.strokeStyle = colors.paper;
+  ctx.lineCap = "round";
+  ctx.globalAlpha = 0.78;
+  ctx.lineWidth = box.h * 0.035;
+  for (let index = 0; index < 3; index += 1) {
+    ctx.beginPath();
+    ctx.ellipse(
+      cx - box.w * 0.02,
+      cy - box.h * (0.12 - index * 0.095),
+      box.w * (0.26 - index * 0.025),
+      box.h * (0.1 + index * 0.012),
+      0.03,
+      Math.PI * 1.04,
+      Math.PI * 1.96,
+    );
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function robePath(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  robeTop: number,
+  robeBottom: number,
+  width: number,
+): void {
+  ctx.beginPath();
+  ctx.moveTo(cx - width * 0.12, robeTop);
+  ctx.lineTo(cx + width * 0.11, robeTop - (robeBottom - robeTop) * 0.04);
+  ctx.lineTo(cx + width * 0.17, robeBottom);
+  ctx.lineTo(cx - width * 0.19, robeBottom + (robeBottom - robeTop) * 0.02);
+  ctx.closePath();
+}
+
+function drawShieldRing(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+  colors: StyleboardColors,
+  accent: string,
+): void {
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.strokeStyle = colors.ink;
+  ctx.globalAlpha = 0.18;
+  ctx.lineWidth = Math.max(3, rx * 0.13);
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, -0.08, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.strokeStyle = accent;
+  ctx.globalAlpha = 0.42;
+  ctx.lineWidth = Math.max(4, rx * 0.11);
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, -0.08, Math.PI * 0.1, Math.PI * 1.22);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, -0.08, Math.PI * 1.48, Math.PI * 1.92);
+  ctx.stroke();
+
+  ctx.strokeStyle = colors.paper;
+  ctx.globalAlpha = 0.76;
+  ctx.lineWidth = Math.max(3, rx * 0.055);
+  dryBrushLine(ctx, [
+    { x: cx - rx * 0.62, y: cy - ry * 0.12 },
+    { x: cx - rx * 0.35, y: cy + ry * 0.05 },
+  ], rx * 0.05, colors.paper, 0.76, 3420);
+  dryBrushLine(ctx, [
+    { x: cx + rx * 0.32, y: cy + ry * 0.34 },
+    { x: cx + rx * 0.62, y: cy + ry * 0.2 },
+  ], rx * 0.05, colors.paper, 0.76, 3421);
+  ctx.restore();
+}
+
+function drawSeam(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  top: number,
+  bottom: number,
+  width: number,
+  colors: StyleboardColors,
+): void {
+  ctx.save();
+  ctx.strokeStyle = colors.paper;
+  ctx.globalAlpha = 0.82;
+  ctx.lineWidth = width * 0.018;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(x - width * 0.01, top);
+  ctx.quadraticCurveTo(x + width * 0.035, (top + bottom) * 0.48, x - width * 0.005, bottom);
+  ctx.stroke();
+  ctx.restore();
 }
 
 function paintDraw(canvas: HTMLCanvasElement, colors: StyleboardColors): void {
@@ -489,21 +942,42 @@ function drawMountainLayer(
   const next = mulberry32(seed);
   const baseY = height * baseRatio;
   const amplitude = height * amplitudeRatio;
+  const washBottom = Math.min(height * 0.67, baseY + amplitude * 0.58);
+  const crestPoints: Point[] = [];
   ctx.save();
   ctx.fillStyle = colors.ink;
   ctx.globalAlpha = alpha;
   ctx.beginPath();
-  ctx.moveTo(0, height);
+  ctx.moveTo(0, washBottom);
   ctx.lineTo(0, baseY);
   const steps = 9;
   for (let index = 0; index <= steps; index += 1) {
     const x = width * index / steps;
     const crest = baseY - amplitude * (0.28 + next() * 0.72);
+    crestPoints.push({ x, y: crest });
     ctx.lineTo(x, crest);
   }
-  ctx.lineTo(width, height);
+  ctx.lineTo(width, washBottom);
   ctx.closePath();
   ctx.fill();
+
+  ctx.globalAlpha = alpha * 0.72;
+  ctx.shadowColor = colors.ink;
+  ctx.shadowBlur = Math.max(6, amplitude * 0.18);
+  ctx.strokeStyle = colors.ink;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = Math.max(10, amplitude * 0.16);
+  ctx.beginPath();
+  ctx.moveTo(crestPoints[0].x, crestPoints[0].y);
+  for (let index = 1; index < crestPoints.length; index += 1) {
+    const current = crestPoints[index];
+    const previous = crestPoints[index - 1];
+    ctx.quadraticCurveTo(previous.x, previous.y, (previous.x + current.x) * 0.5, (previous.y + current.y) * 0.5);
+  }
+  const last = crestPoints[crestPoints.length - 1];
+  ctx.lineTo(last.x, last.y);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -670,12 +1144,18 @@ function drawR4Info(
   for (let index = 0; index < entries.length; index += 1) {
     const entry = entries[index];
     const cx = x + width * (0.28 + index * 0.115);
-    ctx.fillStyle = entry.color;
+    const isMetal = entry.label === "金";
+    ctx.fillStyle = isMetal ? colors.ink : entry.color;
     ctx.globalAlpha = 0.86;
     ctx.beginPath();
     ctx.arc(cx, y + height * 0.38, height * 0.14, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = colors.paper;
+    ctx.strokeStyle = colors.ink;
+    ctx.globalAlpha = 0.72;
+    ctx.lineWidth = Math.max(2, height * 0.026);
+    ctx.stroke();
+    ctx.fillStyle = isMetal ? entry.color : colors.paper;
+    ctx.globalAlpha = 1;
     ctx.font = `800 ${height * 0.18}px "Songti SC", serif`;
     ctx.textAlign = "center";
     ctx.fillText(entry.label, cx, y + height * 0.38);
