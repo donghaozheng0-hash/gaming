@@ -1,7 +1,7 @@
 import "./style.css";
 import { BabylonApp } from "./app/BabylonApp";
 import { loadGameConfig } from "./config";
-import { shouldLoadDebugPanel } from "./debug/gate";
+import { shouldLoadDebugPanel, shouldShowStyleboard } from "./debug/gate";
 import { assembleBattle } from "./game/battle/combat/assembleBattle";
 import { createBattleScene } from "./render/battleScene";
 
@@ -34,6 +34,14 @@ if (import.meta.env.DEV && shouldLoadDebugPanel(window.location.search, true)) {
     .then((module) => module.mountDebugPanel({ config, seed }))
     .catch((error: unknown) => {
       console.error("[debug] 调参台加载失败:", error);
+    });
+}
+
+if (import.meta.env.DEV && shouldShowStyleboard(window.location.search, true)) {
+  import("./debug/styleboard")
+    .then((module) => module.mountStyleboard({ config }))
+    .catch((error: unknown) => {
+      console.error("[debug] 草图板加载失败:", error);
     });
 }
 
