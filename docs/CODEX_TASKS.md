@@ -87,7 +87,20 @@
 | 验收命令 | `npm run quality:gate -- --task T6.1`(面板视觉由 Claude 手动 `?debug=1` 截图人眼复核)。 |
 | 通过标准 | debug.gate 8 用例 skip→PASS;既有 53 用例零回退;无 debug 参数时行为与 T6 完全一致。 |
 
+## Task 7.0：雾山五行风格草图板(?styleboard=1)——草图先行,拍板后才签 T7
+
+| 项 | 内容 |
+|---|---|
+| 目标 | dev 评审页四板块:入场界面/战斗HUD(含 R4 情报条)/八怪水墨造型图鉴/画符评分示意。基调=宣纸留白+浓墨主笔+朱砂点睛+五行晕染(Claude 定,产品看图终拍)。 |
+| 允许修改 | `src/debug/styleboard.ts`(新)、`src/debug/gate.ts`(追加 shouldShowStyleboard)、`src/main.ts`(守门分支)。 |
+| 禁止事项 | 零游戏/渲染/配置改动;零新依赖与资源文件;禁 Math.random(确定性笔触,评审图可复现);颜色只读 config.visual palette。 |
+| 必须包含 | MONSTER_SKETCH_SPECS 与 config 八怪 id 一一钉死;造型语言表见 `docs/briefs/T7.0.md` §3.3。 |
+| 验收命令 | `npm run quality:gate -- --task T7.0`;终点=产品负责人看图拍板。 |
+| 通过标准 | styleboard.gate 3 用例 PASS,64/64;`?styleboard=1` 出全屏评审页。 |
+
 ## Task 7：灵机点、画符与融合的首版交互
+
+> **前置(2026-07-05 产品拍板)**:①正式契约待 T7.0 草图用户拍板后签发;②UI 与怪物造型以《雾山五行》水墨画风为基(基调见 T7.0 简报 §3);③调参台已改 dev 默认常驻(?debug=0 关),T7 的 UI 布局须与右侧面板共存。
 
 | 项 | 内容 |
 |---|---|

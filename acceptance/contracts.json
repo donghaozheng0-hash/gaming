@@ -297,6 +297,39 @@
         "as any/@ts-ignore 硬压类型;引入新依赖(零新增 npm 包,面板用原生 DOM)",
         "src/game/** 内 import src/debug 或 src/render(依赖方向:debug→game 单向)"
       ]
+    },
+    "T7.0": {
+      "title": "雾山五行风格草图板(?styleboard=1):入场UI/战斗HUD/八怪造型/画符示意,供产品拍板",
+      "requires": [
+        "isolation",
+        "config tables",
+        "typescript",
+        "test",
+        "build"
+      ],
+      "evidence": [
+        "tests/styleboard.gate.test.ts 3 用例由 skip 转 PASS(未修改该文件)",
+        "既有 61 用例零回退(合计 64)",
+        "Claude 截 ?styleboard=1 各板块图交用户拍板(草图批的验收终点=用户点头,不是门禁)"
+      ],
+      "definitionOfDone": [
+        "src/debug/gate.ts 追加 shouldShowStyleboard(search,isDev):仅 dev+styleboard=1 为 true",
+        "src/debug/styleboard.ts:STYLEBOARD_SECTIONS(entry/hud/monsters/draw 四板块)+MONSTER_SKETCH_SPECS(与 config 八怪 id 一一对应)+mountStyleboard(全屏 DOM 评审页,板块间锚点导航)",
+        "板块①入场界面:远山淡墨背景+书法感\"符塔\"标题+朱印方章\"入塔\"按钮+留白构图",
+        "板块②战斗HUD:顶栏(深度/波次/灵机点)+R4 情报条(本关怪五行构成图标列+Boss 波标记)+底部符栏与画符入口;标注仅为草图非交互",
+        "板块③八怪图鉴:canvas 程序化水墨剪影,墨团为体+笔触勾边+五行色晕染一处+每怪特征形(简报 §3 造型语言表),图下标 id/中文名/特征",
+        "板块④画符示意:轨迹样例+50/80/95 评分三档的水墨反馈样式(文字标注阈值)",
+        "paper/ink/朱砂/五行色一律读 config.visual palette;笔触抖动用确定性函数(评审图可复现)",
+        "main.ts 守门:dev+styleboard=1 动态 import,与调参台守门并列;评审页出现时隐藏游戏画布(全屏白纸)"
+      ],
+      "forbidden": [
+        "修改任一 Claude 尺子:tests/*.gate.test.ts、tests/golden.formulas.test.ts、scripts/**、acceptance/**、docs/**、package.json/tsconfig.json",
+        "修改 src/config/**(含 visual:草图读现有色板,新增视觉参数等正式 T7 契约再落)",
+        "修改 src/game/**、src/render/**(草图批零游戏逻辑/渲染改动;defaultLoadout/assembleBattle 等一概不碰);src/debug 既有文件仅允许 gate.ts 追加函数与 main.ts 加守门分支",
+        "Math.random/Date.now/performance.now(程序化笔触必须确定性,否则两次评审图不一致)",
+        "引入新依赖(字体文件/图片资源/npm 包都不要,全部程序化绘制)",
+        "as any/@ts-ignore"
+      ]
     }
   }
 }
