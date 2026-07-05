@@ -189,9 +189,9 @@ function sketchCanvas(label: string): HTMLCanvasElement {
 function paintEntry(canvas: HTMLCanvasElement, colors: StyleboardColors): void {
   const { ctx, width, height } = setupCanvas(canvas, 1120, 700, colors);
   drawPaperTexture(ctx, width, height, colors, 101);
-  drawMountainLayer(ctx, width, height, colors, 0.28, 0.13, 0.07, 11);
-  drawMountainLayer(ctx, width, height, colors, 0.43, 0.16, 0.11, 23);
-  drawMountainLayer(ctx, width, height, colors, 0.58, 0.13, 0.15, 37);
+  drawMountainLayer(ctx, width, height, colors, 0.52, 0.16, 0.1, 11);
+  drawMountainLayer(ctx, width, height, colors, 0.58, 0.19, 0.16, 23);
+  drawMountainLayer(ctx, width, height, colors, 0.64, 0.21, 0.24, 37);
 
   drawCalligraphy(ctx, "符塔", width * 0.5, height * 0.36, Math.min(132, width * 0.14), colors);
   drawSealButton(ctx, width * 0.5, height * 0.69, Math.min(128, width * 0.12), colors);
@@ -388,45 +388,40 @@ function drawFastYao(
   accent: string,
   eye: string,
 ): void {
-  const cx = box.x + box.w * 0.53;
-  const cy = box.y + box.h * 0.55;
-  dryBrushLine(ctx, [
-    { x: box.x + box.w * 0.16, y: cy + box.h * 0.02 },
-    { x: box.x - box.w * 0.03, y: cy + box.h * 0.02 },
-  ], box.w * 0.036, colors.ink, 0.38, 3211);
-  dryBrushLine(ctx, [
-    { x: box.x + box.w * 0.2, y: cy + box.h * 0.09 },
-    { x: box.x + box.w * 0.02, y: cy + box.h * 0.17 },
-  ], box.w * 0.028, colors.ink, 0.3, 3212);
-  dryBrushLine(ctx, [
-    { x: cx - box.w * 0.27, y: cy - box.h * 0.01 },
-    { x: box.x + box.w * 0.04, y: cy - box.h * 0.08 },
-  ], box.w * 0.03, colors.ink, 0.8, 3213);
+  const px = (value: number): number => box.x + box.w * value;
+  const py = (value: number): number => box.y + box.h * value;
 
-  drawInkBlob(ctx, cx, cy, box.w * 0.26, box.h * 0.13, 3214, colors, { color: accent, dx: 0.38, dy: -0.35 });
+  taperedDryBrushLine(ctx, [{ x: px(0.72), y: py(0.46) }, { x: px(0.92), y: py(0.42) }], box.w * 0.046, colors.ink, 0.82, 3211);
+  dryBrushLine(ctx, [{ x: px(0.88), y: py(0.4) }, { x: px(1.08), y: py(0.36) }], box.w * 0.018, colors.ink, 0.24, 3212);
+  dryBrushLine(ctx, [{ x: px(0.88), y: py(0.48) }, { x: px(1.1), y: py(0.49) }], box.w * 0.016, colors.ink, 0.2, 3213);
+
+  for (const limb of [
+    [{ x: px(0.3), y: py(0.58) }, { x: px(0.18), y: py(0.78) }],
+    [{ x: px(0.34), y: py(0.6) }, { x: px(0.26), y: py(0.8) }],
+    [{ x: px(0.62), y: py(0.55) }, { x: px(0.74), y: py(0.78) }],
+    [{ x: px(0.66), y: py(0.52) }, { x: px(0.8), y: py(0.74) }],
+  ] as const) {
+    taperedDryBrushLine(ctx, limb, box.w * 0.038, colors.ink, 0.84, 3220 + Math.round(limb[0].x));
+  }
+
+  ctx.save();
+  ctx.translate(px(0.485), py(0.48));
+  ctx.rotate(-0.17);
+  drawInkBlob(ctx, 0, 0, box.w * 0.25, box.h * 0.11, 3214, colors, { color: accent, dx: -0.42, dy: 0.12 });
+  ctx.restore();
+
   drawInkShape(ctx, [
-    { x: cx + box.w * 0.2, y: cy - box.h * 0.08 },
-    { x: cx + box.w * 0.39, y: cy - box.h * 0.12 },
-    { x: cx + box.w * 0.48, y: cy - box.h * 0.02 },
-    { x: cx + box.w * 0.31, y: cy + box.h * 0.06 },
+    { x: px(0.25), y: py(0.52) },
+    { x: px(0.12), y: py(0.58) },
+    { x: px(0.2), y: py(0.49) },
+    { x: px(0.31), y: py(0.48) },
   ], colors.ink, 0.9);
-  dryBrushLine(ctx, [
-    { x: cx - box.w * 0.1, y: cy + box.h * 0.08 },
-    { x: cx - box.w * 0.24, y: cy + box.h * 0.28 },
-  ], box.w * 0.035, colors.ink, 0.8, 3215);
-  dryBrushLine(ctx, [
-    { x: cx + box.w * 0.02, y: cy + box.h * 0.09 },
-    { x: cx + box.w * 0.1, y: cy + box.h * 0.31 },
-  ], box.w * 0.034, colors.ink, 0.8, 3216);
-  dryBrushLine(ctx, [
-    { x: cx + box.w * 0.14, y: cy + box.h * 0.08 },
-    { x: cx + box.w * 0.27, y: cy + box.h * 0.23 },
-  ], box.w * 0.03, colors.ink, 0.72, 3217);
-  dryBrushLine(ctx, [
-    { x: cx - box.w * 0.2, y: cy + box.h * 0.07 },
-    { x: cx - box.w * 0.07, y: cy + box.h * 0.27 },
-  ], box.w * 0.03, colors.ink, 0.7, 3218);
-  drawEye(ctx, cx + box.w * 0.35, cy - box.h * 0.055, box.w * 0.014, eye, colors);
+  drawInkShape(ctx, [
+    { x: px(0.2), y: py(0.48) },
+    { x: px(0.29), y: py(0.39) },
+    { x: px(0.3), y: py(0.5) },
+  ], colors.ink, 0.88);
+  drawEye(ctx, px(0.18), py(0.54), box.w * 0.015, eye, colors);
 }
 
 function drawArmoredYao(
@@ -458,37 +453,48 @@ function drawShieldYao(
   accent: string,
   eye: string,
 ): void {
-  const cx = box.x + box.w * 0.48;
-  const top = box.y + box.h * 0.22;
-  const robeTop = box.y + box.h * 0.39;
-  const robeBottom = box.y + box.h * 0.84;
-  dryBrushLine(ctx, [
-    { x: cx + box.w * 0.16, y: top },
-    { x: cx + box.w * 0.19, y: robeBottom },
-  ], box.w * 0.024, colors.ink, 0.82, 3411);
-  dryBrushLine(ctx, [
-    { x: cx - box.w * 0.04, y: robeTop },
-    { x: cx + box.w * 0.12, y: top + box.h * 0.1 },
-  ], box.w * 0.026, colors.ink, 0.76, 3412);
-  dryBrushLine(ctx, [
-    { x: cx + box.w * 0.07, y: robeTop },
-    { x: cx + box.w * 0.16, y: top + box.h * 0.1 },
-  ], box.w * 0.026, colors.ink, 0.76, 3413);
-  drawInkBlob(ctx, cx, top, box.w * 0.085, box.h * 0.075, 3414, colors);
-  drawInkShape(ctx, [
-    { x: cx - box.w * 0.12, y: robeTop },
-    { x: cx + box.w * 0.11, y: robeTop - box.h * 0.02 },
-    { x: cx + box.w * 0.17, y: robeBottom },
-    { x: cx - box.w * 0.19, y: robeBottom + box.h * 0.01 },
-  ], colors.ink, 0.9);
+  const px = (value: number): number => box.x + box.w * value;
+  const py = (value: number): number => box.y + box.h * value;
+
+  dryBrushLine(ctx, [{ x: px(0.5), y: py(0.14) }, { x: px(0.52), y: py(0.6) }], box.w * 0.018, colors.ink, 0.86, 3411);
   ctx.save();
-  robePath(ctx, cx, robeTop, robeBottom, box.w);
-  ctx.clip();
-  drawColorBleed(ctx, cx + box.w * 0.03, robeBottom - box.h * 0.08, box.w * 0.11, box.h * 0.08, accent, 0.54);
+  ctx.strokeStyle = colors.ink;
+  ctx.globalAlpha = 0.82;
+  ctx.lineWidth = box.w * 0.018;
+  ctx.beginPath();
+  ctx.ellipse(px(0.51), py(0.14), box.w * 0.036, box.h * 0.035, 0.08, 0, Math.PI * 2);
+  ctx.stroke();
   ctx.restore();
-  drawEye(ctx, cx - box.w * 0.03, top - box.h * 0.005, box.w * 0.011, eye, colors);
-  drawEye(ctx, cx + box.w * 0.03, top - box.h * 0.005, box.w * 0.011, eye, colors);
-  drawShieldRing(ctx, cx + box.w * 0.05, box.y + box.h * 0.55, box.w * 0.27, box.h * 0.31, colors, accent);
+
+  dryBrushLine(ctx, [{ x: px(0.42), y: py(0.42) }, { x: px(0.46), y: py(0.32) }, { x: px(0.5), y: py(0.3) }], box.w * 0.024, colors.ink, 0.76, 3412);
+  dryBrushLine(ctx, [{ x: px(0.58), y: py(0.42) }, { x: px(0.55), y: py(0.32) }, { x: px(0.52), y: py(0.3) }], box.w * 0.024, colors.ink, 0.76, 3413);
+
+  ctx.save();
+  ctx.fillStyle = colors.ink;
+  ctx.strokeStyle = colors.ink;
+  ctx.globalAlpha = 0.9;
+  ctx.beginPath();
+  ctx.moveTo(px(0.5), py(0.3));
+  ctx.lineTo(px(0.64), py(0.82));
+  ctx.lineTo(px(0.36), py(0.82));
+  ctx.closePath();
+  ctx.fill();
+  ctx.lineWidth = box.w * 0.022;
+  ctx.stroke();
+  ctx.clip();
+  drawColorBleed(ctx, px(0.5), py(0.74), box.w * 0.12, box.h * 0.08, accent, 0.54);
+  ctx.restore();
+
+  dryBrushLine(ctx, [{ x: px(0.38), y: py(0.79) }, { x: px(0.24), y: py(0.85) }], box.w * 0.036, colors.ink, 0.4, 3414);
+  drawInkShape(ctx, [
+    { x: px(0.5), y: py(0.17) },
+    { x: px(0.55), y: py(0.25) },
+    { x: px(0.46), y: py(0.25) },
+  ], colors.ink, 0.86);
+  drawInkBlob(ctx, px(0.5), py(0.24), box.w * 0.06, box.h * 0.06, 3415, colors);
+  drawEye(ctx, px(0.47), py(0.24), box.w * 0.011, eye, colors);
+  drawEye(ctx, px(0.53), py(0.24), box.w * 0.011, eye, colors);
+  drawShieldRing(ctx, px(0.5), py(0.5), box.w * 0.22, box.h * 0.28, colors, accent);
 }
 
 function drawSplitYao(
@@ -538,47 +544,58 @@ function drawEliteYaojiang(
   colors: StyleboardColors,
   accent: string,
 ): void {
-  const cx = box.x + box.w * 0.5;
-  const headY = box.y + box.h * 0.23;
-  const bodyY = box.y + box.h * 0.55;
-  dryBrushLine(ctx, [
-    { x: cx - box.w * 0.13, y: bodyY - box.h * 0.08 },
-    { x: cx - box.w * 0.31, y: box.y + box.h * 0.8 },
-  ], box.w * 0.08, colors.ink, 0.42, 3610);
-  drawInkBlob(ctx, cx, bodyY, box.w * 0.14, box.h * 0.32, 3611, colors, { color: accent, dx: 0.04, dy: -0.24 });
-  dryBrushLine(ctx, [
-    { x: cx - box.w * 0.24, y: bodyY - box.h * 0.18 },
-    { x: cx + box.w * 0.24, y: bodyY - box.h * 0.18 },
-  ], box.w * 0.064, colors.ink, 0.88, 3612);
-  drawInkBlob(ctx, cx, headY, box.w * 0.075, box.h * 0.075, 3613, colors);
-  dryBrushLine(ctx, [
-    { x: cx - box.w * 0.045, y: headY - box.h * 0.06 },
-    { x: cx - box.w * 0.14, y: headY - box.h * 0.18 },
-    { x: cx - box.w * 0.1, y: headY - box.h * 0.24 },
-  ], box.w * 0.024, colors.ink, 0.88, 3614);
-  dryBrushLine(ctx, [
-    { x: cx + box.w * 0.045, y: headY - box.h * 0.06 },
-    { x: cx + box.w * 0.14, y: headY - box.h * 0.18 },
-    { x: cx + box.w * 0.1, y: headY - box.h * 0.24 },
-  ], box.w * 0.024, colors.ink, 0.88, 3615);
-  dryBrushLine(ctx, [
-    { x: cx + box.w * 0.26, y: bodyY - box.h * 0.03 },
-    { x: cx + box.w * 0.31, y: box.y + box.h * 0.89 },
-  ], box.w * 0.024, colors.ink, 0.88, 3616);
-  dryBrushLine(ctx, [
-    { x: cx + box.w * 0.29, y: box.y + box.h * 0.76 },
-    { x: cx + box.w * 0.38, y: box.y + box.h * 0.9 },
-  ], box.w * 0.018, colors.ink, 0.74, 3617);
-  dryBrushLine(ctx, [
-    { x: cx - box.w * 0.05, y: bodyY + box.h * 0.23 },
-    { x: cx - box.w * 0.11, y: box.y + box.h * 0.9 },
-  ], box.w * 0.034, colors.ink, 0.76, 3618);
-  dryBrushLine(ctx, [
-    { x: cx + box.w * 0.05, y: bodyY + box.h * 0.23 },
-    { x: cx + box.w * 0.1, y: box.y + box.h * 0.9 },
-  ], box.w * 0.034, colors.ink, 0.76, 3619);
-  drawEye(ctx, cx - box.w * 0.024, headY - box.h * 0.002, box.w * 0.011, colors.seal, colors);
-  drawEye(ctx, cx + box.w * 0.024, headY - box.h * 0.002, box.w * 0.011, colors.seal, colors);
+  const px = (value: number): number => box.x + box.w * value;
+  const py = (value: number): number => box.y + box.h * value;
+
+  ctx.save();
+  ctx.fillStyle = colors.ink;
+  ctx.globalAlpha = 0.32;
+  ctx.beginPath();
+  ctx.moveTo(px(0.35), py(0.34));
+  ctx.bezierCurveTo(px(0.28), py(0.5), px(0.24), py(0.66), px(0.28), py(0.8));
+  ctx.bezierCurveTo(px(0.39), py(0.7), px(0.43), py(0.52), px(0.39), py(0.35));
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  taperedDryBrushLine(ctx, [{ x: px(0.42), y: py(0.62) }, { x: px(0.4), y: py(0.88) }], box.w * 0.047, colors.ink, 0.86, 3610);
+  taperedDryBrushLine(ctx, [{ x: px(0.58), y: py(0.62) }, { x: px(0.6), y: py(0.88) }], box.w * 0.047, colors.ink, 0.86, 3611);
+  dryBrushLine(ctx, [{ x: px(0.36), y: py(0.88) }, { x: px(0.45), y: py(0.88) }], box.w * 0.028, colors.ink, 0.82, 3612);
+  dryBrushLine(ctx, [{ x: px(0.55), y: py(0.88) }, { x: px(0.64), y: py(0.88) }], box.w * 0.028, colors.ink, 0.82, 3613);
+
+  ctx.save();
+  ctx.fillStyle = colors.ink;
+  ctx.strokeStyle = colors.ink;
+  ctx.globalAlpha = 0.91;
+  ctx.beginPath();
+  ctx.moveTo(px(0.33), py(0.34));
+  ctx.lineTo(px(0.67), py(0.34));
+  ctx.lineTo(px(0.61), py(0.64));
+  ctx.lineTo(px(0.39), py(0.64));
+  ctx.closePath();
+  ctx.fill();
+  ctx.lineWidth = box.w * 0.022;
+  ctx.stroke();
+  ctx.clip();
+  drawColorBleed(ctx, px(0.5), py(0.48), box.w * 0.13, box.h * 0.1, accent, 0.52);
+  ctx.restore();
+
+  drawInkBlob(ctx, px(0.35), py(0.35), box.w * 0.07, box.h * 0.055, 3614, colors);
+  drawInkBlob(ctx, px(0.65), py(0.35), box.w * 0.07, box.h * 0.055, 3615, colors);
+  dryBrushLine(ctx, [{ x: px(0.62), y: py(0.43) }, { x: px(0.7), y: py(0.48) }], box.w * 0.026, colors.ink, 0.78, 3616);
+  dryBrushLine(ctx, [{ x: px(0.7), y: py(0.3) }, { x: px(0.72), y: py(0.86) }], box.w * 0.02, colors.ink, 0.88, 3617);
+  dryBrushLine(ctx, [{ x: px(0.66), y: py(0.31) }, { x: px(0.76), y: py(0.31) }], box.w * 0.016, colors.ink, 0.86, 3618);
+  drawInkShape(ctx, [
+    { x: px(0.71), y: py(0.84) },
+    { x: px(0.735), y: py(0.88) },
+    { x: px(0.69), y: py(0.88) },
+  ], colors.ink, 0.86);
+
+  drawInkBlob(ctx, px(0.5), py(0.27), box.w * 0.07, box.h * 0.07, 3619, colors);
+  taperedDryBrushLine(ctx, [{ x: px(0.46), y: py(0.21) }, { x: px(0.43), y: py(0.15) }, { x: px(0.48), y: py(0.11) }], box.w * 0.029, colors.ink, 0.9, 3620);
+  taperedDryBrushLine(ctx, [{ x: px(0.54), y: py(0.21) }, { x: px(0.57), y: py(0.15) }, { x: px(0.52), y: py(0.11) }], box.w * 0.029, colors.ink, 0.9, 3621);
+  drawEye(ctx, px(0.47), py(0.27), box.w * 0.011, colors.seal, colors);
+  drawEye(ctx, px(0.53), py(0.27), box.w * 0.011, colors.seal, colors);
 }
 
 function drawChapterBoss(
@@ -934,50 +951,44 @@ function drawMountainLayer(
   width: number,
   height: number,
   colors: StyleboardColors,
-  baseRatio: number,
+  footRatio: number,
   amplitudeRatio: number,
   alpha: number,
   seed: number,
 ): void {
   const next = mulberry32(seed);
-  const baseY = height * baseRatio;
+  const footY = height * footRatio;
   const amplitude = height * amplitudeRatio;
-  const washBottom = Math.min(height * 0.67, baseY + amplitude * 0.58);
   const crestPoints: Point[] = [];
+  const segmentCount = (2 + seed % 3) * 2;
+
   ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, width, height * 0.66);
+  ctx.clip();
+
+  for (let index = 0; index <= segmentCount; index += 1) {
+    const edge = index === 0 || index === segmentCount;
+    const x = edge ? width * index / segmentCount : width * (index + (next() - 0.5) * 0.16) / segmentCount;
+    const peak = index % 2 === 1;
+    const lift = peak ? amplitude * (0.54 + next() * 0.38) : amplitude * (0.04 + next() * 0.16);
+    crestPoints.push({ x, y: footY - lift });
+  }
+
   ctx.fillStyle = colors.ink;
   ctx.globalAlpha = alpha;
+  ctx.shadowColor = colors.ink;
+  ctx.shadowBlur = Math.max(8, amplitude * 0.16);
   ctx.beginPath();
-  ctx.moveTo(0, washBottom);
-  ctx.lineTo(0, baseY);
-  const steps = 9;
-  for (let index = 0; index <= steps; index += 1) {
-    const x = width * index / steps;
-    const crest = baseY - amplitude * (0.28 + next() * 0.72);
-    crestPoints.push({ x, y: crest });
-    ctx.lineTo(x, crest);
+  ctx.moveTo(0, footY);
+  for (const point of crestPoints) {
+    ctx.lineTo(point.x, point.y);
   }
-  ctx.lineTo(width, washBottom);
+  ctx.lineTo(width, footY);
   ctx.closePath();
   ctx.fill();
 
-  ctx.globalAlpha = alpha * 0.72;
-  ctx.shadowColor = colors.ink;
-  ctx.shadowBlur = Math.max(6, amplitude * 0.18);
-  ctx.strokeStyle = colors.ink;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  ctx.lineWidth = Math.max(10, amplitude * 0.16);
-  ctx.beginPath();
-  ctx.moveTo(crestPoints[0].x, crestPoints[0].y);
-  for (let index = 1; index < crestPoints.length; index += 1) {
-    const current = crestPoints[index];
-    const previous = crestPoints[index - 1];
-    ctx.quadraticCurveTo(previous.x, previous.y, (previous.x + current.x) * 0.5, (previous.y + current.y) * 0.5);
-  }
-  const last = crestPoints[crestPoints.length - 1];
-  ctx.lineTo(last.x, last.y);
-  ctx.stroke();
+  dryBrushLine(ctx, crestPoints, Math.max(4, amplitude * 0.055), colors.ink, Math.min(0.38, alpha * 1.45), seed + 100);
   ctx.restore();
 }
 
@@ -1476,6 +1487,37 @@ function dryBrushLine(
       else ctx.lineTo(x, y);
     }
     ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function taperedDryBrushLine(
+  ctx: CanvasRenderingContext2D,
+  points: ReadonlyArray<Point>,
+  width: number,
+  color: string,
+  alpha: number,
+  seed: number,
+): void {
+  if (points.length < 2) return;
+  const next = mulberry32(seed);
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  for (let pass = 0; pass < 4; pass += 1) {
+    const passAlpha = alpha * (0.2 + next() * 0.25);
+    for (let index = 0; index < points.length - 1; index += 1) {
+      const start = points[index];
+      const end = points[index + 1];
+      const progress = index / Math.max(1, points.length - 2);
+      ctx.globalAlpha = passAlpha;
+      ctx.lineWidth = width * (0.9 - progress * 0.48) * (0.72 + next() * 0.38);
+      ctx.beginPath();
+      ctx.moveTo(start.x + (next() - 0.5) * width * 0.36, start.y + (next() - 0.5) * width * 0.36);
+      ctx.lineTo(end.x + (next() - 0.5) * width * 0.28, end.y + (next() - 0.5) * width * 0.28);
+      ctx.stroke();
+    }
   }
   ctx.restore();
 }
