@@ -112,6 +112,8 @@
 | 验收命令 | `npm run quality:gate:capture`。 |
 | 通过标准 | 不画符也能跑完；画符成功有水墨正反馈；融合效果可见。 |
 
+> **完成（2026-07-19；施工提交 `c63b3d1`）**：原始 T7 质量门禁 PASS，11 个测试文件、80/80 用例通过；机器报告见 `reports/t7-original-quality-gate.json`，浏览器证据见 `screenshots/t7/01`–`14`，完整提交与边界索引见 `docs/iterations/T7_COMPLETION.md`。T7b 未启动且不在本次提交范围。
+
 ## Task 8：首章 1-1 到 1-3 可玩切片
 
 | 项 | 内容 |
