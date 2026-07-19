@@ -1,9 +1,11 @@
 import type { GameConfig } from "../../../config";
+import type { FusionRecipe } from "../../../config/schema/fusion";
 import { coreDamage } from "../../formulas/core";
 import { runeDamage } from "../../formulas/damage";
 import { relation } from "../../formulas/elements";
 import { combatPower } from "../../formulas/power";
 import type { EventBus } from "../../events/EventBus";
+import { drawBonusForScore, type DrawTier } from "../draw/scoring";
 import type { GeneratedMap, OpenSlot, Vec2 } from "../map/MapGenerator";
 import {
   resolveTargetingStrategy,
@@ -23,6 +25,15 @@ export interface CombatSnapshot {
   leaks: number;
   monstersAlive: number;
   lootMultiplier: number;
+  wavesCleared: number;
+}
+
+export interface DrawCooldownState {
+  ready: boolean;
+  remainingSteps: number;
+  remainingSeconds: number;
+  globalSteps: number;
+  perRuneSteps: number;
 }
 
 export interface CombatSimulationDeps {
@@ -79,6 +90,10 @@ interface RuneTower {
   cooldownRemainingSteps: number;
   xiangshengMultiplier: number;
   strategy: TargetingStrategy;
+  attackBase: number;
+  upgradeLevel: number;
+  fusionRecipe: FusionRecipe | null;
+  pendingDrawBonus: number | null;
 }
 
 interface MonsterEntity {
@@ -113,8 +128,14 @@ export class CombatSimulation {
   private readonly lootMultiplierValue: number;
   private readonly activeWaves: ActiveWave[] = [];
   private readonly monsters: MonsterEntity[] = [];
+  private readonly dispatchedWaveIndexes = new Set<number>();
+  private readonly waveSpawnCounts = new Map<number, number>();
+  private readonly waveResolvedCounts = new Map<number, number>();
+  private readonly drawRuneReadySteps = new Map<number, number>();
 
   private nextEntityId = 1;
+  private elapsedSteps = 0;
+  private drawGlobalReadyStep = 0;
   private coreHpValue: number;
   private killsValue = 0;
   private leaksValue = 0;
@@ -146,6 +167,7 @@ export class CombatSimulation {
     const queue = flattenWaveEntries(wave.entries, wave.index);
     const spawnIntervalSeconds = wave.spawnIntervalSeconds ?? 0;
 
+    this.dispatchedWaveIndexes.add(wave.index);
     this.activeWaves.push({
       waveIndex: wave.index,
       spawnIntervalSteps: Math.round(spawnIntervalSeconds * this.config.balance.battle.simulationFps),
@@ -156,6 +178,7 @@ export class CombatSimulation {
   }
 
   step(): void {
+    this.elapsedSteps += 1;
     this.spawnDueMonsters();
     this.advanceMonsters();
     this.fireReadyRunes();
@@ -173,11 +196,61 @@ export class CombatSimulation {
       leaks: this.leaksValue,
       monstersAlive: this.monstersAlive(),
       lootMultiplier: this.lootMultiplierValue,
+      wavesCleared: this.wavesCleared(),
     };
   }
 
   getMonsterViews(): CombatMonsterView[] {
     return this.monsters.filter(isAlive).map((monster) => this.toMonsterView(monster));
+  }
+
+  applyRuneUpgrade(slotIndex: number): void {
+    const tower = this.requireTower(slotIndex);
+    tower.upgradeLevel += 1;
+    tower.attackBase =
+      tower.rune.lv1Attack *
+      Math.pow(1 + this.config.balance.battle.runeUpgradeAttackGrowthPerLevel, tower.upgradeLevel);
+  }
+
+  applyFusion(slotIndex: number, recipe: FusionRecipe): void {
+    const tower = this.requireTower(slotIndex);
+    tower.fusionRecipe = recipe;
+  }
+
+  submitDraw(slotIndex: number, score: number): { tier: DrawTier; bonus: number } {
+    const tower = this.requireTower(slotIndex);
+    const cooldown = this.getDrawCooldown(slotIndex);
+
+    if (!cooldown.ready) {
+      throw new Error(`draw rune is cooling down for slot ${slotIndex}`);
+    }
+
+    const result = drawBonusForScore(score, this.config.balance.damageFormula.drawBonus);
+    const cooldownSeconds = this.config.balance.battle.drawRuneCooldownSeconds;
+    this.drawGlobalReadyStep = this.elapsedSteps + Math.round(cooldownSeconds.global * this.config.balance.battle.simulationFps);
+    this.drawRuneReadySteps.set(
+      slotIndex,
+      this.elapsedSteps + Math.round(cooldownSeconds.perRune * this.config.balance.battle.simulationFps),
+    );
+    tower.pendingDrawBonus = result.bonus;
+    this.bus.emit("draw.scored", { slotIndex, score, tier: result.tier });
+
+    return result;
+  }
+
+  getDrawCooldown(slotIndex: number): DrawCooldownState {
+    this.requireTower(slotIndex);
+    const globalSteps = Math.max(0, this.drawGlobalReadyStep - this.elapsedSteps);
+    const perRuneSteps = Math.max(0, (this.drawRuneReadySteps.get(slotIndex) ?? 0) - this.elapsedSteps);
+    const remainingSteps = Math.max(globalSteps, perRuneSteps);
+
+    return {
+      ready: remainingSteps === 0,
+      remainingSteps,
+      remainingSeconds: remainingSteps / this.config.balance.battle.simulationFps,
+      globalSteps,
+      perRuneSteps,
+    };
   }
 
   private defaultWaveTemplateId(): string {
@@ -211,6 +284,10 @@ export class CombatSimulation {
       cooldownRemainingSteps: 0,
       xiangshengMultiplier: this.resolveXiangshengMultiplier(entry, rune, loadout),
       strategy: resolveTargetingStrategy(rune.targetingStrategyId),
+      attackBase: rune.lv1Attack,
+      upgradeLevel: 0,
+      fusionRecipe: null,
+      pendingDrawBonus: null,
     };
   }
 
@@ -364,6 +441,7 @@ export class CombatSimulation {
 
     this.nextEntityId += 1;
     this.monsters.push(monster);
+    this.waveSpawnCounts.set(waveIndex, (this.waveSpawnCounts.get(waveIndex) ?? 0) + 1);
     this.bus.emit("monster.spawned", {
       entityId: monster.entityId,
       monsterId: monster.monsterId,
@@ -388,6 +466,7 @@ export class CombatSimulation {
 
       monster.alive = false;
       this.leaksValue += 1;
+      this.recordWaveResolution(monster.waveIndex);
       const amount = coreDamage({
         atk: monster.attack,
         def: this.coreDef,
@@ -431,6 +510,7 @@ export class CombatSimulation {
         targetEntityId: monster.entityId,
         damage,
       });
+      tower.pendingDrawBonus = null;
       this.applyDamage(monster, damage);
       tower.cooldownRemainingSteps = tower.cooldownSteps;
     }
@@ -447,13 +527,17 @@ export class CombatSimulation {
 
   private damageFor(tower: RuneTower, monster: MonsterEntity): number {
     const elementRelation = relation(tower.rune.element, monster.element);
+    const drawBonus = tower.pendingDrawBonus ?? this.config.balance.damageFormula.drawBonus.base;
 
     return runeDamage({
-      base: tower.rune.lv1Attack,
+      base: tower.attackBase,
       qualityMul: this.config.balance.damageFormula.qualityMultipliers.xia_pin,
       xiangshengMul: tower.xiangshengMultiplier,
-      kezhiMul: this.config.balance.damageFormula.elementalMultipliers[elementRelation],
-      drawBonus: this.config.balance.damageFormula.drawBonus.base,
+      kezhiMul:
+        tower.fusionRecipe === null
+          ? this.config.balance.damageFormula.elementalMultipliers[elementRelation]
+          : fusionKezhiMultiplier(tower.fusionRecipe, monster.element),
+      drawBonus,
     });
   }
 
@@ -482,6 +566,7 @@ export class CombatSimulation {
 
     monster.alive = false;
     this.killsValue += 1;
+    this.recordWaveResolution(monster.waveIndex);
     this.bus.emit("monster.died", {
       entityId: monster.entityId,
       monsterId: monster.monsterId,
@@ -523,6 +608,51 @@ export class CombatSimulation {
   private monstersAlive(): number {
     return this.monsters.filter(isAlive).length;
   }
+
+  private wavesCleared(): number {
+    let total = 0;
+
+    for (const waveIndex of this.dispatchedWaveIndexes) {
+      const spawned = this.waveSpawnCounts.get(waveIndex) ?? 0;
+      const resolved = this.waveResolvedCounts.get(waveIndex) ?? 0;
+      if (this.isWaveSpawnComplete(waveIndex) && resolved >= spawned) {
+        total += 1;
+      }
+    }
+
+    return total;
+  }
+
+  private isWaveSpawnComplete(waveIndex: number): boolean {
+    const wave = this.activeWaves.find((candidate) => candidate.waveIndex === waveIndex);
+    return wave !== undefined && wave.nextSpawnIndex >= wave.queue.length;
+  }
+
+  private recordWaveResolution(waveIndex: number): void {
+    this.waveResolvedCounts.set(waveIndex, (this.waveResolvedCounts.get(waveIndex) ?? 0) + 1);
+  }
+
+  private requireTower(slotIndex: number): RuneTower {
+    const tower = this.towers[slotIndex];
+
+    if (tower === undefined) {
+      throw new Error(`tower slotIndex ${slotIndex} is outside towers`);
+    }
+
+    return tower;
+  }
+}
+
+function fusionKezhiMultiplier(recipe: FusionRecipe, monsterElement: string): number {
+  if (monsterElement === recipe.advantage.target) {
+    return recipe.advantage.multiplier;
+  }
+
+  if (monsterElement === recipe.disadvantage.source) {
+    return recipe.disadvantage.multiplier;
+  }
+
+  return 1;
 }
 
 function deriveCoreStats(config: GameConfig, requiredPower: number): { maxHp: number; def: number } {
@@ -626,6 +756,24 @@ function pointAtDistance(route: RouteGeometry, distanceUnits: number): Vec2 {
   return route.points[route.points.length - 1];
 }
 
+
+function distanceToSegment(point: Vec2, from: Vec2, to: Vec2): number {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const lengthSq = dx * dx + dy * dy;
+  const t = lengthSq === 0 ? 0 : clamp(0, 1, ((point.x - from.x) * dx + (point.y - from.y) * dy) / lengthSq);
+  const projected = {
+    x: from.x + dx * t,
+    y: from.y + dy * t,
+  };
+
+  return distance(point, projected);
+}
+
 function distance(a: Vec2, b: Vec2): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function clamp(min: number, max: number, value: number): number {
+  return Math.max(min, Math.min(max, value));
 }

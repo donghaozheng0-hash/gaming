@@ -108,6 +108,30 @@
       "coreHpBarThicknessCanvasUnits": 6
     }
   },
+  "battleUi": {
+    "zIndex": 20,
+    "hudMarginPx": 18,
+    "panelPaddingPx": 14,
+    "panelGapPx": 10,
+    "controlRadiusPx": 8,
+    "buttonHeightPx": 38,
+    "iconSizePx": 24,
+    "lingjiButtonSizePx": 72,
+    "menuWidthPx": 320,
+    "runeCardWidthPx": 96,
+    "runeCardHeightPx": 132,
+    "drawOverlayPaddingPx": 24,
+    "drawPaperMaxWidthPx": 760,
+    "drawPaperMaxHeightPx": 620,
+    "drawStrokeWidthPx": 7,
+    "drawTemplateStrokeWidthPx": 3,
+    "feedbackDurationMs": 1400,
+    "cooldownRefreshMs": 250,
+    "scrimOpacity": 0.62,
+    "paperOpacity": 0.94,
+    "disabledOpacity": 0.45,
+    "intelCompactWidthPx": 160
+  },
   "effectKeys": {
     "commonCast": "符箓：出手时浮现符箓纹样，亮起后笔画化为攻击。",
     "fire": "泼墨焚烧：朱赤泼墨炸开 + 飞白火舌，边缘有焦墨。",

@@ -1,3 +1,6 @@
+import type { ElementId, FusedElementId } from "../../config/schema/common";
+import type { DrawTier } from "../battle/draw/scoring";
+
 export interface BattleEventMap {
   "battle.prepStarted": { levelId: string };
   "wave.started": { index: number };
@@ -7,9 +10,16 @@ export interface BattleEventMap {
   "monster.leaked": { entityId: number; monsterId: string };
   "core.damaged": { amount: number; remainingHp: number };
   "rune.fired": { slotIndex: number; runeId: string; targetEntityId: number; damage: number };
+  "lingji.granted": { waveIndex: number; total: number };
+  "lingji.spent": { use: "upgrade"; slotIndex: number } | { use: "fusion"; slotIndex: number; recipeId: FusedElementId };
+  "essence.dropped": { element: ElementId; waveIndex: number };
+  "rune.upgraded": { slotIndex: number; level: number };
+  "rune.fused": { slotIndex: number; recipeId: FusedElementId };
+  "draw.scored": { slotIndex: number; score: number; tier: DrawTier };
   "battle.settled": {
     victory: boolean;
     wavesCleared: number;
+    wavesDispatched?: number;
     totalSteps: number;
     coreHp?: number;
     kills?: number;
