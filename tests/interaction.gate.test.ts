@@ -126,6 +126,14 @@ const singleMonsterWave = (index: number) => ({
   spawnIntervalSeconds: 0,
 });
 
+// 伤害锚点用:一波 3 只(防 slot1 抢刀后锚点符无目标;等待窗按入射程现实时间放宽)
+const anchorWave = (index: number) => ({
+  index,
+  entries: [{ monsterPoolIds: ["normal_yaobing"], totalCount: 3 }],
+  spawnIntervalSeconds: 0,
+});
+const ENTER_RANGE_STEPS = 3000; // ≤100s 模拟:覆盖出生→走入射程→两发的最坏窗口
+
 describe("T7 · 画符评分纯函数(2.7 三档)", () => {
   it.skipIf(!ready)("锚点:49→none/0;50→partial/0;65→0.10;80→full/0.2;95→perfect/0.2", async () => {
     const { drawBonusForScore } = await load(scoringPath);
@@ -175,7 +183,7 @@ describe("T7 · 笔迹识别(确定性 $1 类)", () => {
 describe("T7 · CombatSimulation:画符增幅与冷却(按步数,确定性)", () => {
   it.skipIf(!ready)("满额画符:下一发 144(只吃一发,第二发回 120);draw.scored 事件携带 tier", async () => {
     const config = await clonedConfig();
-    const { simulation, bus } = await riggedBattle(config, [singleMonsterWave(1)]);
+    const { simulation, bus } = await riggedBattle(config, [anchorWave(1)]);
     const damages: number[] = [];
     let scored: any = null;
     bus.on("rune.fired", (p: any) => { if (p.slotIndex === 0) damages.push(p.damage); });
@@ -186,7 +194,7 @@ describe("T7 · CombatSimulation:画符增幅与冷却(按步数,确定性)", ()
     expect(result).toEqual({ tier: "full", bonus: 0.2 });
     expect(scored).toMatchObject({ slotIndex: 0, score: 88, tier: "full" });
 
-    for (let step = 0; step < 90 && damages.length < 2; step += 1) simulation.step();
+    for (let step = 0; step < ENTER_RANGE_STEPS && damages.length < 2; step += 1) simulation.step();
     expect(damages[0]).toBe(DRAW_FULL);
     expect(damages[1]).toBe(FEN_TIAN_BASE);
   });
@@ -207,13 +215,13 @@ describe("T7 · CombatSimulation:画符增幅与冷却(按步数,确定性)", ()
 
   it.skipIf(!ready)("65 分部分加成:下一发 132(线性档进 runeDamage 的 drawBonus)", async () => {
     const config = await clonedConfig();
-    const { simulation, bus } = await riggedBattle(config, [singleMonsterWave(1)]);
+    const { simulation, bus } = await riggedBattle(config, [anchorWave(1)]);
     const damages: number[] = [];
     bus.on("rune.fired", (p: any) => { if (p.slotIndex === 0) damages.push(p.damage); });
 
     simulation.spawnWave(1);
     simulation.submitDraw(0, 65);
-    for (let step = 0; step < 90 && damages.length < 1; step += 1) simulation.step();
+    for (let step = 0; step < ENTER_RANGE_STEPS && damages.length < 1; step += 1) simulation.step();
     expect(damages[0]).toBe(DRAW_PARTIAL_65);
   });
 });
@@ -264,7 +272,7 @@ describe("T7 · RunProgression:灵机 2/4/6 与五行精(2.8)", () => {
 
   it.skipIf(!ready)("升级:消耗 1 灵机 → 该符下一发 138(复利进 base);无点数 throw", async () => {
     const config = await clonedConfig();
-    const { simulation, bus, loadout } = await riggedBattle(config, [1, 2].map(singleMonsterWave));
+    const { simulation, bus, loadout } = await riggedBattle(config, [1, 2].map(anchorWave));
     const { RunProgression } = await load(progressionPath);
     const run = new RunProgression({ config, bus, rng: () => 0.99, simulation, loadout });
     const damages: number[] = [];
@@ -277,7 +285,7 @@ describe("T7 · RunProgression:灵机 2/4/6 与五行精(2.8)", () => {
     expect(run.state().upgradeLevels[0]).toBe(1);
 
     simulation.spawnWave(1);
-    for (let step = 0; step < 90 && damages.length < 1; step += 1) simulation.step();
+    for (let step = 0; step < ENTER_RANGE_STEPS && damages.length < 1; step += 1) simulation.step();
     expect(damages[0]).toBe(UPGRADED_ONE_LEVEL);
   });
 });
@@ -330,7 +338,7 @@ describe("T7 · 融合(2.9/6.5):雷=木+火,克制表取代五行克制", () => 
     const damages: number[] = [];
     bus.on("rune.fired", (p: any) => { if (p.slotIndex === 0) damages.push(p.damage); });
     simulation.spawnWave(1);
-    for (let step = 0; step < 90 && damages.length < 1; step += 1) simulation.step();
+    for (let step = 0; step < ENTER_RANGE_STEPS && damages.length < 1; step += 1) simulation.step();
     expect(damages[0]).toBe(THUNDER_VS_WATER);
   });
 
@@ -348,7 +356,7 @@ describe("T7 · 融合(2.9/6.5):雷=木+火,克制表取代五行克制", () => 
     const damages: number[] = [];
     bus.on("rune.fired", (p: any) => { if (p.slotIndex === 0) damages.push(p.damage); });
     simulation.spawnWave(1);
-    for (let step = 0; step < 90 && damages.length < 1; step += 1) simulation.step();
+    for (let step = 0; step < ENTER_RANGE_STEPS && damages.length < 1; step += 1) simulation.step();
     expect(damages[0]).toBe(THUNDER_VS_EARTH);
   });
 });
