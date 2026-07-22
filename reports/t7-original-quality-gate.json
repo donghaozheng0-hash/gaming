@@ -1,0 +1,119 @@
+{
+  "pass": true,
+  "contractPass": true,
+  "task": "T7",
+  "withCapture": true,
+  "generatedAt": "2026-07-19T13:18:30.293Z",
+  "results": [
+    {
+      "name": "CLAUDE.md",
+      "pass": true,
+      "detail": "CLAUDE.md"
+    },
+    {
+      "name": "AGENTS.md",
+      "pass": true,
+      "detail": "AGENTS.md"
+    },
+    {
+      "name": "Claude godogen skill",
+      "pass": true,
+      "detail": ".claude/skills/godogen"
+    },
+    {
+      "name": "Codex godogen skill",
+      "pass": true,
+      "detail": ".agents/skills/godogen"
+    },
+    {
+      "name": "package.json",
+      "pass": true,
+      "detail": "package.json"
+    },
+    {
+      "name": "tsconfig.json",
+      "pass": true,
+      "detail": "tsconfig.json"
+    },
+    {
+      "name": "src/main.ts",
+      "pass": true,
+      "detail": "src/main.ts"
+    },
+    {
+      "name": "docs/PROJECT_BRAIN.md",
+      "pass": true,
+      "detail": "docs/PROJECT_BRAIN.md"
+    },
+    {
+      "name": "docs/WORKFLOW.md",
+      "pass": true,
+      "detail": "docs/WORKFLOW.md"
+    },
+    {
+      "name": "docs/ACCEPTANCE_GATE.md",
+      "pass": true,
+      "detail": "docs/ACCEPTANCE_GATE.md"
+    },
+    {
+      "name": "docs/DATA_ARCHITECTURE.md",
+      "pass": true,
+      "detail": "docs/DATA_ARCHITECTURE.md"
+    },
+    {
+      "name": "docs/GAME_ARCHITECTURE.md",
+      "pass": true,
+      "detail": "docs/GAME_ARCHITECTURE.md"
+    },
+    {
+      "name": "docs/VISUAL_DIRECTION.md",
+      "pass": true,
+      "detail": "docs/VISUAL_DIRECTION.md"
+    },
+    {
+      "name": "acceptance/contracts.json",
+      "pass": true,
+      "detail": "acceptance/contracts.json"
+    },
+    {
+      "name": "dependencies",
+      "pass": true,
+      "detail": "node_modules present"
+    },
+    {
+      "name": "isolation",
+      "pass": true,
+      "detail": "node scripts/check-isolation.mjs"
+    },
+    {
+      "name": "config tables",
+      "pass": true,
+      "detail": "node scripts/check-config.mjs"
+    },
+    {
+      "name": "typescript",
+      "pass": true,
+      "detail": "npm run check"
+    },
+    {
+      "name": "test",
+      "pass": true,
+      "detail": "npm test"
+    },
+    {
+      "name": "build",
+      "pass": true,
+      "detail": "npm run build"
+    },
+    {
+      "name": "capture still",
+      "pass": true,
+      "detail": "npm run capture:still"
+    },
+    {
+      "name": "capture artifact",
+      "pass": true,
+      "detail": "screenshots/still.png"
+    }
+  ]
+}

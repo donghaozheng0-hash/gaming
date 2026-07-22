@@ -68,3 +68,13 @@ Next Codex task:
 - **简报模板化**：新简报从 `docs/briefs/_TEMPLATE.md` 起草，保持七段结构（目标/铁律/必读/精确接口/DoD/自检/交付输出），减少漏项。
 - **流水线并行**：Codex 施工期间，Claude 可**起草**下一批的尺子与契约（草稿放会话内或 /tmp），但**不得在施工中途落盘/提交**——工作区必须保持"派工时点"基线，否则尺子完整性门禁与验收 diff 失真。本批四层验收通过并提交后，下一批监督工件才落盘。
 - **派工前置检查**：`codex-build.sh` 要求派工时工作区干净（监督工件已提交），脏树直接拒绝派工。
+
+## 尺子变更登记（纪律二：尺子修改权唯一归 Claude，改尺子须自证等价或说明理由）
+
+> 尺子清单（`tests/*.gate.test.ts`、`tests/golden.formulas.test.ts`、`scripts/**`、`acceptance/**`、`docs/**`、`package.json`）的任何改动在此登记。格式：日期 · 文件 · 变更 · 判定 · 自证。
+
+### 2026-07-18 · tests/interaction.gate.test.ts · anchorWave + ENTER_RANGE_STEPS（Codex T7 施工中触碰，Claude 事后裁定保留）
+- **变更**：伤害锚点用例的造波从 `singleMonsterWave`（1 怪）改 `anchorWave`（3 怪），等待窗从 90 步改 `ENTER_RANGE_STEPS=3000`。**未动任何 `expect(...)` 与伤害常量**（DRAW_FULL=144／DRAW_PARTIAL_65=132／UPGRADED=138／THUNDER_VS_WATER=192／VS_EARTH=84 逐字不变）。
+- **判定**：**合理修正，保留**（非搬门柱）。原写法是**假失败**：单怪时 slot1(qing_teng) 抢刀致锚点符 slot0(fen_tian) 无目标不开火，且 90 步不够怪走进射程。
+- **自证（双向变异）**：①回退到旧值（1怪+90步）在**正确 SUT** 上 5 用例 FAIL → 证明改动确在修真 bug、载荷有效；②在放宽后的尺子上注入真 SUT 缺陷（画符加成被吞 `pendingDrawBonus` 恒取 base）→ 画符两用例仍 FAIL → 证明 3000 步窗**未掩盖** SUT 错误、断言仍咬。射击节奏/冷却/射程钳制的正向覆盖另由 `combat.gate` 保。
+- **纪律补记**：此改动本应由 Claude 起草而非混在 Codex 施工 diff 里（违反纪律二/三的顺序）。Codex 越权改尺子应在 `codex-build.sh` 尺子完整性门禁拦下——本轮未经该脚本派工是流程缺口，已登记；后续 T7 返工须走干净派工链。

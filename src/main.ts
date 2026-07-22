@@ -4,6 +4,7 @@ import { loadGameConfig } from "./config";
 import { shouldLoadDebugPanel, shouldShowStyleboard } from "./debug/gate";
 import { assembleBattle } from "./game/battle/combat/assembleBattle";
 import { createBattleScene } from "./render/battleScene";
+import { mountBattleInteractionUi } from "./ui/BattleInteractionUI";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
 
@@ -14,13 +15,14 @@ if (!canvas) {
 const app = new BabylonApp(canvas);
 const config = loadGameConfig();
 const seed = readSeed();
-const { map, bus, loadout, simulation, battle } = assembleBattle({
+const { map, bus, loadout, simulation, battle, run } = assembleBattle({
   config,
   seed,
   requiredPower: config.balance.progressionCurves.endlessTower.basePower,
 });
 
 await app.load((a) => createBattleScene(a.engine, { config, map, simulation, bus, loadout }));
+const cleanupBattleUi = mountBattleInteractionUi({ config, bus, simulation, run, loadout });
 battle.start();
 app.start();
 app.engine.runRenderLoop(() => {
@@ -47,6 +49,7 @@ if (import.meta.env.DEV && shouldShowStyleboard(window.location.search, true)) {
 
 if (import.meta.env.DEV && import.meta.hot) {
   import.meta.hot.dispose(() => {
+    cleanupBattleUi();
     app.dispose();
   });
 }

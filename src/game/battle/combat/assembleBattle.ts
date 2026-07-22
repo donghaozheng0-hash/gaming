@@ -3,6 +3,7 @@ import { EventBus } from "../../events/EventBus";
 import { BattleController } from "../BattleController";
 import { generateMap, type GeneratedMap } from "../map/MapGenerator";
 import { createRng } from "../map/rng";
+import { RunProgression } from "../run/RunProgression";
 import { CombatSimulation, type CombatLoadoutEntry } from "./CombatSimulation";
 import { buildDefaultLoadout } from "./defaultLoadout";
 
@@ -12,6 +13,7 @@ export interface BattleAssembly {
   loadout: readonly CombatLoadoutEntry[];
   simulation: CombatSimulation;
   battle: BattleController;
+  run: RunProgression;
 }
 
 /**
@@ -40,7 +42,8 @@ export function assembleBattle(opts: {
     requiredPower,
     waveTemplateId: opts.waveTemplateId,
   });
+  const run = new RunProgression({ config, bus, rng: createRng(seed), simulation, loadout });
   const battle = new BattleController({ config, bus, simulation });
 
-  return { map, bus, loadout, simulation, battle };
+  return { map, bus, loadout, simulation, battle, run };
 }

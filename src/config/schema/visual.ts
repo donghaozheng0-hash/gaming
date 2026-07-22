@@ -16,6 +16,7 @@ export interface VisualConfig {
     ink: Record<string, string>;
   };
   scene: VisualSceneConfig;
+  battleUi: VisualBattleUiConfig;
   effectKeys: Record<string, string>;
   uiTokens: Record<string, string>;
 }
@@ -46,6 +47,31 @@ export interface VisualSceneConfig {
   };
 }
 
+export interface VisualBattleUiConfig {
+  zIndex: number;
+  hudMarginPx: number;
+  panelPaddingPx: number;
+  panelGapPx: number;
+  controlRadiusPx: number;
+  buttonHeightPx: number;
+  iconSizePx: number;
+  lingjiButtonSizePx: number;
+  menuWidthPx: number;
+  runeCardWidthPx: number;
+  runeCardHeightPx: number;
+  drawOverlayPaddingPx: number;
+  drawPaperMaxWidthPx: number;
+  drawPaperMaxHeightPx: number;
+  drawStrokeWidthPx: number;
+  drawTemplateStrokeWidthPx: number;
+  feedbackDurationMs: number;
+  cooldownRefreshMs: number;
+  scrimOpacity: number;
+  paperOpacity: number;
+  disabledOpacity: number;
+  intelCompactWidthPx: number;
+}
+
 export interface PaletteEntry {
   name: string;
   primary: string;
@@ -55,17 +81,74 @@ export interface PaletteEntry {
 
 export function validateVisualConfig(value: unknown): VisualConfig {
   const obj = assertPlainObject(value, "visual");
-  assertExactKeys(obj, "visual", ["palette", "scene", "effectKeys", "uiTokens"]);
+  assertExactKeys(obj, "visual", ["palette", "scene", "battleUi", "effectKeys", "uiTokens"]);
 
   return {
     palette: validatePalette(requireField(obj, "palette", "visual")),
     scene: validateSceneConfig(requireField(obj, "scene", "visual")),
+    battleUi: validateBattleUiConfig(requireField(obj, "battleUi", "visual")),
     effectKeys: assertRecord(requireField(obj, "effectKeys", "visual"), "visual.effectKeys", (item, path) =>
       assertString(item, path),
     ),
     uiTokens: assertRecord(requireField(obj, "uiTokens", "visual"), "visual.uiTokens", (item, path) =>
       assertString(item, path),
     ),
+  };
+}
+
+function validateBattleUiConfig(value: unknown): VisualBattleUiConfig {
+  const obj = assertPlainObject(value, "visual.battleUi");
+  assertExactKeys(obj, "visual.battleUi", [
+    "zIndex",
+    "hudMarginPx",
+    "panelPaddingPx",
+    "panelGapPx",
+    "controlRadiusPx",
+    "buttonHeightPx",
+    "iconSizePx",
+    "lingjiButtonSizePx",
+    "menuWidthPx",
+    "runeCardWidthPx",
+    "runeCardHeightPx",
+    "drawOverlayPaddingPx",
+    "drawPaperMaxWidthPx",
+    "drawPaperMaxHeightPx",
+    "drawStrokeWidthPx",
+    "drawTemplateStrokeWidthPx",
+    "feedbackDurationMs",
+    "cooldownRefreshMs",
+    "scrimOpacity",
+    "paperOpacity",
+    "disabledOpacity",
+    "intelCompactWidthPx",
+  ]);
+
+  return {
+    zIndex: assertPositiveNumber(obj.zIndex, "visual.battleUi.zIndex"),
+    hudMarginPx: assertPositiveNumber(obj.hudMarginPx, "visual.battleUi.hudMarginPx"),
+    panelPaddingPx: assertPositiveNumber(obj.panelPaddingPx, "visual.battleUi.panelPaddingPx"),
+    panelGapPx: assertPositiveNumber(obj.panelGapPx, "visual.battleUi.panelGapPx"),
+    controlRadiusPx: assertPositiveNumber(obj.controlRadiusPx, "visual.battleUi.controlRadiusPx"),
+    buttonHeightPx: assertPositiveNumber(obj.buttonHeightPx, "visual.battleUi.buttonHeightPx"),
+    iconSizePx: assertPositiveNumber(obj.iconSizePx, "visual.battleUi.iconSizePx"),
+    lingjiButtonSizePx: assertPositiveNumber(obj.lingjiButtonSizePx, "visual.battleUi.lingjiButtonSizePx"),
+    menuWidthPx: assertPositiveNumber(obj.menuWidthPx, "visual.battleUi.menuWidthPx"),
+    runeCardWidthPx: assertPositiveNumber(obj.runeCardWidthPx, "visual.battleUi.runeCardWidthPx"),
+    runeCardHeightPx: assertPositiveNumber(obj.runeCardHeightPx, "visual.battleUi.runeCardHeightPx"),
+    drawOverlayPaddingPx: assertPositiveNumber(obj.drawOverlayPaddingPx, "visual.battleUi.drawOverlayPaddingPx"),
+    drawPaperMaxWidthPx: assertPositiveNumber(obj.drawPaperMaxWidthPx, "visual.battleUi.drawPaperMaxWidthPx"),
+    drawPaperMaxHeightPx: assertPositiveNumber(obj.drawPaperMaxHeightPx, "visual.battleUi.drawPaperMaxHeightPx"),
+    drawStrokeWidthPx: assertPositiveNumber(obj.drawStrokeWidthPx, "visual.battleUi.drawStrokeWidthPx"),
+    drawTemplateStrokeWidthPx: assertPositiveNumber(
+      obj.drawTemplateStrokeWidthPx,
+      "visual.battleUi.drawTemplateStrokeWidthPx",
+    ),
+    feedbackDurationMs: assertPositiveNumber(obj.feedbackDurationMs, "visual.battleUi.feedbackDurationMs"),
+    cooldownRefreshMs: assertPositiveNumber(obj.cooldownRefreshMs, "visual.battleUi.cooldownRefreshMs"),
+    scrimOpacity: assertUnitNumber(obj.scrimOpacity, "visual.battleUi.scrimOpacity"),
+    paperOpacity: assertUnitNumber(obj.paperOpacity, "visual.battleUi.paperOpacity"),
+    disabledOpacity: assertUnitNumber(obj.disabledOpacity, "visual.battleUi.disabledOpacity"),
+    intelCompactWidthPx: assertPositiveNumber(obj.intelCompactWidthPx, "visual.battleUi.intelCompactWidthPx"),
   };
 }
 
@@ -198,6 +281,15 @@ function assertPositiveNumber(value: unknown, path: string): number {
   const number = assertNumber(value, path);
   if (number <= 0) {
     fail(path, "expected positive number");
+  }
+
+  return number;
+}
+
+function assertUnitNumber(value: unknown, path: string): number {
+  const number = assertNumber(value, path);
+  if (number < 0 || number > 1) {
+    fail(path, "expected number in [0,1]");
   }
 
   return number;

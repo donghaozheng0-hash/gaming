@@ -166,7 +166,8 @@ export class BattleController {
       const snapshot = this.simulation.snapshot();
       this.bus.emit("battle.settled", {
         victory,
-        wavesCleared: victory ? this.wavesPerLevel : this.completedWaves,
+        wavesCleared: victory ? this.wavesPerLevel : snapshot.wavesCleared,
+        wavesDispatched: this.currentWaveIndex,
         totalSteps: this.totalSteps,
         coreHp: snapshot.coreHp,
         kills: snapshot.kills,
